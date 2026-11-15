@@ -27,7 +27,7 @@ function toast(msg) {
 function searchProducts() {
     var inp = document.querySelector('input[name="search"]');
     var q = inp ? inp.value.trim() : '';
-    if (q) location.href = 'Products.html?q=' + encodeURIComponent(q);
+    if (q) location.href = 'index.html?page=products&q=' + encodeURIComponent(q);
 }
 
 // ===== Dark Mode (Controlled from Settings only) =====
@@ -95,10 +95,11 @@ function initLanguage() { if (window.BodaI18n) BodaI18n.init(); }
 
 // ===== Active Nav Link =====
 function initActiveNav() {
-    var path = decodeURIComponent(location.pathname.split('/').pop() || 'home page.html').toLowerCase();
+    var page = new URLSearchParams(location.search).get('page') || 'home';
     document.querySelectorAll('header nav a').forEach(function (a) {
-        var href = (a.getAttribute('href') || '').toLowerCase();
-        a.classList.toggle('active', href === path);
+        var url = new URL(a.href, location.href);
+        var hrefPage = new URLSearchParams(url.search).get('page');
+        a.classList.toggle('active', hrefPage === page);
     });
 }
 
@@ -142,7 +143,7 @@ var CATEGORIES = [
     } catch (e) { }
 })();
 
-function catUrl(name, sub) { return 'Products.html?cat=' + encodeURIComponent(name) + (sub ? '&sub=' + encodeURIComponent(sub) : ''); }
+function catUrl(name, sub) { return 'index.html?page=category&cat=' + encodeURIComponent(name) + (sub ? '&sub=' + encodeURIComponent(sub) : ''); }
 
 // Renders the cards on Home (#cat-grid) and on the Categories page (#cat-dir-grid)
 function renderCategoryCards() {
@@ -183,7 +184,7 @@ function addToCart(it) {
 function buyNow(it) {
     var c = LS.get('boda_cart');
     if (!c.some(function (x) { return x.id === it.id; })) { it.qty = 1; c.push(it); LS.set('boda_cart', c); }
-    location.href = 'cart.html';
+    location.href = 'index.html?page=cart';
 }
 function toggleFav(it) {
     var f = LS.get('boda_favs'), i = f.findIndex(function (x) { return x.id === it.id; });
@@ -193,6 +194,7 @@ function toggleFav(it) {
 }
 
 function initProductCard(a) {
+    if (!a.classList.contains('pd')) linkCard(a);
     var item = function () { return itemOf(a); };
     rememberProduct(item());
     a.querySelector('.buy-btn').onclick = function () { buyNow(item()); };
@@ -315,7 +317,8 @@ function initFilters() {
             var u = new URLSearchParams();
             if (S.cat) u.set('cat', S.cat); if (S.sub) u.set('sub', S.sub);
             if (S.q) u.set('q', S.q); if (S.sale) u.set('sale', '1');
-            history.replaceState(null, '', location.pathname + (u.toString() ? '?' + u.toString() : ''));
+            u.set('page', 'products');
+            history.replaceState(null, '', location.pathname + '?' + u.toString());
         } catch (e) { }
     }
     $id('f-q').value = S.q;
@@ -338,7 +341,7 @@ function initFilters() {
 function renderCart() {
     var box = $id('cart-box'), c = LS.get('boda_cart');
     if (!c.length) {
-        box.innerHTML = '<div class="empty-state"><div class="empty-big">🛒</div><h3>Your cart is empty</h3><p>Add products from any department in Boda Store and they will appear here.</p><a class="favorites-btn" href="Products.html">Browse All Products</a></div>';
+        box.innerHTML = '<div class="empty-state"><div class="empty-big">🛒</div><h3>Your cart is empty</h3><p>Add products from any department in Boda Store and they will appear here.</p><a class="favorites-btn" href="index.html?page=products">Browse All Products</a></div>';
         return;
     }
     var total = 0;
@@ -351,7 +354,7 @@ function renderCart() {
     var note = '<div class="cart-shipping-note' + (free ? ' free' : '') + '">' + (free ? '✅ You qualify for Free Delivery on this order!' : '🚚 Add $' + (500 - total) + ' more for Free Delivery.') + '</div>';
     box.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead><tbody>' + rows +
         '</tbody><tfoot><tr><td colspan="3">Total</td><td colspan="2">$' + total + '</td></tr></tfoot></table></div>' + note +
-        '<div class="cart-actions"><button id="checkout" type="button">Proceed to Checkout</button><a href="Products.html" class="cart-continue">Continue Shopping</a><button id="clear" type="button" class="secondary">Clear cart</button></div>';
+        '<div class="cart-actions"><button id="checkout" type="button">Proceed to Checkout</button><a href="index.html?page=products" class="cart-continue">Continue Shopping</a><button id="clear" type="button" class="secondary">Clear cart</button></div>';
 }
 
 function initCart() {
@@ -371,7 +374,7 @@ function initCart() {
 function renderFavs() {
     var box = $id('fav-box'), f = LS.get('boda_favs');
     if (!f.length) {
-        box.innerHTML = '<div class="empty-favorites"><div class="empty-big">❤️</div><h3>No Favorite Products Yet!</h3><p>Start adding products to your favorites.</p><a href="Products.html" class="favorites-btn">Explore Products</a></div>';
+        box.innerHTML = '<div class="empty-favorites"><div class="empty-big">❤️</div><h3>No Favorite Products Yet!</h3><p>Start adding products to your favorites.</p><a href="index.html?page=products" class="favorites-btn">Explore Products</a></div>';
         return;
     }
     box.innerHTML = '<div class="product-grid">' + f.map(function (i) {
@@ -385,7 +388,7 @@ function renderFavs() {
 function renderReviews() {
     var box = $id('reviews-box'), r = getRatings(), ids = Object.keys(r), meta = getMeta();
     if (!ids.length) {
-        box.innerHTML = '<div class="empty-state"><div class="empty-big">☆</div><h3>No reviews yet</h3><p>Rate a product with the stars and it will show up here.</p><a class="favorites-btn" href="Products.html">Browse products</a></div>';
+        box.innerHTML = '<div class="empty-state"><div class="empty-big">☆</div><h3>No reviews yet</h3><p>Rate a product with the stars and it will show up here.</p><a class="favorites-btn" href="index.html?page=products">Browse products</a></div>';
         return;
     }
     var avg = (ids.reduce(function (s, id) { return s + r[id]; }, 0) / ids.length).toFixed(1);
@@ -395,7 +398,7 @@ function renderReviews() {
             for (var i = 1; i <= 5; i++) st += '<button type="button" class="rv-star' + (i <= v ? ' on' : '') + '" data-id="' + esc(id) + '" data-v="' + i + '">★</button>';
             return '<div class="rv-card">' + (m.img ? '<img src="' + esc(m.img) + '" alt="">' : '<div class="rv-thumb">' + esc(m.name.charAt(0)) + '</div>') +
                 '<div><h3>' + esc(m.name) + '</h3><small>' + esc(m.cat || '') + '</small><div>' + st + '</div><p>' + RATING_LABELS[v] + ' (' + v + '/5)</p>' +
-                '<div class="rv-actions"><a href="Products.html#' + esc(id) + '">View product</a><button type="button" class="rv-remove" data-id="' + esc(id) + '">Remove</button></div></div></div>';
+                '<div class="rv-actions"><a href="index.html?page=product&id=' + encodeURIComponent(id) + '">View product</a><button type="button" class="rv-remove" data-id="' + esc(id) + '">Remove</button></div></div></div>';
         }).join('') + '</div>';
     box.onclick = function (e) {
         var t = e.target, rr = getRatings();
@@ -515,13 +518,14 @@ function getOrders() { return LS.get('boda_orders'); }
 var ORDER_STEPS = ['Pending', 'Processing', 'Shipped', 'Delivered'], STEP_MIN = [0, 1, 3, 6], ordersTab = 'all';
 function statusOf(o) {
     if (o.cancelled) return 'Cancelled';
+    if (o.manual) return o.status; // status set by the admin panel
     var m = (Date.now() - o.created) / 60000, s = 0; STEP_MIN.forEach(function (t, i) { if (m >= t) s = i; }); return ORDER_STEPS[s];
 }
 function syncOrders() {
     var all = getOrders(), ch = false;
     all.forEach(function (o) {
         var s = statusOf(o);
-        if (o.status !== s) { o.status = s; ch = true; if (s !== 'Pending' && s !== 'Cancelled') notify('Order ' + o.id + ' is now ' + s, 'Orders.html'); }
+        if (o.status !== s) { o.status = s; ch = true; if (s !== 'Pending' && s !== 'Cancelled') notify('Order ' + o.id + ' is now ' + s, 'index.html?page=orders'); }
     });
     if (ch) { LS.set('boda_orders', all); if ($id('orders-box')) renderOrders(); }
 }
@@ -534,7 +538,7 @@ function renderOrders() {
     var html = '<div class="chips order-tabs">' + tabs.map(function (t) {
         return '<button type="button" class="chip' + (ordersTab === t[0] ? ' on' : '') + '" data-tab="' + t[0] + '">' + t[1] + ' <span>' + all.filter(function (o) { return inTab(o, t[0]); }).length + '</span></button>';
     }).join('') + '</div>';
-    if (!list.length) html += '<div class="empty-state"><div class="empty-big">📦</div><h3>No orders here yet</h3><p>Orders you place at checkout will appear here.</p><a class="favorites-btn" href="Products.html">Start shopping</a></div>';
+    if (!list.length) html += '<div class="empty-state"><div class="empty-big">📦</div><h3>No orders here yet</h3><p>Orders you place at checkout will appear here.</p><a class="favorites-btn" href="index.html?page=products">Start shopping</a></div>';
     html += list.map(function (o) {
         var st = o.status, step = ORDER_STEPS.indexOf(st);
         var track = o.cancelled ? '<p class="form-error">This order was cancelled.</p>' : '<ol class="track">' + ORDER_STEPS.map(function (s, i) { return '<li class="' + (i < step ? 'done' : i === step ? 'current' : '') + '">' + s + '</li>'; }).join('') + '</ol>';
@@ -553,7 +557,7 @@ function renderOrders() {
         var o = os.filter(function (x) { return x.id === t.dataset.id; })[0]; if (!o) return;
         if (t.dataset.act === 'cancel') { if (!confirm(T('Cancel order ' + o.id + '?'))) return; o.cancelled = true; o.status = 'Cancelled'; LS.set('boda_orders', os); toast('Order cancelled'); }
         else if (t.dataset.act === 'remove') { LS.set('boda_orders', os.filter(function (x) { return x.id !== o.id; })); toast('Order removed'); }
-        else if (t.dataset.act === 'reorder') { var c = LS.get('boda_cart'); o.items.forEach(function (i) { var f = c.filter(function (x) { return x.id === i.id; })[0]; if (f) f.qty += i.qty; else c.push(JSON.parse(JSON.stringify(i))); }); LS.set('boda_cart', c); location.href = 'cart.html'; return; }
+        else if (t.dataset.act === 'reorder') { var c = LS.get('boda_cart'); o.items.forEach(function (i) { var f = c.filter(function (x) { return x.id === i.id; })[0]; if (f) f.qty += i.qty; else c.push(JSON.parse(JSON.stringify(i))); }); LS.set('boda_cart', c); location.href = 'index.html?page=cart'; return; }
         else return;
         renderOrders();
     };
@@ -604,9 +608,9 @@ function startCheckout() {
         localStorage.setItem('boda_ship', JSON.stringify(s));
         var o = { id: 'BD-' + String(Date.now()).slice(-6), user: u ? u.email : 'guest', created: Date.now(), status: 'Pending', cancelled: false, items: cart, total: total, payment: label, ship: s };
         var os = getOrders(); os.unshift(o); LS.set('boda_orders', os); LS.set('boda_cart', []); updateBadges();
-        notify('Order ' + o.id + ' placed (' + money(total) + ').', 'Orders.html');
+        notify('Order ' + o.id + ' placed (' + money(total) + ').', 'index.html?page=orders');
         box.innerHTML = '<div class="empty-state"><div class="empty-big">✅</div><h3>Order placed!</h3><p>Order number: <strong>' + o.id + '</strong> (' + esc(label) + ').</p>' +
-            '<div class="cart-actions"><a class="auth-link-btn" href="Orders.html">View my orders</a><a class="auth-link-btn" href="Products.html">Continue shopping</a></div></div>';
+            '<div class="cart-actions"><a class="auth-link-btn" href="index.html?page=orders">View my orders</a><a class="auth-link-btn" href="index.html?page=products">Continue shopping</a></div></div>';
     };
 }
 
@@ -632,7 +636,7 @@ function initNotifs() {
         '<div class="notif-dropdown" id="notif-dropdown"><div class="notif-head"><strong>Notifications</strong><button type="button" id="notif-read">Mark read</button></div>' +
         '<div class="notif-list" id="notif-list"></div><div class="notif-foot"><button type="button" id="notif-clear">Clear</button></div></div>';
     wrap.insertBefore(box, wrap.firstChild);
-    if (localStorage.getItem('boda_notifs') === null) notify('Welcome to Boda Store! Explore all 8 departments.', 'Products.html');
+    if (localStorage.getItem('boda_notifs') === null) notify('Welcome to Boda Store! Explore all 8 departments.', 'index.html?page=products');
     drawNotifs();
     $id('notif-btn').onclick = function (e) {
         e.stopPropagation();
@@ -665,7 +669,7 @@ function initAuth() {
     var u = getUser();
     if (u && !sessionStorage.getItem('boda_add')) {
         box.innerHTML = '<div class="empty-state"><h2>Hi, ' + esc(u.name) + ' 👋</h2><p>Signed in as ' + esc(u.email) + '.</p>' +
-            '<div class="btn-row" style="justify-content:center"><a class="auth-link-btn" href="home page.html">Go to Store</a><a class="auth-link-btn" href="Orders.html">My Orders</a><button type="button" id="signout" class="secondary">Sign out</button></div></div>';
+            '<div class="btn-row" style="justify-content:center"><a class="auth-link-btn" href="index.html?page=home">Go to Store</a><a class="auth-link-btn" href="index.html?page=orders">My Orders</a><button type="button" id="signout" class="secondary">Sign out</button></div></div>';
         $id('signout').onclick = function () { localStorage.removeItem('boda_user'); location.reload(); };
         return;
     }
@@ -711,7 +715,7 @@ function initAuth() {
                 localStorage.setItem('boda_user', JSON.stringify({ name: acc.name, email: acc.login }));
                 sessionStorage.removeItem('boda_add');
                 toast('Welcome, ' + acc.name + '!');
-                setTimeout(function () { location.href = 'home page.html'; }, 700);
+                setTimeout(function () { location.href = 'index.html?page=home'; }, 700);
             });
         };
     }
@@ -746,7 +750,7 @@ function initAuth() {
                 localStorage.setItem('boda_user', JSON.stringify({ name: accs[id].name, email: id }));
                 sessionStorage.removeItem('boda_add');
                 toast('Account created!');
-                setTimeout(function () { location.href = 'home page.html'; }, 700);
+                setTimeout(function () { location.href = 'index.html?page=home'; }, 700);
             });
         };
     }
@@ -762,7 +766,7 @@ function renderSwitch() {
                 '<form class="acc-form" data-id="' + esc(id) + '"><input type="password" placeholder="Password" required><button type="submit">OK</button><button type="button" class="acc-cancel">Cancel</button></form>' :
                 '<button type="button" class="acc-switch" data-id="' + esc(id) + '">Switch</button>') + '</div>';
     }).join('') : '<p>No saved accounts yet.</p>') +
-        '<div class="btn-row"><a class="auth-link-btn" href="Sign In.html" id="acc-add">+ Add account</a>' + (u ? '<button type="button" id="acc-out" class="secondary">Sign out</button>' : '') + '</div>';
+        '<div class="btn-row"><a class="auth-link-btn" href="index.html?page=signin" id="acc-add">+ Add account</a>' + (u ? '<button type="button" id="acc-out" class="secondary">Sign out</button>' : '') + '</div>';
     $id('acc-add').onclick = function () { sessionStorage.setItem('boda_add', '1'); };
     if ($id('acc-out')) $id('acc-out').onclick = function () { localStorage.removeItem('boda_user'); renderSwitch(); toast('Signed out'); };
     box.onclick = function (e) {
@@ -794,12 +798,12 @@ function initHeaderSlider() {
     var header = document.querySelector('header');
     if (!header || !header.querySelector('nav') || document.querySelector('.header-dept-slider')) return;
 
-    var items = [{ ico: '🛍️', label: 'All Products', href: 'Products.html', cat: '' }, { ico: '🔥', label: 'Offers', href: 'offers.html', sale: true }]
+    var items = [{ ico: '🛍️', label: 'All Products', href: 'index.html?page=products', cat: '' }, { ico: '🔥', label: 'Offers', href: 'index.html?page=offers', sale: true }]
         .concat(CATEGORIES.map(function (k) { return { ico: k.icon || '', label: k.name, href: catUrl(k.name), cat: k.name, subs: k.subs }; }));
 
     var P = new URLSearchParams(location.search), curCat = P.get('cat') || '', curSale = P.get('sale') === '1';
-    var isProd = document.body.classList.contains('products');
-    var isOffers = location.pathname.toLowerCase().indexOf('offers.html') !== -1;
+    var isProd = document.body.classList.contains('products') || document.body.classList.contains('category-page');
+    var isOffers = new URLSearchParams(location.search).get('page') === 'offers';
 
     var bar = el('div', 'header-dept-slider');
     bar.setAttribute('aria-label', 'Departments Slider');
@@ -916,9 +920,9 @@ function initStandardFooter() {
     grid.innerHTML =
         '<div><h3>Boda Store</h3><p>Your trusted place for everything you need — all in one store.</p>' +
         '<div class="footer-social"><a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a><a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a><a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a></div></div>' +
-        '<div><h3>Quick Links</h3><ul><li><a href="home page.html">Home</a></li><li><a href="categories.html">Categories</a></li><li><a href="Products.html">Products</a></li><li><a href="offers.html">Offers</a></li><li><a href="About As.html">About Us</a></li><li><a href="Contact Us.html">Contact</a></li></ul></div>' +
-        '<div><h3>Categories</h3><ul><li><a href="Products.html?cat=Electronics">Electronics</a></li><li><a href="Products.html?cat=Home%20%26%20Appliances">Home &amp; Appliances</a></li><li><a href="Products.html?cat=Fashion">Fashion</a></li><li><a href="Products.html?cat=Beauty">Beauty</a></li><li><a href="Products.html?cat=Sports">Sports</a></li><li><a href="Products.html?cat=Books">Books</a></li></ul></div>' +
-        '<div><h3>Customer Service</h3><ul><li><a href="Orders.html">My Orders</a></li><li><a href="cart.html">Cart</a></li><li><a href="Favorites.html">Favorites</a></li><li><a href="Reviews.html">My Reviews</a></li></ul></div>' +
+        '<div><h3>Quick Links</h3><ul><li><a href="index.html?page=home">Home</a></li><li><a href="index.html?page=categories">Categories</a></li><li><a href="index.html?page=products">Products</a></li><li><a href="index.html?page=offers">Offers</a></li><li><a href="index.html?page=about">About Us</a></li><li><a href="index.html?page=contact">Contact</a></li></ul></div>' +
+        '<div><h3>Categories</h3><ul><li><a href="index.html?page=category&cat=Electronics">Electronics</a></li><li><a href="index.html?page=category&cat=Home%20%26%20Appliances">Home &amp; Appliances</a></li><li><a href="index.html?page=category&cat=Fashion">Fashion</a></li><li><a href="index.html?page=category&cat=Beauty">Beauty</a></li><li><a href="index.html?page=category&cat=Sports">Sports</a></li><li><a href="index.html?page=category&cat=Books">Books</a></li></ul></div>' +
+        '<div><h3>Customer Service</h3><ul><li><a href="index.html?page=orders">My Orders</a></li><li><a href="index.html?page=cart">Cart</a></li><li><a href="index.html?page=favorites">Favorites</a></li><li><a href="index.html?page=reviews">My Reviews</a></li></ul></div>' +
         '<div><h3>Contact</h3><ul><li>📧 info@bodastore.com</li><li>📞 +20 100 000 0000</li><li>📍 Alexandria, Egypt</li><li>🕒 Daily: 10 AM – 9 PM</li></ul></div>';
     var bottom = footer.querySelector('.footer-bottom');
     if (bottom) {
@@ -934,6 +938,119 @@ function initBackToTop() {
     btt.onclick = function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 }
 
+// ===== Admin data layer, Product page & Category page =====
+// Catalog = BODA_PRODUCTS (products-data.js) + changes made in admin.html (localStorage: boda_admin_products)
+function getPA() {
+    var d = {}; try { d = JSON.parse(localStorage.getItem('boda_admin_products')) || {}; } catch (e) { }
+    return { edits: d.edits || {}, added: d.added || [], deleted: d.deleted || [] };
+}
+function allProductsRaw() {
+    var a = getPA();
+    return (window.BODA_PRODUCTS || []).map(function (p) { return Object.assign({}, p, a.edits[p.id] || {}); })
+        .concat(a.added).filter(function (p) { return a.deleted.indexOf(p.id) < 0; });
+}
+function allProducts() { return allProductsRaw().filter(function (p) { return !p.hidden; }); }
+function productUrl(id) { return 'index.html?page=product&id=' + encodeURIComponent(id); }
+function statusText(p) { return p.stock === false ? 'Out of Stock' : 'Available'; }
+function priceHTML(p) {
+    return p.old > p.price ? '<p class="price-row"><del class="old-price">$' + p.old + '</del><strong class="new-price">$' + p.price + '</strong></p>' : '<p class="price">$' + p.price + '</p>';
+}
+function badgeHTML(p) {
+    var b = '', pct = p.old > p.price ? Math.round((1 - p.price / p.old) * 100) : 0;
+    if (pct) b = (p.badge && p.badge !== 'NEW') ? p.badge : '\uD83D\uDD25 ' + pct + '% OFF';
+    else if (p.badge === 'NEW') b = 'NEW';
+    return (b ? '<span class="sale-badge' + (b === 'NEW' ? ' new-badge' : '') + '">' + esc(b) + '</span>' : '') +
+        '<span class="stock-badge' + (p.stock === false ? ' out' : '') + '">' + (p.stock === false ? 'Out of Stock' : 'In Stock') + '</span>';
+}
+function ratingHTML() {
+    return '<div class="rating"><span class="stars">' + [1, 2, 3, 4, 5].map(function (i) { return '<button type="button" class="star" data-v="' + i + '">\u2605</button>'; }).join('') + '</span><span class="rating-text">Rate this product</span></div>';
+}
+function actionsHTML(p) {
+    var d = p.stock === false ? ' disabled' : '';
+    return '<div class="card-actions"><div class="card-row"><button type="button" class="add-cart"' + d + '>Add to Cart</button><button type="button" class="buy-btn"' + d + '>Buy Now</button></div><button type="button" class="fav-action">\u2661 Add to Favorites</button></div>';
+}
+function attrsOf(p) { return 'id="' + esc(p.id) + '" data-id="' + esc(p.id) + '" data-cat="' + esc(p.cat) + '" data-sub="' + esc(p.sub || '') + '" data-price="' + p.price + '"'; }
+function featuresHTML(p) { return (p.features || []).length ? '<h4>Features</h4><ul>' + p.features.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>' : ''; }
+function labelOf(p) { return esc(p.cat + (p.sub ? ' \u203A ' + p.sub : '')); }
+function cardHTML(p) {
+    return '<section><article ' + attrsOf(p) + '>' + badgeHTML(p) + '<img src="' + esc(p.img) + '" alt="' + esc(p.name) + '" width="300" height="220" loading="lazy">' +
+        '<span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + '<p>' + esc(p.desc || '') + '</p>' + priceHTML(p) +
+        '<p>Status: ' + statusText(p) + '</p>' + featuresHTML(p) + actionsHTML(p) + '</article></section>';
+}
+function emptyBox(icon, title, text, href, label) {
+    return '<div class="empty-state"><div class="empty-big">' + icon + '</div><h3>' + title + '</h3><p>' + text + '</p><a class="favorites-btn" href="' + href + '">' + label + '</a></div>';
+}
+
+// Click image / title / "View Details" -> product page
+function linkCard(a) {
+    var url = productUrl(a.dataset.id), go = function () { location.href = url; };
+    ['img', 'h3'].forEach(function (s) { var n = a.querySelector(s); if (n) { n.style.cursor = 'pointer'; n.onclick = go; } });
+    var v = [].slice.call(a.querySelectorAll('a')).filter(function (x) { return /View Details/.test(x.textContent); })[0];
+    var acts = a.querySelector('.card-actions');
+    if (!v && acts) { v = el('a', 'view-details', 'View Details \u2192'); acts.before(v); }
+    if (v) v.href = url;
+}
+
+// Apply admin changes to the hard-coded cards (price, name, stock, hidden/deleted, new products)
+function applyAdminDom() {
+    var a = getPA(), map = {};
+    allProductsRaw().forEach(function (p) { map[p.id] = p; });
+    var grid = document.body.classList.contains('products') && document.querySelector('.product-grid');
+    document.querySelectorAll('article[data-id]').forEach(function (art) {
+        var id = art.dataset.id, p = map[id], e = a.edits[id];
+        var wrap = art.parentNode.tagName === 'SECTION' ? art.parentNode : art;
+        if (a.deleted.indexOf(id) > -1 || (p && p.hidden)) { wrap.remove(); return; }
+        if (!e || !p) return;
+        art.dataset.price = p.price;
+        var h = art.querySelector('h3'); if (h) h.textContent = p.name;
+        var pr = art.querySelector('.price-row,.price'); if (pr) pr.outerHTML = priceHTML(p);
+        var s = [].slice.call(art.querySelectorAll('p')).filter(function (x) { return /^\s*Status:/.test(x.textContent); })[0];
+        if (s) s.textContent = 'Status: ' + statusText(p);
+        var sb = art.querySelector('.stock-badge');
+        if (sb) { sb.textContent = p.stock === false ? 'Out of Stock' : 'In Stock'; sb.classList.toggle('out', p.stock === false); }
+        art.querySelectorAll('.add-cart,.buy-btn').forEach(function (b) { b.disabled = p.stock === false; });
+    });
+    if (grid) a.added.forEach(function (p) { if (!p.hidden && a.deleted.indexOf(p.id) < 0) grid.insertAdjacentHTML('beforeend', cardHTML(p)); });
+}
+
+// ---- Product page: index.html?page=product&id=LAP001 ----
+function renderProduct() {
+    var box = $id('product-box'), id = new URLSearchParams(location.search).get('id');
+    var p = allProducts().filter(function (x) { return x.id === id; })[0];
+    if (!p) { box.innerHTML = emptyBox('\uD83D\uDD0D', 'Product not found', 'This product does not exist or is no longer available.', 'index.html?page=products', 'Browse all products'); return; }
+    document.title = p.name + ' | Boda Store';
+    var out = p.stock === false;
+    var rows = [['Product code', esc(p.id)], ['Category', '<a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a>']];
+    if (p.sub) rows.push(['Sub-category', '<a href="' + esc(catUrl(p.cat, p.sub)) + '">' + esc(p.sub) + '</a>']);
+    rows.push(['Availability', statusText(p)], ['Delivery', 'Free on orders over $500']);
+    if (p.cat === 'Electronics' || p.cat === 'Home & Appliances') rows.push(['Warranty', '1 year']);
+    var related = allProducts().filter(function (x) { return x.cat === p.cat && x.id !== p.id; }).slice(0, 4);
+    box.innerHTML = '<div class="crumbs"><a href="index.html?page=home">Home</a> \u203A <a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a> \u203A <span>' + esc(p.name) + '</span></div>' +
+        '<article class="pd" ' + attrsOf(p) + '><div class="pd-media">' + badgeHTML(p) + '<img src="' + esc(p.img) + '" alt="' + esc(p.name) + '"></div>' +
+        '<div class="pd-body"><span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + priceHTML(p) +
+        '<p class="pd-status' + (out ? ' out' : '') + '">\u25CF ' + (out ? 'Out of stock' : 'In stock \u2014 ready to ship') + '</p>' +
+        '<p class="pd-desc">' + esc(p.desc || '') + '</p>' + featuresHTML(p) +
+        '<table class="pd-specs"><tbody>' + rows.map(function (r) { return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table>' +
+        actionsHTML(p) + '</div></article>' +
+        (related.length ? '<h2 class="pd-more">More in ' + esc(p.cat) + '</h2><div class="product-grid">' + related.map(function (x) { return cardHTML(x); }).join('') + '</div>' : '');
+}
+
+// ---- Category page: index.html?page=category&cat=Electronics[&sub=Laptops] ----
+function renderCategory() {
+    var box = $id('category-box'), P = new URLSearchParams(location.search), cat = P.get('cat') || '', sub = P.get('sub') || '';
+    var k = CATEGORIES.filter(function (x) { return x.name === cat; })[0];
+    var list = allProducts().filter(function (p) { return p.cat === cat; });
+    if (!k && !list.length) { box.innerHTML = emptyBox('\uD83D\uDCC2', 'Category not found', 'We could not find this category.', 'index.html?page=categories', 'All categories'); return; }
+    var shown = sub ? list.filter(function (p) { return p.sub === sub; }) : list, subs = k ? k.subs : [];
+    document.title = (sub || cat) + ' | Boda Store';
+    box.innerHTML = '<div class="crumbs"><a href="index.html?page=home">Home</a> \u203A <a href="index.html?page=categories">Categories</a> \u203A ' +
+        (sub ? '<a href="' + esc(catUrl(cat)) + '">' + esc(cat) + '</a> \u203A <span>' + esc(sub) + '</span>' : '<span>' + esc(cat) + '</span>') + '</div>' +
+        '<h1 class="page-title">' + esc(sub || cat) + '</h1><p class="page-intro">' + esc(k ? (k.long || k.desc) : '') + '</p>' +
+        (subs.length ? '<div class="cp-subs"><a href="' + esc(catUrl(cat)) + '" class="' + (sub ? '' : 'on') + '">All <span>' + list.length + '</span></a>' +
+            subs.map(function (n) { return '<a href="' + esc(catUrl(cat, n)) + '" class="' + (n === sub ? 'on' : '') + '">' + esc(n) + ' <span>' + list.filter(function (p) { return p.sub === n; }).length + '</span></a>'; }).join('') + '</div>' : '') +
+        (shown.length ? '<div class="product-grid">' + shown.map(function (x) { return cardHTML(x); }).join('') + '</div>' : emptyBox('\uD83D\uDCE6', 'No products here yet', 'New items are added regularly.', catUrl(cat), 'Back to ' + esc(cat)));
+}
+
 // ===== Boot =====
 document.addEventListener('DOMContentLoaded', function () {
     var inp = document.querySelector('input[name="search"]');
@@ -942,12 +1059,21 @@ document.addEventListener('DOMContentLoaded', function () {
         var q = new URLSearchParams(location.search).get('q'); if (q) inp.value = q;
     }
     var cf = $id('contact-form');
-    if (cf) cf.onsubmit = function (e) { e.preventDefault(); document.querySelector('.form-msg').classList.add('show'); cf.reset(); };
+    if (cf) cf.onsubmit = function (e) {
+        e.preventDefault();
+        var m = LS.get('boda_messages'), f = cf.elements;
+        m.unshift({ id: 'm' + Date.now(), name: f.full_name.value, email: f.email.value, phone: f.phone.value, subject: f.subject.value, message: f.message.value, time: Date.now(), read: false });
+        LS.set('boda_messages', m);
+        document.querySelector('.form-msg').classList.add('show'); cf.reset();
+    };
 
     initTheme();
     initSettingsMenu();
     initActiveNav();
     renderCategoryCards();
+    applyAdminDom();
+    if ($id('product-box')) renderProduct();
+    if ($id('category-box')) renderCategory();
     initHeaderSlider();
     initHeroSlider();
     initNewsletter();
