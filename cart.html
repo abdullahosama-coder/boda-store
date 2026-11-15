@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Review your Boda Store shopping cart.">
+    <title>Shopping Cart | Boda Store</title>
+    <link rel="icon" href="icon/shopping-cart-icon-red-circle-e-commerce-symbol.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="language.js" defer></script>
+    <script src="app.js" defer></script>
+</head>
+
+<body class="cart-page" id="top">
+    <div class="announcement-bar">
+        <p>Everything You Need, All in One Place — Free Delivery on Orders Over $500! <a href="offers.html">View Special
+                Offers</a></p>
+    </div>
+
+    <header>
+        <div class="brand-wrap">
+            <a href="home page.html" class="brand-link">
+                <h1>Boda Store</h1>
+            </a>
+            <span class="brand-tag">All-in-One Store</span>
+        </div>
+        <div class="search-box">
+            <input name="search" type="search" placeholder="Search electronics, home, fashion, books..."
+                aria-label="Search">
+            <button type="button" onclick="searchProducts()" aria-label="Search"><i
+                    class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div class="header-actions">
+            <a href="Favorites.html" class="favorites">❤️ <span>Favorites</span></a>
+            <a href="cart.html" class="cart">🛒 <span>Cart</span></a>
+        </div>
+        <div class="header-tools">
+            <div class="language-menu-wrap">
+                <button type="button" class="language-btn" id="language-btn" title="Language"><i
+                        class="fa-solid fa-globe"></i></button>
+                <div class="language-dropdown" id="language-dropdown">
+                    <button type="button" data-lang="en">🇬🇧 English</button>
+                    <button type="button" data-lang="ar">🇪🇬 العربية</button>
+                </div>
+                <div class="settings-menu-wrap">
+                    <button type="button" class="settings-btn" id="settings-menu-btn" title="Settings"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="settings-dropdown">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <div class="settings-dropdown" id="settings-dropdown">
+                        <h3 class="sl-group">Preferences</h3>
+                        <div class="sl-list">
+                            <details class="sl-item" open>
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-palette"></i></span>
+                                    <span class="sl-text"><strong>Appearance</strong><small>Dark mode and
+                                            theme</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Dark Mode</h4>
+                                            <p>Switch between light and dark appearance.</p>
+                                        </div>
+                                        <button type="button" id="settings-theme-toggle" class="switch-toggle"
+                                            role="switch" aria-checked="false" aria-label="Dark Mode"><span
+                                                class="switch-knob"></span></button>
+                                    </div>
+                                </div>
+                            </details>
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
+                                    <span class="sl-text"><strong>Language</strong><small>English, العربية, Français,
+                                            Deutsch</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Display Language</h4>
+                                            <p>Select your preferred language.</p>
+                                        </div>
+                                        <select id="language-select"></select>
+                                    </div>
+                                    <p id="language-message"></p>
+                                </div>
+                            </details>
+                        </div>
+
+                        <h3 class="sl-group">Account &amp; Payments</h3>
+                        <div class="sl-list">
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-user"></i></span>
+                                    <span class="sl-text"><strong>Account</strong><small>Login and registration</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Login</h4>
+                                            <p>Access your Boda Store account.</p>
+                                        </div>
+                                        <a href="Sign In.html" class="settings-action">Login →</a>
+                                    </div>
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Create Account</h4>
+                                            <p>Register a new Boda Store account.</p>
+                                        </div>
+                                        <a href="Create Account.html" class="settings-action">Sign Up →</a>
+                                    </div>
+                                </div>
+                            </details>
+                            <details class="sl-item" id="orders-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-box"></i></span>
+                                    <span class="sl-text"><strong>My Orders</strong><small>Track, cancel or re-order purchases.</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Order History</h4>
+                                            <p>See the status of all your orders.</p>
+                                        </div>
+                                        <a href="Orders.html" class="settings-action">View →</a>
+                                    </div>
+                                </div>
+                            </details>
+                            <details class="sl-item" id="reviews-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-star"></i></span>
+                                    <span class="sl-text"><strong>My Reviews</strong><small>Edit or remove product ratings.</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Product Ratings</h4>
+                                            <p>Manage the products you rated.</p>
+                                        </div>
+                                        <a href="Reviews.html" class="settings-action">View →</a>
+                                    </div>
+                                </div>
+                            </details>
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-users"></i></span>
+                                    <span class="sl-text"><strong>Switch Account</strong><small>Switch accounts on this
+                                            device</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div id="switch-box"></div>
+                                </div>
+                            </details>
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-credit-card"></i></span>
+                                    <span class="sl-text"><strong>Payment Methods &amp; Gateways</strong><small>Cards,
+                                            Vodafone Cash, InstaPay, PayPal, Fawry</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div id="pay-box"></div>
+                                </div>
+                            </details>
+                        </div>
+
+                        <h3 class="sl-group">Store</h3>
+                        <div class="sl-list">
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-store"></i></span>
+                                    <span class="sl-text"><strong>Store Information</strong><small>About Boda Store and
+                                            support</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>About Us</h4>
+                                            <p>Learn more about our all-in-one store.</p>
+                                        </div>
+                                        <a href="About As.html" class="settings-action">View →</a>
+                                    </div>
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Contact Us</h4>
+                                            <p>Questions about an order? Write to us.</p>
+                                        </div>
+                                        <a href="Contact Us.html" class="settings-action">Open →</a>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="home page.html">Home</a></li>
+                <li><a href="categories.html">Categories</a></li>
+                <li><a href="Products.html">Products</a></li>
+                <li><a href="offers.html">Offers</a></li>
+                <li><a href="About As.html">About Us</a></li>
+                <li><a href="Contact Us.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="page-title">Shopping Cart 🛒</h1>
+        <p class="page-intro">Review your selected products from across all departments before checkout.</p>
+        <div id="cart-box"></div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h3>Boda Store</h3>
+                <p>Your trusted place for everything you need — all in one store.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div>
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="home page.html">Home</a></li>
+                    <li><a href="categories.html">Categories</a></li>
+                    <li><a href="Products.html">Products</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="About As.html">About Us</a></li>
+                    <li><a href="Contact Us.html">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="Products.html?cat=Electronics">Electronics</a></li>
+                    <li><a href="Products.html?cat=Home%20%26%20Appliances">Home &amp; Appliances</a></li>
+                    <li><a href="Products.html?cat=Fashion">Fashion</a></li>
+                    <li><a href="Products.html?cat=Beauty">Beauty</a></li>
+                    <li><a href="Products.html?cat=Sports">Sports</a></li>
+                    <li><a href="Products.html?cat=Books">Books</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="Orders.html">My Orders</a></li>
+                    <li><a href="cart.html">Cart</a></li>
+                    <li><a href="Favorites.html">Favorites</a></li>
+                    <li><a href="Reviews.html">My Reviews</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <ul>
+                    <li>📧 info@bodastore.com</li>
+                    <li>📞 +20 100 000 0000</li>
+                    <li>📍 Alexandria, Egypt</li>
+                    <li>🕒 Daily: 10 AM – 9 PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 Boda Store. All Rights Reserved.</span>
+            <div class="footer-payments">
+                <span><i class="fa-brands fa-cc-visa"></i> Visa</span>
+                <span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+                <span><i class="fa-solid fa-truck"></i> Cash on Delivery</span>
+            </div>
+        </div>
+    </footer>
+    <a href="#top" class="back-to-top" title="Back to Top">↑</a>
+</body>
+
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Boda Store — Everything You Need, All in One Place.">
+    <title>Boda Store | Everything You Need, All in One Place</title>
+    <link rel="icon" href="icon/shopping-cart-icon-red-circle-e-commerce-symbol.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="language.js" defer></script>
+    <script src="app.js" defer></script>
+</head>
+
+<body class="home" id="top">
+    <div class="announcement-bar">
+        <p>
+            Everything You Need, All in One Place — Free Delivery on Orders Over $500!
+            <a href="offers.html">View Special Offers</a>
+        </p>
+    </div>
+
+    <header>
+        <div class="brand-wrap">
+            <a href="home page.html" class="brand-link">
+                <h1>Boda Store</h1>
+            </a>
+            <span class="brand-tag">All-in-One Store</span>
+        </div>
+
+        <div class="search-box">
+            <input name="search" type="search" placeholder="Search electronics, home, fashion, books..."
+                aria-label="Search">
+            <button type="button" onclick="searchProducts()" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+
+        <div class="header-actions">
+            <a href="Favorites.html" class="favorites">❤️ <span>Favorites</span></a>
+            <a href="cart.html" class="cart">🛒 <span>Cart</span></a>
+        </div>
+
+        <div class="header-tools">
+            <div class="language-menu-wrap">
+                <button type="button" class="language-btn" id="language-btn" title="Language">
+                    <i class="fa-solid fa-globe"></i>
+                </button>
+                <div class="language-dropdown" id="language-dropdown">
+                    <button type="button" data-lang="en">🇬🇧 English</button>
+                    <button type="button" data-lang="ar">🇪🇬 العربية</button>
+                    <button type="button" data-lang="fr">🇫🇷 Français</button>
+                    <button type="button" data-lang="de">🇩🇪 Deutsch</button>
+                </div>
+                <div class="settings-menu-wrap">
+                    <button type="button" class="settings-btn" id="settings-menu-btn" title="Settings"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="settings-dropdown">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <div class="settings-dropdown" id="settings-dropdown">
+                        <h3 class="sl-group">Preferences</h3>
+                        <div class="sl-list">
+                            <details class="sl-item" open>
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-palette"></i></span>
+                                    <span class="sl-text"><strong>Appearance</strong><small>Dark mode and
+                                            theme</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Dark Mode</h4>
+                                            <p>Switch between light and dark appearance.</p>
+                                        </div>
+                                        <button type="button" id="settings-theme-toggle" class="switch-toggle"
+                                            role="switch" aria-checked="false" aria-label="Dark Mode"><span
+                                                class="switch-knob"></span></button>
+                                    </div>
+                                </div>
+                            </details>
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
+                                    <span class="sl-text"><strong>Language</strong><small>English, العربية, Français,
+                                            Deutsch</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Display Language</h4>
+                                            <p>Select your preferred language.</p>
+                                        </div>
+                                        <select id="language-select"></select>
+                                    </div>
+                                    <p id="language-message"></p>
+                                </div>
+                            </details>
+                        </div>
+
+                        <h3 class="sl-group">Account &amp; Payments</h3>
+                        <div class="sl-list">
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-user"></i></span>
+                                    <span class="sl-text"><strong>Account</strong><small>Login and registration</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Login</h4>
+                                            <p>Access your Boda Store account.</p>
+                                        </div>
+                                        <a href="Sign In.html" class="settings-action">Login →</a>
+                                    </div>
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Create Account</h4>
+                                            <p>Register a new Boda Store account.</p>
+                                        </div>
+                                        <a href="Create Account.html" class="settings-action">Sign Up →</a>
+                                    </div>
+                                </div>
+                            </details>
+                            <details class="sl-item" id="orders-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-box"></i></span>
+                                    <span class="sl-text"><strong>My Orders</strong><small>Track, cancel or re-order purchases.</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Order History</h4>
+                                            <p>See the status of all your orders.</p>
+                                        </div>
+                                        <a href="Orders.html" class="settings-action">View →</a>
+                                    </div>
+                                </div>
+                            </details>
+                            <details class="sl-item" id="reviews-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-star"></i></span>
+                                    <span class="sl-text"><strong>My Reviews</strong><small>Edit or remove product ratings.</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Product Ratings</h4>
+                                            <p>Manage the products you rated.</p>
+                                        </div>
+                                        <a href="Reviews.html" class="settings-action">View →</a>
+                                    </div>
+                                </div>
+                            </details>
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-users"></i></span>
+                                    <span class="sl-text"><strong>Switch Account</strong><small>Switch accounts on this
+                                            device</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div id="switch-box"></div>
+                                </div>
+                            </details>
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-credit-card"></i></span>
+                                    <span class="sl-text"><strong>Payment Methods &amp; Gateways</strong><small>Cards,
+                                            Vodafone Cash, InstaPay, PayPal, Fawry</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div id="pay-box"></div>
+                                </div>
+                            </details>
+                        </div>
+
+                        <h3 class="sl-group">Store</h3>
+                        <div class="sl-list">
+                            <details class="sl-item">
+                                <summary>
+                                    <span class="sl-icon"><i class="fa-solid fa-store"></i></span>
+                                    <span class="sl-text"><strong>Store Information</strong><small>About Boda Store and
+                                            support</small></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </summary>
+                                <div class="sl-body">
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>About Us</h4>
+                                            <p>Learn more about our all-in-one store.</p>
+                                        </div>
+                                        <a href="About As.html" class="settings-action">View →</a>
+                                    </div>
+                                    <div class="settings-option">
+                                        <div>
+                                            <h4>Contact Us</h4>
+                                            <p>Questions about an order? Write to us.</p>
+                                        </div>
+                                        <a href="Contact Us.html" class="settings-action">Open →</a>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="home page.html">Home</a></li>
+                <li><a href="categories.html">Categories</a></li>
+                <li><a href="Products.html">Products</a></li>
+                <li><a href="offers.html">Offers</a></li>
+                <li><a href="About As.html">About Us</a></li>
+                <li><a href="Contact Us.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-slider" aria-label="Boda Store Highlights">
+            <button type="button" class="hero-arrow prev" aria-label="Previous slide"><i
+                    class="fa-solid fa-chevron-left"></i></button>
+            <div class="hero-slides">
+                <div class="hero-slide">
+                    <div>
+                        <span class="hero-badge">All-in-One Online Store</span>
+                        <h2>Everything You Need, All in One Place.</h2>
+                        <p>Discover a wide range of products for your everyday needs, all in one place — electronics,
+                            home, fashion, sports, and books.</p>
+                        <div class="hero-actions">
+                            <a href="Products.html" class="hero-btn-primary">Shop Now</a>
+                            <a href="#categories" class="hero-btn-secondary">Explore Categories</a>
+                        </div>
+                        <div class="hero-stats">
+                            <div><strong>8 Categories</strong><span>One Unified Store</span></div>
+                            <div><strong>Daily Offers</strong><span>Up to 25% OFF</span></div>
+                            <div><strong>1 Checkout</strong><span>Fast &amp; Secure</span></div>
+                        </div>
+                    </div>
+                    <div class="hero-multi-grid">
+                        <div class="hero-tile"><span>💻</span><small>Electronics</small></div>
+                        <div class="hero-tile"><span>📱</span><small>Smart Tech</small></div>
+                        <div class="hero-tile"><span>👕</span><small>Fashion</small></div>
+                        <div class="hero-tile"><span>🏠</span><small>Home</small></div>
+                        <div class="hero-tile"><span>🎮</span><small>Gaming</small></div>
+                        <div class="hero-tile"><span>🎧</span><small>Accessories</small></div>
+                    </div>
+                </div>
+
+                <div class="hero-slide">
+                    <div>
+                        <span class="hero-badge">🔥 Special Offers</span>
+                        <h2>Big Savings Across All Departments.</h2>
+                        <p>Grab limited-time discounts on laptops, monitors, perfumes, and everyday fashion.</p>
+                        <div class="hero-actions">
+                            <a href="offers.html" class="hero-btn-primary">View Offers</a>
+                            <a href="Products.html" class="hero-btn-secondary">All Products</a>
+                        </div>
+                    </div>
+                    <img src="icon/magnific_Xmyng87Bfo.png" alt="Special Offers at Boda Store" width="400" height="270">
+                </div>
+
+                <div class="hero-slide">
+                    <div>
+                        <span class="hero-badge">🆕 New Arrivals</span>
+                        <h2>Fresh Arrivals Every Week.</h2>
+                        <p>Explore newly added 5G phones, educational toys, automotive tech, and hardcover books.</p>
+                        <div class="hero-actions">
+                            <a href="#new-arrivals" class="hero-btn-primary">See New Arrivals</a>
+                            <a href="#categories" class="hero-btn-secondary">Explore Categories</a>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="hero-visual-icons">
+                            <i class="fa-solid fa-couch"></i>
+                            <i class="fa-solid fa-car"></i>
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <span>Home, Automotive, Books &amp; Lifestyle</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="hero-arrow next" aria-label="Next slide"><i
+                    class="fa-solid fa-chevron-right"></i></button>
+            <div class="hero-dots"></div>
+        </section>
+
+        <!-- Shop by Category -->
+        <section id="categories">
+            <h2>Shop by Category</h2>
+            <ul class="cat-grid" id="cat-grid"></ul>
+        </section>
+
+        <!-- Featured Products -->
+        <section>
+            <div class="section-head">
+                <h2>⭐ Featured Products</h2>
+                <a href="Products.html" class="view-all">View all products →</a>
+            </div>
+            <p class="section-sub">Selected top-rated picks from across our departments.</p>
+
+            <div class="product-grid">
+                <article id="GPC001" data-id="GPC001" data-cat="Electronics" data-sub="Computers" data-price="1200">
+                    <img src="icon/images .jpeg" alt="Gaming PC" width="200">
+                    <span class="cat-label">Electronics › Computers</span>
+                    <h3>Gaming PC</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star" data-v="1"
+                                aria-label="1 star">★</button><button type="button" class="star" data-v="2"
+                                aria-label="2 stars">★</button><button type="button" class="star" data-v="3"
+                                aria-label="3 stars">★</button><button type="button" class="star" data-v="4"
+                                aria-label="4 stars">★</button><button type="button" class="star" data-v="5"
+                                aria-label="5 stars">★</button></span><span class="rating-text">Rate this product</span>
+                    </div>
+                    <p>High-performance computer for gaming and work.</p>
+                    <p class="price">$1200</p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div>
+                        <button type="button" class="fav-action">♡ Add to Favorites</button>
+                    </div>
+                </article>
+                <article id="HOM001" data-id="HOM001" data-cat="Home & Appliances" data-sub="Kitchen Appliances"
+                    data-price="160">
+                    <span class="stock-badge">In Stock</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsNoQhwIi80fpGCPCRWiHknxmEy2rbqBV2mPFE8Ne_wH_3lZgPk4RmhmM&s=10"
+                        alt="Espresso Coffee Maker" width="300" height="220" loading="lazy">
+                    <span class="cat-label">Home &amp; Appliances › Kitchen Appliances</span>
+                    <h3>Espresso Coffee Maker</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star"
+                                data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                data-v="4">★</button><button type="button" class="star"
+                                data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                    <p>Compact stainless espresso &amp; cappuccino brewer</p>
+                    <p class="price">$160</p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                            class="fav-action">♡ Add to Favorites</button>
+                    </div>
+                </article>
+
+                <article id="JWL001" data-id="JWL001" data-cat="Fashion" data-sub="Jewelry & Accessories"
+                    data-price="50">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT07UAR4iXSV80xZvawdpHsdPQ8ry4Mc7hu1Kr3Y2l5gQ&s=10"
+                        alt="Jewelry & Rings Set" width="200">
+                    <span class="cat-label">Fashion › Jewelry</span>
+                    <h3>Jewelry &amp; Rings Set</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star" data-v="1"
+                                aria-label="1 star">★</button><button type="button" class="star" data-v="2"
+                                aria-label="2 stars">★</button><button type="button" class="star" data-v="3"
+                                aria-label="3 stars">★</button><button type="button" class="star" data-v="4"
+                                aria-label="4 stars">★</button><button type="button" class="star" data-v="5"
+                                aria-label="5 stars">★</button></span><span class="rating-text">Rate this product</span>
+                    </div>
+                    <p>Elegant rings and bracelets for everyday wear.</p>
+                    <p class="price">$50</p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div>
+                        <button type="button" class="fav-action">♡ Add to Favorites</button>
+                    </div>
+                </article>
+
+                <article id="SPT001" data-id="SPT001" data-cat="Sports" data-sub="Fitness Gear" data-price="110">
+                    <span class="stock-badge">In Stock</span>
+                    <img src="https://m.media-amazon.com/images/I/719InDfTxDL._AC_UF894,1000_QL80_.jpg"
+                        alt="Adjustable Dumbbell Set" width="300" height="220" loading="lazy">
+                    <span class="cat-label">Sports › Fitness Gear</span>
+                    <h3>Adjustable Dumbbell Set</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star"
+                                data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                data-v="4">★</button><button type="button" class="star"
+                                data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                    <p>Space-saving home workout weights up to 20kg</p>
+                    <p class="price">$110</p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                            class="fav-action">♡ Add to
+                            Favorites</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Special Offers -->
+        <section id="offers">
+            <div class="section-head">
+                <h2>🔥 Special Offers</h2>
+                <a href="offers.html" class="view-all">View all offers →</a>
+            </div>
+            <p class="section-sub">Limited-time deals with old price, new price, and discount.</p>
+
+            <div class="product-grid">
+                <article id="LAP001" data-id="LAP001" data-cat="Electronics" data-sub="Laptops" data-price="800">
+                    <span class="sale-badge">🔥 20% OFF</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3Ws-ctAePR1gShFQfMkfRZ_tfIm9jxd6vxe3Fbt8ijfb1Ay2jTyOq8jyt&s=10"
+                        alt="HP Laptop" width="200">
+                    <span class="cat-label">Electronics › Laptops</span>
+                    <h3>HP Laptop</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star" data-v="1"
+                                aria-label="1 star">★</button><button type="button" class="star" data-v="2"
+                                aria-label="2 stars">★</button><button type="button" class="star" data-v="3"
+                                aria-label="3 stars">★</button><button type="button" class="star" data-v="4"
+                                aria-label="4 stars">★</button><button type="button" class="star" data-v="5"
+                                aria-label="5 stars">★</button></span><span class="rating-text">Rate this product</span>
+                    </div>
+                    <p>Powerful laptop for work and study.</p>
+                    <p class="price-row"><del class="old-price">$1000</del><strong class="new-price">$800</strong></p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div>
+                        <button type="button" class="fav-action">♡ Add to Favorites</button>
+                    </div>
+                </article>
+                <article id="MON002" data-id="MON002" data-cat="Electronics" data-sub="Monitors" data-price="390">
+                    <span class="sale-badge">🔥 15% OFF</span><span class="stock-badge">In Stock</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1tzpsPEib0kQzOqHo-D_Wty4cJgjwjZsCoa97HMK6eXHd27IqMp2ApqQ&s=10"
+                        alt="Curved Monitor 165Hz" width="300" height="220" loading="lazy">
+                    <span class="cat-label">Electronics › Monitors</span>
+                    <h3>Curved Monitor 165Hz</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star"
+                                data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                data-v="4">★</button><button type="button" class="star"
+                                data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                    <p>27-inch QHD curved display with 1ms response</p>
+                    <p class="price-row"><del class="old-price">$460</del><strong class="new-price">$390</strong></p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                            class="fav-action">♡ Add to
+                            Favorites</button>
+                    </div>
+                </article>
+
+                <section>
+                    <article id="BTY001" data-id="BTY001" data-cat="Beauty" data-sub="Perfumes" data-price="65">
+                        <span class="sale-badge">🔥 25% OFF</span><span class="stock-badge">In Stock</span>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMBF11x7Zfgx_WjnQU2iTxC3wSKOUOAYn3kMfqYfrb78QdJ2Wossm7u4A&s=10"
+                            alt="Signature Eau de Parfum" width="300" height="220" loading="lazy">
+                        <span class="cat-label">Beauty › Perfumes</span>
+                        <h3>Signature Eau de Parfum</h3>
+                        <div class="rating"><span class="stars"><button type="button" class="star"
+                                    data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                    type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                    data-v="4">★</button><button type="button" class="star"
+                                    data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                        <p>Long-lasting woody &amp; citrus fragrance (100ml)</p>
+                        <p class="price-row"><del class="old-price">$88</del><strong class="new-price">$65</strong></p>
+                        <p> Status: Available</p>
+                        <a href="Products.html#PHN001">View Details →</a>
+                        <div class="card-actions">
+                            <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                    type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                                class="fav-action">♡ Add to
+                                Favorites</button>
+                        </div>
+                    </article>
+                </section>
+                <article id="FSH001" data-id="FSH001" data-cat="Fashion" data-sub="Clothing" data-price="55">
+                    <span class="sale-badge">🔥 20% OFF</span><span class="stock-badge">In Stock</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2GUv-8a95c4q-TkWHXUt9h0IcjkgjDd1GzDBc2bFGKQIJUHbku5dPLPM&s=10"
+                        alt="Essential Cotton Hoodie" width="300" height="220" loading="lazy">
+                    <span class="cat-label">Fashion › Clothing</span>
+                    <h3>Essential Cotton Hoodie</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star"
+                                data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                data-v="4">★</button><button type="button" class="star"
+                                data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                    <p>Soft heavyweight fleece hoodie for daily wear</p>
+                    <p class="price-row"><del class="old-price">$69</del><strong class="new-price">$55</strong></p>
+                    <p>Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+
+
+                    </ul>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                            class="fav-action">♡ Add to
+                            Favorites</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- New Arrivals -->
+        <section id="new-arrivals">
+            <div class="section-head">
+                <h2>🆕 New Arrivals</h2>
+                <a href="Products.html" class="view-all">Explore all new items →</a>
+            </div>
+            <p class="section-sub">The latest products added to Boda Store.</p>
+
+            <div class="product-grid">
+                <article id="PHN001" data-id="PHN001" data-cat="Electronics" data-sub="Smart Devices" data-price="650">
+                    <span class="sale-badge new-badge">NEW</span><span class="stock-badge">In Stock</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQivET-RHreDIW_ass24taHQI6YfNFjM7sREZZRs2db2g&s"
+                        alt="Pro Smartphone 5G" width="300" height="220" loading="lazy">
+                    <span class="cat-label">Electronics › Smart Devices</span>
+                    <h3>Pro Smartphone 5G</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star"
+                                data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                data-v="4">★</button><button type="button" class="star"
+                                data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                    <p>Fast OLED smartphone with all-day battery</p>
+
+
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+                    </ul>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                            class="fav-action">♡ Add to Favorites</button>
+                    </div>
+                </article>
+
+                <article id="KID001" data-id="KID001" data-cat="Kids & Toys" data-sub="Educational Toys"
+                    data-price="40">
+                    <span class="sale-badge new-badge">NEW</span><span class="stock-badge">In Stock</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6VQEdudzzD5Yon9JEA6c0EqyM9to0-ptzk7C_15IEcg&s=10"
+                        alt="STEM Building Blocks" width="300" height="220" loading="lazy">
+                    <span class="cat-label">Kids &amp; Toys › Educational Toys</span>
+                    <h3>STEM Building Blocks</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star"
+                                data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                data-v="4">★</button><button type="button" class="star"
+                                data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                    <p>200-piece creative robotics &amp; building kit</p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+
+                    </ul>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                            class="fav-action">♡ Add to
+                            Favorites</button>
+                    </div>
+                </article>
+
+                <article id="AUT001" data-id="AUT001" data-cat="Automotive" data-sub="Car Tech" data-price="85">
+                    <span class="sale-badge new-badge">NEW</span><span class="stock-badge">In Stock</span>
+                    <img src="https://m.media-amazon.com/images/I/71IJ7O+-mSL._AC_UF894,1000_QL80_.jpg"
+                        alt="Full HD Dash Cam" width="300" height="220" loading="lazy">
+                    <span class="cat-label">Automotive › Car Tech</span>
+                    <h3>Full HD Dash Cam</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star"
+                                data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                data-v="4">★</button><button type="button" class="star"
+                                data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                    <p>Wide-angle night vision dash camera with Wi-Fi</p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+
+                    </ul>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                            class="fav-action">♡ Add to
+                            Favorites</button>
+                    </div>
+                </article>
+                <article id="BOK001" data-id="BOK001" data-cat="Books" data-sub="Tech & Business" data-price="25">
+                    <span class="sale-badge new-badge">NEW</span><span class="stock-badge">In Stock</span>
+                    <img src="https://m.media-amazon.com/images/I/71stxGw9JgL._AC_UF1000,1000_QL80_.jpg"
+                        alt="Clean Architecture Guide" width="300" height="220" loading="lazy">
+                    <span class="cat-label">Books › Tech &amp; Business</span>
+                    <h3>Clean Architecture Guide</h3>
+                    <div class="rating"><span class="stars"><button type="button" class="star"
+                                data-v="1">★</button><button type="button" class="star" data-v="2">★</button><button
+                                type="button" class="star" data-v="3">★</button><button type="button" class="star"
+                                data-v="4">★</button><button type="button" class="star"
+                                data-v="5">★</button></span><span class="rating-text">Rate this product</span></div>
+                    <p>Practical hardcover handbook for developers</p>
+                    <p> Status: Available</p>
+                    <a href="Products.html#PHN001">View Details →</a>
+
+                    </ul>
+                    <div class="card-actions">
+                        <div class="card-row"><button type="button" class="add-cart">Add to Cart</button><button
+                                type="button" class="buy-btn">Buy Now</button></div><button type="button"
+                            class="fav-action">♡ Add to
+                            Favorites</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section>
+            <h2>Why Choose Boda Store?</h2>
+            <div class="why-grid">
+                <div class="why-card">
+                    <div class="why-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <h3>Fast Delivery</h3>
+                    <p>Fast and reliable shipping</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>Secure Payment</h3>
+                    <p>Safe payment experience</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i class="fa-solid fa-headset"></i></div>
+                    <h3>Support</h3>
+                    <p>Customer assistance</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter -->
+        <section class="newsletter-box">
+            <div>
+                <h2>Subscribe to Our Newsletter</h2>
+                <p>Get exclusive offers, discounts, and new arrivals directly in your inbox.</p>
+            </div>
+            <form id="newsletter-form" class="newsletter-form">
+                <input type="email" placeholder="Enter your email address..." aria-label="Email address" required>
+                <button type="submit">Subscribe</button>
+            </form>
+            <p class="nl-msg" role="status"></p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h3>Boda Store</h3>
+                <p>Your trusted place for everything you need — all in one store.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div>
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="home page.html">Home</a></li>
+                    <li><a href="categories.html">Categories</a></li>
+                    <li><a href="Products.html">Products</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="About As.html">About Us</a></li>
+                    <li><a href="Contact Us.html">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="Products.html?cat=Electronics">Electronics</a></li>
+                    <li><a href="Products.html?cat=Home%20%26%20Appliances">Home &amp; Appliances</a></li>
+                    <li><a href="Products.html?cat=Fashion">Fashion</a></li>
+                    <li><a href="Products.html?cat=Beauty">Beauty</a></li>
+                    <li><a href="Products.html?cat=Sports">Sports</a></li>
+                    <li><a href="Products.html?cat=Books">Books</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="Orders.html">My Orders</a></li>
+                    <li><a href="cart.html">Cart</a></li>
+                    <li><a href="Favorites.html">Favorites</a></li>
+                    <li><a href="Reviews.html">My Reviews</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <ul>
+                    <li>📧 info@bodastore.com</li>
+                    <li>📞 +20 100 000 0000</li>
+                    <li>📍 Alexandria, Egypt</li>
+                    <li>🕒 Daily: 10 AM – 9 PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 Boda Store. All Rights Reserved.</span>
+            <div class="footer-payments">
+                <span><i class="fa-brands fa-cc-visa"></i> Visa</span>
+                <span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+                <span><i class="fa-solid fa-truck"></i> Cash on Delivery</span>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#top" class="back-to-top" title="Back to Top">↑</a>
+</body>
+
+</html>

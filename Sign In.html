@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to your Boda Store account.">
+    <title>Login | Boda Store</title>
+    <link rel="icon" href="icon/shopping-cart-icon-red-circle-e-commerce-symbol.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="language.js" defer></script>
+    <script src="app.js" defer></script>
+</head>
+
+<body class="sign-page" id="top">
+    <div class="announcement-bar">
+        <p>Everything You Need, All in One Place — Free Delivery on Orders Over $500! <a href="offers.html">View Special
+                Offers</a></p>
+    </div>
+
+    <main class="auth-page">
+        <div class="auth-brand">
+            <div class="auth-header">
+                <a href="home page.html" class="auth-logo">
+                    <h1>Boda Store</h1>
+                    <span class="brand-tag">All-in-One Store</span>
+                </a>
+                <div class="auth-top-actions">
+                    <a href="home page.html" class="auth-back-store"><i class="fa-solid fa-house"></i> Back to Home</a>
+                    <div class="header-tools">
+                        <div class="language-menu-wrap">
+                            <button type="button" class="language-btn" id="language-btn" title="Language">
+                                <i class="fa-solid fa-globe"></i>
+                            </button>
+                            <div class="language-dropdown" id="language-dropdown">
+                                <button type="button" data-lang="en">🇬🇧 English</button>
+                                <button type="button" data-lang="ar">🇪🇬 العربية</button>
+                                <button type="button" data-lang="fr">🇫🇷 Français</button>
+                                <button type="button" data-lang="de">🇩🇪 Deutsch</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>One account for electronics, home, fashion, sports, and more.</p>
+        </div>
+
+        <div class="auth-container">
+            <div class="auth-tabs" role="tablist">
+                <a href="Sign In.html" class="auth-tab active">Login</a>
+                <a href="Create Account.html" class="auth-tab">Create Account</a>
+            </div>
+
+            <section id="auth-box">
+                <form id="auth-form">
+                    <fieldset>
+                        <legend>Login to Boda Store</legend>
+
+                        <label for="a-login">Email or Phone Number</label>
+                        <input id="a-login" name="login" type="text" placeholder="Enter your email or phone number"
+                            autocomplete="username" required>
+
+                        <label for="a-pass">Password</label>
+                        <input id="a-pass" name="password" type="password" placeholder="Enter your password"
+                            minlength="6" autocomplete="current-password" required>
+
+                        <div class="auth-row-between">
+                            <label class="chk">
+                                <input type="checkbox" id="a-remember" name="remember">
+                                <span>Remember me</span>
+                            </label>
+                            <button type="button" id="forgot-toggle" class="forgot-link">Forgot password?</button>
+                        </div>
+
+                        <p class="form-error" role="alert"></p>
+                        <div class="btn-row">
+                            <button type="submit" class="auth-submit-btn"><i class="fa-solid fa-right-to-bracket"></i>
+                                Login</button>
+                        </div>
+
+                        <div class="auth-extra">
+                            <a href="Create Account.html">Create New Account →</a>
+                        </div>
+                    </fieldset>
+                </form>
+
+                <form id="forgot-form" hidden>
+                    <fieldset>
+                        <legend>Reset Password</legend>
+
+                        <label for="f-login">Registered Email or Phone</label>
+                        <input id="f-login" name="login" type="text" placeholder="Enter your registered email or phone"
+                            required>
+
+                        <label for="f-pass">New Password</label>
+                        <input id="f-pass" name="password" type="password" placeholder="At least 6 characters"
+                            minlength="6" required>
+
+                        <p class="form-error" role="alert"></p>
+                        <div class="btn-row">
+                            <button type="submit">Update Password</button>
+                            <button type="button" id="forgot-cancel" class="secondary">Cancel</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </section>
+
+            <p class="auth-create">
+                Just browsing? <a href="Products.html">Explore All Products</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h3>Boda Store</h3>
+                <p>Your trusted place for everything you need — all in one store.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div>
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="home page.html">Home</a></li>
+                    <li><a href="categories.html">Categories</a></li>
+                    <li><a href="Products.html">Products</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="About As.html">About Us</a></li>
+                    <li><a href="Contact Us.html">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="Products.html?cat=Electronics">Electronics</a></li>
+                    <li><a href="Products.html?cat=Home%20%26%20Appliances">Home &amp; Appliances</a></li>
+                    <li><a href="Products.html?cat=Fashion">Fashion</a></li>
+                    <li><a href="Products.html?cat=Beauty">Beauty</a></li>
+                    <li><a href="Products.html?cat=Sports">Sports</a></li>
+                    <li><a href="Products.html?cat=Books">Books</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="Orders.html">My Orders</a></li>
+                    <li><a href="cart.html">Cart</a></li>
+                    <li><a href="Favorites.html">Favorites</a></li>
+                    <li><a href="Reviews.html">My Reviews</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <ul>
+                    <li>📧 info@bodastore.com</li>
+                    <li>📞 +20 100 000 0000</li>
+                    <li>📍 Alexandria, Egypt</li>
+                    <li>🕒 Daily: 10 AM – 9 PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 Boda Store. All Rights Reserved.</span>
+            <div class="footer-payments">
+                <span><i class="fa-brands fa-cc-visa"></i> Visa</span>
+                <span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+                <span><i class="fa-solid fa-truck"></i> Cash on Delivery</span>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
