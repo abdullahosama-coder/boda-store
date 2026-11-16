@@ -1001,15 +1001,25 @@ function applyAdminDom() {
         var wrap = art.parentNode.tagName === 'SECTION' ? art.parentNode : art;
         if (a.deleted.indexOf(id) > -1 || (p && p.hidden)) { wrap.remove(); return; }
         if (!e || !p) return;
-        art.dataset.price = p.price;
-        var h = art.querySelector('h3'); if (h) h.textContent = p.name;
-        var pr = art.querySelector('.price-row,.price'); if (pr) pr.outerHTML = priceHTML(p);
-        var s = [].slice.call(art.querySelectorAll('p')).filter(function (x) { return /^\s*Status:/.test(x.textContent); })[0];
-        if (s) s.textContent = 'Status: ' + statusText(p);
-        var sb = art.querySelector('.stock-badge');
-        if (sb) { sb.textContent = p.stock === false ? 'Out of Stock' : 'In Stock'; sb.classList.toggle('out', p.stock === false); }
-        art.querySelectorAll('.add-cart,.buy-btn').forEach(function (b) { b.disabled = p.stock === false; });
+        // Rebuild the card from the catalog so EVERY admin edit (image, description, features, badge, category, price, stock) shows up.
+        // This runs before initCards(), so no event handlers are lost.
+        var tmp = document.createElement('div'); tmp.innerHTML = cardHTML(p);
+        var fresh = tmp.querySelector('article');
+        if (fresh) { if (art.className) fresh.className = art.className; art.replaceWith(fresh); }
     });
+    // Offers page: show every discounted product, hide products whose discount was removed
+    if (document.body.classList.contains('offers-page')) {
+        var og = document.querySelector('.product-grid');
+        if (og) {
+            var shownIds = {};
+            document.querySelectorAll('article[data-id]').forEach(function (art) {
+                var p = map[art.dataset.id];
+                if (p && !(p.old > p.price)) { (art.parentNode.tagName === 'SECTION' ? art.parentNode : art).remove(); } else shownIds[art.dataset.id] = 1;
+            });
+            allProducts().forEach(function (p) { if (p.old > p.price && !shownIds[p.id]) og.insertAdjacentHTML('beforeend', cardHTML(p)); });
+        }
+        return;
+    }
     if (grid) a.added.forEach(function (p) { if (!p.hidden && a.deleted.indexOf(p.id) < 0) grid.insertAdjacentHTML('beforeend', cardHTML(p)); });
 }
 
@@ -1023,16 +1033,26 @@ function renderProduct() {
     var rows = [['Product code', esc(p.id)], ['Category', '<a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a>']];
     if (p.sub) rows.push(['Sub-category', '<a href="' + esc(catUrl(p.cat, p.sub)) + '">' + esc(p.sub) + '</a>']);
     rows.push(['Availability', statusText(p)], ['Delivery', 'Free on orders over $500']);
-    if (p.cat === 'Electronics' || p.cat === 'Home & Appliances') rows.push(['Warranty', '1 year']);
+    if (p.brand) rows.push(['Brand', esc(p.brand)]);
+    if (p.warranty) rows.push(['Warranty', esc(p.warranty)]);
+    else if (p.cat === 'Electronics' || p.cat === 'Home & Appliances') rows.push(['Warranty', '1 year']);
+    if ((p.options || []).length) rows.push(['Options', p.options.map(esc).join(' \u00B7 ')]);
+    var lowStock = !out && typeof p.qty === 'number' && p.qty > 0 && p.qty <= 5;
     var related = allProducts().filter(function (x) { return x.cat === p.cat && x.id !== p.id; }).slice(0, 4);
     box.innerHTML = '<div class="crumbs"><a href="index.html?page=home">Home</a> \u203A <a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a> \u203A <span>' + esc(p.name) + '</span></div>' +
         '<article class="pd" ' + attrsOf(p) + '><div class="pd-media">' + badgeHTML(p) + '<img src="' + esc(p.img) + '" alt="' + esc(p.name) + '"></div>' +
         '<div class="pd-body"><span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + priceHTML(p) +
-        '<p class="pd-status' + (out ? ' out' : '') + '">\u25CF ' + (out ? 'Out of stock' : 'In stock \u2014 ready to ship') + '</p>' +
-        '<p class="pd-desc">' + esc(p.desc || '') + '</p>' + featuresHTML(p) +
+        '<p class="pd-status' + (out ? ' out' : '') + '">\u25CF ' + (out ? 'Out of stock' : lowStock ? 'Only ' + p.qty + ' left in stock' : 'In stock \u2014 ready to ship') + '</p>' +
+        '<p class="pd-desc">' + esc(p.desc || '') + '</p>' + (p.long ? '<p class="pd-long" style="white-space:pre-line">' + esc(p.long) + '</p>' : '') + featuresHTML(p) +
         '<table class="pd-specs"><tbody>' + rows.map(function (r) { return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table>' +
         actionsHTML(p) + '</div></article>' +
         (related.length ? '<h2 class="pd-more">More in ' + esc(p.cat) + '</h2><div class="product-grid">' + related.map(function (x) { return cardHTML(x); }).join('') + '</div>' : '');
+}
+
+// (thumbnail click handler is attached by initGallery below)
+function initGallery() {
+    var main = $id('pd-main-img'); if (!main) return;
+    document.querySelectorAll('.pd-thumbs img').forEach(function (t) { t.onclick = function () { main.src = t.dataset.full; }; });
 }
 
 // ---- Category page: index.html?page=category&cat=Electronics[&sub=Laptops] ----
@@ -1067,12 +1087,16 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('.form-msg').classList.add('show'); cf.reset();
     };
 
+    // Admin saved something in another tab -> refresh the storefront automatically
+    window.addEventListener('storage', function (ev) {
+        if (ev.key === 'boda_admin_products' || ev.key === 'boda_categories') location.reload();
+    });
     initTheme();
     initSettingsMenu();
     initActiveNav();
     renderCategoryCards();
     applyAdminDom();
-    if ($id('product-box')) renderProduct();
+    if ($id('product-box')) { renderProduct(); initGallery(); }
     if ($id('category-box')) renderCategory();
     initHeaderSlider();
     initHeroSlider();
