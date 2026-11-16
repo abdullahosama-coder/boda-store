@@ -347,7 +347,7 @@ function renderCart() {
     var total = 0;
     var rows = c.map(function (i, n) {
         var s = i.price * i.qty; total += s;
-        var thumb = i.img ? '<img src="' + esc(i.img) + '" alt="' + esc(i.name) + '">' : '<div class="cart-thumb">' + esc(i.name.charAt(0)) + '</div>';
+        var thumb = liveImg(i.id, i.img) ? '<img src="' + esc(liveImg(i.id, i.img)) + '" alt="' + esc(i.name) + '" referrerpolicy="no-referrer">' : '<div class="cart-thumb">' + esc(i.name.charAt(0)) + '</div>';
         return '<tr><td><div class="cart-item-cell">' + thumb + '<div><strong>' + esc(i.name) + '</strong>' + (i.cat ? '<small>' + esc(i.cat) + '</small>' : '') + '</div></div></td><td>$' + i.price + '</td><td><button class="qty" data-n="' + n + '" data-d="-1">−</button> ' + i.qty + ' <button class="qty" data-n="' + n + '" data-d="1">+</button></td><td>$' + s + '</td><td><button class="rm" data-n="' + n + '">Remove</button></td></tr>';
     }).join('');
     var free = total >= 500;
@@ -379,7 +379,7 @@ function renderFavs() {
     }
     box.innerHTML = '<div class="product-grid">' + f.map(function (i) {
         return '<section><article data-id="' + esc(i.id) + '" data-cat="' + esc(i.cat) + '" data-price="' + i.price + '">' +
-            (i.img ? '<img src="' + esc(i.img) + '" alt="' + esc(i.name) + '">' : '<div class="thumb">' + esc(i.name.charAt(0)) + '</div>') +
+            (liveImg(i.id, i.img) ? '<img src="' + esc(liveImg(i.id, i.img)) + '" alt="' + esc(i.name) + '" referrerpolicy="no-referrer">' : '<div class="thumb">' + esc(i.name.charAt(0)) + '</div>') +
             '<h3>' + esc(i.name) + '</h3><p>' + esc(i.cat) + '</p><p class="price">$' + i.price + '</p></article></section>';
     }).join('') + '</div>';
     initCards(box);
@@ -396,7 +396,7 @@ function renderReviews() {
         '<div class="rv-grid">' + ids.map(function (id) {
             var m = meta[id] || { name: id }, v = r[id], st = '';
             for (var i = 1; i <= 5; i++) st += '<button type="button" class="rv-star' + (i <= v ? ' on' : '') + '" data-id="' + esc(id) + '" data-v="' + i + '">★</button>';
-            return '<div class="rv-card">' + (m.img ? '<img src="' + esc(m.img) + '" alt="">' : '<div class="rv-thumb">' + esc(m.name.charAt(0)) + '</div>') +
+            return '<div class="rv-card">' + (liveImg(id, m.img) ? '<img src="' + esc(liveImg(id, m.img)) + '" alt="" referrerpolicy="no-referrer">' : '<div class="rv-thumb">' + esc(m.name.charAt(0)) + '</div>') +
                 '<div><h3>' + esc(m.name) + '</h3><small>' + esc(m.cat || '') + '</small><div>' + st + '</div><p>' + RATING_LABELS[v] + ' (' + v + '/5)</p>' +
                 '<div class="rv-actions"><a href="index.html?page=product&id=' + encodeURIComponent(id) + '">View product</a><button type="button" class="rv-remove" data-id="' + esc(id) + '">Remove</button></div></div></div>';
         }).join('') + '</div>';
@@ -950,6 +950,12 @@ function allProductsRaw() {
         .concat(a.added).filter(function (p) { return a.deleted.indexOf(p.id) < 0; });
 }
 function allProducts() { return allProductsRaw().filter(function (p) { return !p.hidden; }); }
+var IMG_FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="220" viewBox="0 0 300 220"><rect width="300" height="220" fill="#f3f5f9"/><g fill="none" stroke="#9aa6b8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><rect x="105" y="65" width="90" height="75" rx="8"/><circle cx="130" cy="92" r="9"/><path d="M105 130l28-26 20 18 14-12 28 20"/></g><text x="150" y="178" font-family="Arial" font-size="15" fill="#9aa6b8" text-anchor="middle">Image unavailable</text></svg>');
+// The catalog (products-data.js + admin edits) is the ONLY source of product images.
+function liveImg(id, fallback) {
+    var p = allProductsRaw().filter(function (x) { return x.id === id; })[0];
+    return p && p.img ? p.img : (fallback || '');
+}
 function productUrl(id) { return 'index.html?page=product&id=' + encodeURIComponent(id); }
 function statusText(p) { return p.stock === false ? 'Out of Stock' : 'Available'; }
 function priceHTML(p) {
@@ -970,12 +976,12 @@ function actionsHTML(p) {
     return '<div class="card-actions"><div class="card-row"><button type="button" class="add-cart"' + d + '>Add to Cart</button><button type="button" class="buy-btn"' + d + '>Buy Now</button></div><button type="button" class="fav-action">\u2661 Add to Favorites</button></div>';
 }
 function attrsOf(p) { return 'id="' + esc(p.id) + '" data-id="' + esc(p.id) + '" data-cat="' + esc(p.cat) + '" data-sub="' + esc(p.sub || '') + '" data-price="' + p.price + '"'; }
-function featuresHTML(p) { return (p.features || []).length ? '<h4>Features</h4><ul>' + p.features.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>' : ''; }
+function featuresHTML(p, max) { var f = max ? (p.features || []).slice(0, max) : (p.features || []); return f.length ? '<h4>Features</h4><ul>' + f.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>' : ''; }
 function labelOf(p) { return esc(p.cat + (p.sub ? ' \u203A ' + p.sub : '')); }
 function cardHTML(p) {
-    return '<section><article ' + attrsOf(p) + '>' + badgeHTML(p) + '<img src="' + esc(p.img) + '" alt="' + esc(p.name) + '" width="300" height="220" loading="lazy">' +
+    return '<section><article ' + attrsOf(p) + '>' + badgeHTML(p) + '<img src="' + esc(p.img || IMG_FALLBACK) + '" alt="' + esc(p.name) + '" width="300" height="220" loading="lazy" referrerpolicy="no-referrer">' +
         '<span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + '<p>' + esc(p.desc || '') + '</p>' + priceHTML(p) +
-        '<p>Status: ' + statusText(p) + '</p>' + featuresHTML(p) + actionsHTML(p) + '</article></section>';
+        '<p>Status: ' + statusText(p) + '</p>' + featuresHTML(p, 3) + actionsHTML(p) + '</article></section>';
 }
 function emptyBox(icon, title, text, href, label) {
     return '<div class="empty-state"><div class="empty-big">' + icon + '</div><h3>' + title + '</h3><p>' + text + '</p><a class="favorites-btn" href="' + href + '">' + label + '</a></div>';
@@ -1000,6 +1006,7 @@ function applyAdminDom() {
         var id = art.dataset.id, p = map[id], e = a.edits[id];
         var wrap = art.parentNode.tagName === 'SECTION' ? art.parentNode : art;
         if (a.deleted.indexOf(id) > -1 || (p && p.hidden)) { wrap.remove(); return; }
+        if (p && !e) { var im0 = art.querySelector('img'); if (im0 && p.img) { im0.setAttribute('referrerpolicy', 'no-referrer'); if (im0.getAttribute('src') !== p.img) im0.src = p.img; } }
         if (!e || !p) return;
         // Rebuild the card from the catalog so EVERY admin edit (image, description, features, badge, category, price, stock) shows up.
         // This runs before initCards(), so no event handlers are lost.
@@ -1007,17 +1014,10 @@ function applyAdminDom() {
         var fresh = tmp.querySelector('article');
         if (fresh) { if (art.className) fresh.className = art.className; art.replaceWith(fresh); }
     });
-    // Offers page: show every discounted product, hide products whose discount was removed
+    // Offers page: built ONLY from the catalog (admin controls images, prices and which products appear)
     if (document.body.classList.contains('offers-page')) {
         var og = document.querySelector('.product-grid');
-        if (og) {
-            var shownIds = {};
-            document.querySelectorAll('article[data-id]').forEach(function (art) {
-                var p = map[art.dataset.id];
-                if (p && !(p.old > p.price)) { (art.parentNode.tagName === 'SECTION' ? art.parentNode : art).remove(); } else shownIds[art.dataset.id] = 1;
-            });
-            allProducts().forEach(function (p) { if (p.old > p.price && !shownIds[p.id]) og.insertAdjacentHTML('beforeend', cardHTML(p)); });
-        }
+        if (og) og.innerHTML = allProducts().filter(function (p) { return p.old > p.price; }).map(cardHTML).join('');
         return;
     }
     if (grid) a.added.forEach(function (p) { if (!p.hidden && a.deleted.indexOf(p.id) < 0) grid.insertAdjacentHTML('beforeend', cardHTML(p)); });
@@ -1040,7 +1040,7 @@ function renderProduct() {
     var lowStock = !out && typeof p.qty === 'number' && p.qty > 0 && p.qty <= 5;
     var related = allProducts().filter(function (x) { return x.cat === p.cat && x.id !== p.id; }).slice(0, 4);
     box.innerHTML = '<div class="crumbs"><a href="index.html?page=home">Home</a> \u203A <a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a> \u203A <span>' + esc(p.name) + '</span></div>' +
-        '<article class="pd" ' + attrsOf(p) + '><div class="pd-media">' + badgeHTML(p) + '<img src="' + esc(p.img) + '" alt="' + esc(p.name) + '"></div>' +
+        '<article class="pd" ' + attrsOf(p) + '><div class="pd-media">' + badgeHTML(p) + '<img src="' + esc(p.img || IMG_FALLBACK) + '" alt="' + esc(p.name) + '" referrerpolicy="no-referrer"></div>' +
         '<div class="pd-body"><span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + priceHTML(p) +
         '<p class="pd-status' + (out ? ' out' : '') + '">\u25CF ' + (out ? 'Out of stock' : lowStock ? 'Only ' + p.qty + ' left in stock' : 'In stock \u2014 ready to ship') + '</p>' +
         '<p class="pd-desc">' + esc(p.desc || '') + '</p>' + (p.long ? '<p class="pd-long" style="white-space:pre-line">' + esc(p.long) + '</p>' : '') + featuresHTML(p) +
@@ -1070,6 +1070,14 @@ function renderCategory() {
             subs.map(function (n) { return '<a href="' + esc(catUrl(cat, n)) + '" class="' + (n === sub ? 'on' : '') + '">' + esc(n) + ' <span>' + list.filter(function (p) { return p.sub === n; }).length + '</span></a>'; }).join('') + '</div>' : '') +
         (shown.length ? '<div class="product-grid">' + shown.map(function (x) { return cardHTML(x); }).join('') + '</div>' : emptyBox('\uD83D\uDCE6', 'No products here yet', 'New items are added regularly.', catUrl(cat), 'Back to ' + esc(cat)));
 }
+
+// Broken product image -> neutral placeholder (no broken-icon / alt text in cards)
+document.addEventListener('error', function (e) {
+    var t = e.target;
+    if (t && t.tagName === 'IMG' && t.closest && t.closest('article[data-id], .pd-media, .cart-item-cell, .rv-card') && t.src !== IMG_FALLBACK && !t.dataset.failed) {
+        t.dataset.failed = '1'; t.src = IMG_FALLBACK;
+    }
+}, true);
 
 // ===== Boot =====
 document.addEventListener('DOMContentLoaded', function () {
