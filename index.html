@@ -7034,6 +7034,31 @@
                 height: 38px
             }
 
+
+            .msg, .slide-card { position: relative }
+            .hasck { padding-inline-start: 46px !important }
+            .cardck { position: absolute; inset-inline-start: 14px; top: 50%; transform: translateY(-50%); margin: 0; display: block }
+            .msg.hasck .cardck { top: 20px; transform: none }
+            .cardck input { width: 18px; height: 18px; margin: 0; padding: 0; accent-color: var(--brand); cursor: pointer }
+            .msg.picked, .slide-card.picked { background: var(--infobg) }
+            .bulk .bulkall { display: inline-flex; align-items: center; gap: 6px; margin: 0; color: var(--ink); font-weight: 600 }
+            .bulk .bulkall input { width: 18px; height: 18px; margin: 0; accent-color: var(--brand) }
+            .bulk .bsel { margin-inline-end: auto }
+            .bulk:not(.on) .bsel { color: var(--soft) }
+
+            /* ===== Filters panel + compact pager (like the reference admin) ===== */
+            .fpanel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; align-items: flex-end }
+            .fpanel::before { content: attr(data-title); flex: 0 0 100%; font-weight: 700; font-size: .88rem; color: var(--soft) }
+            .fpanel .fl { order: 1; flex: 0 1 240px; min-width: 190px; margin: 0; font-size: .8rem }
+            .fpanel .fl select { width: 100%; margin-top: 4px }
+            .fpanel .fclear { order: 2; margin-inline-start: auto; height: 40px; padding: 0 14px }
+            .fpanel input[type="search"] { order: 3; flex: 1 1 100% !important; min-width: 0 !important }
+            .pager { justify-content: flex-end; gap: 26px; font-size: .85rem; color: var(--soft); border-top: 1px solid var(--line); padding-top: 10px }
+            .pager .pinfo { font-size: .85rem }
+            .pgo { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: .85rem }
+            .pgo input { width: 64px; height: 32px; padding: 0 8px; text-align: center }
+            .pager .psz select { height: 32px; min-width: 64px; border-width: 0 0 2px 0; border-radius: 0; background-color: transparent; font-size: .9rem }
+            .pager .pb { min-width: 34px; height: 34px; padding: 0; font-size: 1.3rem; line-height: 1; border: 0; background: transparent }
             img.th.bad {
                 display: inline-block;
                 background: var(--badbg);
@@ -7057,14 +7082,14 @@
         <script>
             (function () {
                 // ⚠ بيانات الدخول الافتراضية مكتوبة هنا (حماية أولية فقط). غيّر كلمة المرور من الإعدادات، ولما تنشر الموقع فعليًا لازم تحمي اللوحة من السيرفر.
-                const ADMIN = { user: 'admin', pass: 'Boda@2026' };
+                const ADMIN = { user: 'admin', pass: '' };
                 const K = {
                     orders: 'boda_orders', acc: 'boda_accounts', msgs: 'boda_messages', news: 'boda_newsletter', cats: 'boda_categories', pa: 'boda_admin_products', notifs: 'boda_notifs', hero: 'boda_hero', site: 'boda_site',
                     articles: 'boda_news', offers: 'boda_offers', ads: 'boda_ads', comp: 'boda_complaints', warn: 'boda_warnings', govs: 'boda_govs', users: 'boda_admin_users', ustat: 'boda_cust_status', nlog: 'boda_notif_log', log: 'boda_admin_log', apw: 'boda_admin_pw', lang: 'boda_admin_lang', theme: 'boda_admin_theme'
                 };
                 const $ = (s, r = document) => r.querySelector(s);
                 const rd = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
-                const wr = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast(t('quota')); } };
+                const wr = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast(t('quota')); } if ((k === K.pa || k === K.cats) && apiOn()) queueSync(); };
                 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
                 const money = n => '$' + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
 
@@ -7123,6 +7148,12 @@ req_err || كمّل الحقول المطلوبة. || Fill in the required field
 quota || مساحة التخزين امتلأت — صغّر الصور أو احذف بيانات قديمة. || Storage is full — use smaller images or delete old data. || Stockage plein. || Speicher voll.
 active || مفعّل || Active || Actif || Aktiv
 upload || رفع صورة || Upload image || Téléverser une image || Bild hochladen
+fl_title || الفلاتر الأساسية || Basic filters || Filtres de base || Basisfilter
+fl_cat || القسم || Category || Catégorie || Kategorie
+fl_stock || التوفر || Availability || Disponibilité || Verfügbarkeit
+fl_vis || الظهور في المتجر || Visibility || Visibilité || Sichtbarkeit
+fl_status || الحالة || Status || Statut || Status
+fl_clear || مسح كل الفلاتر || Clear all filters || Effacer les filtres || Alle Filter löschen
 img_loading || جاري تحميل الصورة... || Loading image... || Chargement de l'image... || Bild wird geladen...
 img_ok || تم تحميل الصورة ✓ || Image loaded ✓ || Image chargée ✓ || Bild geladen ✓
 img_bad || تعذّر تحميل الصورة — تأكد من الرابط أو ارفع الصورة. || Could not load the image — check the link or upload it. || Image introuvable — vérifiez le lien ou téléversez-la. || Bild nicht ladbar — Link prüfen oder hochladen.
@@ -7823,7 +7854,7 @@ ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2
                     const h = rd(K.nlog, []);
                     return `<div class="head"><div><h1>${t('n_notifs')}</h1><p class="sub">${t('nt_sub')}</p></div><button class="btn ghost" data-act="nclear">${t('nt_clear')}</button></div>
 <form id="nf" class="box"><div class="g2"><label class="wide">${t('nt_text')}<textarea name="text" rows="2" required></textarea></label><label class="wide">${t('nt_link')}<input name="href" value="index.html?page=offers"></label></div><p class="err"></p><div class="bar"><button class="btn">🔔 ${t('nt_send')}</button></div><small>${t('nt_note')}</small></form>
-<div class="box" style="margin-top:14px"><h2>${t('nt_history')}</h2>${h.length ? `<div class="tw"><table><tbody>${h.map(x => `<tr><td class="wrap">${esc(x.text)}<br><small>${esc(x.href)}</small></td><td>${when(x.time)}</td><td><button class="mini del" data-act="nldel" data-id="${x.time}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<p class="empty">${t('nt_none')}</p>`}</div>`;
+<div class="box" style="margin-top:14px"><h2>${t('nt_history')}</h2>${h.length ? `<div id="tbl"><div class="tw"><table><thead><tr><th>${t('nt_text')}</th><th></th><th></th></tr></thead><tbody>${h.map(x => `<tr><td class="wrap">${esc(x.text)}<br><small>${esc(x.href)}</small></td><td>${when(x.time)}</td><td><button class="mini del" data-act="nldel" data-id="${x.time}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div></div>` : `<p class="empty">${t('nt_none')}</p>`}</div>`;
                 }
 
                 /* ---------- Messages / Hero / Newsletter ---------- */
@@ -7846,8 +7877,8 @@ ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2
                     const h = HERO(), custom = Array.isArray(rd(K.hero, null));
                     return `<div class="head"><div><h1>${t('h_title_page')}</h1><p class="sub">${t('h_sub')}</p></div><div>${custom ? `<button class="btn ghost" data-act="hreset">${t('h_reset')}</button> ` : ''}<button class="btn" data-act="hadd">+ ${t('h_add')}</button></div></div>
 <div class="note">${custom ? t('h_custom') : t('h_default')}</div>
-${h.map((x, i) => `<div class="slide-card"><span class="no">${i + 1}</span><div><b>${esc(x.title)}</b> <span class="pill info">${esc(x.badge)}</span><p>${esc(x.text)}</p><small>${esc(x.b1)} → ${esc(x.l1)}</small></div>
-<div class="acts"><button class="mini" data-act="hup" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button><button class="mini" data-act="hdown" data-i="${i}" ${i === h.length - 1 ? 'disabled' : ''}>↓</button><button class="mini" data-act="hedit" data-i="${i}">${t('edit')}</button><button class="mini del" data-act="hdel" data-i="${i}">${t('del')}</button></div></div>`).join('')}`;
+<div id="tbl">${h.map((x, i) => `<div class="slide-card"><span class="no">${i + 1}</span><div><b>${esc(x.title)}</b> <span class="pill info">${esc(x.badge)}</span><p>${esc(x.text)}</p><small>${esc(x.b1)} → ${esc(x.l1)}</small></div>
+<div class="acts"><button class="mini" data-act="hup" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button><button class="mini" data-act="hdown" data-i="${i}" ${i === h.length - 1 ? 'disabled' : ''}>↓</button><button class="mini" data-act="hedit" data-i="${i}">${t('edit')}</button><button class="mini del" data-act="hdel" data-i="${i}">${t('del')}</button></div></div>`).join('')}</div>`;
                 }
                 function hform(i) {
                     const x = i >= 0 ? HERO()[i] : { badge: '', title: '', text: '', b1: 'Shop Now', l1: 'index.html?page=products', b2: '', l2: '', emojis: '', img: '' };
@@ -7885,65 +7916,168 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 }
 
 
-                /* ---------- Bulk select + pagination for every admin list ---------- */
+                /* ---------- Bulk select + pagination for EVERY admin list (tables + card lists) ---------- */
                 const PG = {};
                 const PGT = {
-                    ar: { all: 'تحديد الكل', sel: 'محدد', del: 'حذف المحدد', clr: 'إلغاء التحديد', prev: 'السابق', next: 'التالي', pg: 'صفحة', of: 'من', per: 'لكل صفحة', tot: 'إجمالي', conf: 'تأكيد حذف العناصر المحددة؟' },
-                    en: { all: 'Select all', sel: 'selected', del: 'Delete selected', clr: 'Clear', prev: 'Prev', next: 'Next', pg: 'Page', of: 'of', per: 'per page', tot: 'Total', conf: 'Delete the selected items?' }
+                    ar: { all: 'تحديد الكل', sel: 'محدد', del: 'حذف المحدد', clr: 'إلغاء التحديد', prev: 'السابق', next: 'التالي', pg: 'صفحة', of: 'من', per: 'الصفوف في الصفحة', go: 'اذهب لصفحة', tot: 'إجمالي', conf: 'تأكيد حذف العناصر المحددة؟', skip: 'تعذّر حذف بعض العناصر' },
+                    en: { all: 'Select all', sel: 'selected', del: 'Delete selected', clr: 'Clear', prev: 'Prev', next: 'Next', pg: 'Page', of: 'of', per: 'Rows per page', go: 'Go to page', tot: 'Total', conf: 'Delete the selected items?', skip: 'Some items could not be deleted' },
+                    fr: { all: 'Tout sélectionner', sel: 'sélectionné(s)', del: 'Supprimer la sélection', clr: 'Désélectionner', prev: 'Préc.', next: 'Suiv.', pg: 'Page', of: 'sur', per: 'Lignes par page', go: 'Aller à la page', tot: 'Total', conf: 'Supprimer les éléments sélectionnés ?', skip: 'Certains éléments n’ont pas pu être supprimés' },
+                    de: { all: 'Alle auswählen', sel: 'ausgewählt', del: 'Auswahl löschen', clr: 'Aufheben', prev: 'Zurück', next: 'Weiter', pg: 'Seite', of: 'von', per: 'Zeilen pro Seite', go: 'Gehe zu Seite', tot: 'Gesamt', conf: 'Ausgewählte Elemente löschen?', skip: 'Einige Elemente konnten nicht gelöscht werden' }
                 };
                 const pt = k => (PGT[LG] || PGT.en)[k];
+                const pgKey = (el) => (location.hash || '#dash') + (location.hash === '#comp' ? ':' + (S.ctab || '') : '') + (el && el.closest && el.closest('#rep') ? ':rep' : '');
+                function bulkDelete(items) {
+                    /* Reuse each row's own delete action (same rules, e.g. a category that still has products is NOT deleted).
+                       Run bottom-to-top so index-based deletes (hero slides) stay correct. */
+                    const specs = items.map(b => b.getAttributeNames().filter(n => n.startsWith('data-')).map(n => '[' + n + '="' + CSS.escape(b.getAttribute(n)) + '"]').join('')).reverse();
+                    const oc = window.confirm, oa = window.alert, blocked = []; let done = 0;
+                    window.confirm = () => true; window.alert = m => { blocked.push(String(m)); };
+                    try { specs.forEach(sp => { const b = document.querySelector('#view .mini.del' + sp); if (b) { b.click(); done++; } }); }
+                    finally { window.confirm = oc; window.alert = oa; }
+                    if (blocked.length) oa(pt('skip') + ' (' + blocked.length + '):\n' + [...new Set(blocked)].join('\n'));
+                }
+                function setupList(job) {
+                    const items = job.items, isTable = !!job.tb, key = pgKey(job.tb || job.host), st = PG[key] || (PG[key] = { p: 1, n: 10 });
+                    const canDel = items.some(r => r.querySelector('.mini.del'));
+                    const bar = document.createElement('div'), pager = document.createElement('div');
+                    bar.className = 'bulk'; pager.className = 'pager';
+                    let all, cks = [];
+                    if (canDel) {
+                        if (isTable) {
+                            job.tb.tHead.rows[0].insertAdjacentHTML('afterbegin', '<th class="ck"><input type="checkbox" data-pgall title="' + pt('all') + '"></th>');
+                            items.forEach(r => r.insertAdjacentHTML('afterbegin', '<td class="ck"><input type="checkbox" data-pgrow></td>'));
+                            all = job.tb.querySelector('[data-pgall]');
+                        } else {
+                            items.forEach(r => { r.classList.add('hasck'); r.insertAdjacentHTML('afterbegin', '<label class="cardck"><input type="checkbox" data-pgrow></label>'); });
+                        }
+                        cks = items.map(r => r.querySelector('[data-pgrow]'));
+                    }
+                    bar.innerHTML = (!isTable && canDel ? '<label class="bulkall"><input type="checkbox" data-pgall> ' + pt('all') + '</label>' : '') +
+                        '<span class="bsel"><b data-bn>0</b> ' + pt('sel') + '</span>' + (canDel ? '<button type="button" class="mini del" data-bdel>' + pt('del') + '</button>' : '') + '<button type="button" class="mini" data-bclr>' + pt('clr') + '</button>';
+                    if (!isTable && canDel) all = bar.querySelector('[data-pgall]');
+                    if (isTable) { job.wrap.before(bar); job.wrap.after(pager); } else { job.host.prepend(bar); job.host.append(pager); }
+                    const pageItems = () => items.filter(r => !r.hidden);
+                    function sync() {
+                        const n = cks.filter(c => c.checked).length, pr = pageItems().map(r => r.querySelector('[data-pgrow]')).filter(Boolean);
+                        if (all) { all.checked = pr.length > 0 && pr.every(c => c.checked); all.indeterminate = !all.checked && pr.some(c => c.checked); }
+                        items.forEach((r, i) => r.classList.toggle('picked', !!(cks[i] && cks[i].checked)));
+                        bar.querySelector('[data-bn]').textContent = n;
+                        bar.classList.toggle('on', n > 0);
+                        bar.hidden = !canDel || (isTable && !n) ? true : false;
+                        if (!canDel) bar.hidden = true;
+                    }
+                    function apply() {
+                        const tot = items.length, pages = Math.max(1, Math.ceil(tot / st.n)); st.p = Math.min(Math.max(1, st.p), pages);
+                        items.forEach((r, i) => { r.hidden = !(i >= (st.p - 1) * st.n && i < st.p * st.n); });
+                        let nums = [];
+                        for (let i = 1; i <= pages; i++) if (i === 1 || i === pages || Math.abs(i - st.p) <= 1) nums.push(i); else if (nums[nums.length - 1] !== '…') nums.push('…');
+                        const from = tot ? (st.p - 1) * st.n + 1 : 0, to = Math.min(tot, st.p * st.n);
+                        pager.innerHTML = '<label class="psz">' + pt('per') + ' <select data-pgsize>' + [10, 25, 50, 100].map(n => '<option ' + (n === st.n ? 'selected' : '') + '>' + n + '</option>').join('') + '</select></label>' +
+                            '<span class="pinfo">' + from + '–' + to + ' ' + pt('of') + ' <b>' + tot + '</b></span>' +
+                            '<label class="pgo">' + pt('go') + ' <input type="number" min="1" max="' + pages + '" value="' + st.p + '" data-pggo></label>' +
+                            '<div class="pnav"><button type="button" class="pb" data-pg="' + (st.p - 1) + '" ' + (st.p <= 1 ? 'disabled' : '') + '>‹</button><button type="button" class="pb" data-pg="' + (st.p + 1) + '" ' + (st.p >= pages ? 'disabled' : '') + '>›</button></div>';
+                        pager.hidden = tot <= 10 && st.n === 10;
+                        sync();
+                    }
+                    if (all) all.onchange = () => { pageItems().forEach(r => { const c = r.querySelector('[data-pgrow]'); if (c) c.checked = all.checked; }); sync(); };
+                    cks.forEach(c => { c.onchange = sync; });
+                    pager.onclick = e => { const b = e.target.closest('[data-pg]'); if (b && !b.disabled) { st.p = +b.dataset.pg; apply(); } };
+                    pager.onchange = e => { if (e.target.matches('[data-pgsize]')) { st.n = +e.target.value; st.p = 1; apply(); } else if (e.target.matches('[data-pggo]')) { st.p = parseInt(e.target.value, 10) || 1; apply(); } };
+                    bar.onclick = e => {
+                        if (e.target.closest('[data-bclr]')) { cks.forEach(c => { c.checked = false; }); sync(); return; }
+                        if (!e.target.closest('[data-bdel]')) return;
+                        const btns = items.filter((r, i) => cks[i] && cks[i].checked).map(r => r.querySelector('.mini.del')).filter(Boolean);
+                        if (!btns.length || !confirm(pt('conf') + ' (' + btns.length + ')')) return;
+                        bulkDelete(btns);
+                        if (bar.isConnected) { cks.forEach(c => { c.checked = false; }); sync(); }
+                    };
+                    apply();
+                }
                 function enhanceTables() {
-                    document.querySelectorAll('#tbl .tw > table').forEach(tb => {
+                    const jobs = [];
+                    document.querySelectorAll('#tbl .tw > table, #rep .tw > table').forEach(tb => {
                         if (tb.dataset.enh || !tb.tBodies[0] || !tb.tHead) return;
                         const rows = [...tb.tBodies[0].rows]; if (!rows.length) return;
-                        tb.dataset.enh = '1';
-                        const key = location.hash || '#dash', st = PG[key] || (PG[key] = { p: 1, n: 10 });
-                        const canDel = rows.some(r => r.querySelector('.mini.del'));
-                        tb.tHead.rows[0].insertAdjacentHTML('afterbegin', '<th class="ck"><input type="checkbox" data-pgall title="' + pt('all') + '"></th>');
-                        rows.forEach(r => r.insertAdjacentHTML('afterbegin', '<td class="ck"><input type="checkbox" data-pgrow></td>'));
-                        const wrap = tb.closest('.tw'), bar = document.createElement('div'), pager = document.createElement('div');
-                        bar.className = 'bulk'; bar.hidden = true; pager.className = 'pager';
-                        wrap.before(bar); wrap.after(pager);
-                        const all = tb.querySelector('[data-pgall]'), cks = rows.map(r => r.querySelector('[data-pgrow]'));
-                        const pageRows = () => rows.filter(r => !r.hidden);
-                        function sync() {
-                            const n = cks.filter(c => c.checked).length, pr = pageRows().map(r => r.querySelector('[data-pgrow]'));
-                            all.checked = pr.length > 0 && pr.every(c => c.checked);
-                            all.indeterminate = !all.checked && pr.some(c => c.checked);
-                            rows.forEach((r, i) => r.classList.toggle('picked', cks[i].checked));
-                            bar.hidden = !n;
-                            bar.innerHTML = '<b>' + n + '</b> ' + pt('sel') + (canDel ? ' <button type="button" class="mini del" data-bdel>' + pt('del') + '</button>' : '') + ' <button type="button" class="mini" data-bclr>' + pt('clr') + '</button>';
-                        }
-                        function apply() {
-                            const tot = rows.length, pages = Math.max(1, Math.ceil(tot / st.n)); st.p = Math.min(Math.max(1, st.p), pages);
-                            rows.forEach((r, i) => { r.hidden = !(i >= (st.p - 1) * st.n && i < st.p * st.n); });
-                            let nums = [];
-                            for (let i = 1; i <= pages; i++) if (i === 1 || i === pages || Math.abs(i - st.p) <= 1) nums.push(i); else if (nums[nums.length - 1] !== '…') nums.push('…');
-                            pager.innerHTML = '<span class="pinfo">' + pt('tot') + ': <b>' + tot + '</b> · ' + pt('pg') + ' ' + st.p + ' ' + pt('of') + ' ' + pages + '</span>' +
-                                '<div class="pnav"><button type="button" class="pb" data-pg="' + (st.p - 1) + '" ' + (st.p <= 1 ? 'disabled' : '') + '>' + pt('prev') + '</button>' +
-                                nums.map(i => i === '…' ? '<span class="pdots">…</span>' : '<button type="button" class="pb' + (i === st.p ? ' on' : '') + '" data-pg="' + i + '">' + i + '</button>').join('') +
-                                '<button type="button" class="pb" data-pg="' + (st.p + 1) + '" ' + (st.p >= pages ? 'disabled' : '') + '>' + pt('next') + '</button></div>' +
-                                '<label class="psz">' + pt('per') + ' <select data-pgsize>' + [10, 25, 50, 100].map(n => '<option ' + (n === st.n ? 'selected' : '') + '>' + n + '</option>').join('') + '</select></label>';
-                            pager.hidden = tot <= 10 && st.n === 10;
-                            sync();
-                        }
-                        all.onchange = () => { pageRows().forEach(r => { r.querySelector('[data-pgrow]').checked = all.checked; }); sync(); };
-                        cks.forEach(c => { c.onchange = sync; });
-                        pager.onclick = e => { const b = e.target.closest('[data-pg]'); if (b && !b.disabled) { st.p = +b.dataset.pg; apply(); } };
-                        pager.onchange = e => { if (e.target.matches('[data-pgsize]')) { st.n = +e.target.value; st.p = 1; apply(); } };
-                        bar.onclick = e => {
-                            if (e.target.closest('[data-bclr]')) { cks.forEach(c => { c.checked = false; }); sync(); return; }
-                            if (!e.target.closest('[data-bdel]')) return;
-                            const items = rows.filter((r, i) => cks[i].checked).map(r => r.querySelector('.mini.del')).filter(Boolean).map(b => ({ id: b.dataset.id, m: b.dataset.m }));
-                            if (!items.length || !confirm(pt('conf') + ' (' + items.length + ')')) return;
-                            const oc = window.confirm; window.confirm = () => true;
-                            try { items.forEach(x => { const b = document.querySelector('#tbl .mini.del[data-id="' + CSS.escape(x.id) + '"]' + (x.m ? '[data-m="' + x.m + '"]' : '')); if (b) b.click(); }); } finally { window.confirm = oc; }
-                        };
-                        apply();
+                        tb.dataset.enh = '1'; jobs.push({ items: rows, tb, wrap: tb.closest('.tw') });
+                    });
+                    const host = document.getElementById('tbl');
+                    if (host) { const cards = [...host.children].filter(x => x.matches('.msg, .slide-card')); if (cards.length && !cards[0].dataset.enh) { cards[0].dataset.enh = '1'; jobs.push({ items: cards, host }); } }
+                    jobs.forEach(setupList);
+                }
+                ['input', 'change'].forEach(ev => document.addEventListener(ev, e => { const x = e.target; if (x.dataset && (x.dataset.q || x.dataset.rp)) { const k = pgKey(null) + (x.dataset.rp ? ':rep' : ''); if (PG[pgKey(null)]) PG[pgKey(null)].p = 1; if (PG[k]) PG[k].p = 1; } }, true));
+                const FLC = { pc: 'fl_cat', ps: 'fl_stock', pv: 'fl_vis' };
+                function enhanceFilters() {
+                    document.querySelectorAll('#view .filters:not(.enh)').forEach(f => {
+                        const qs = [...f.querySelectorAll('[data-q]')]; if (!qs.length) return;
+                        f.classList.add('enh', 'fpanel'); f.dataset.title = t('fl_title');
+                        f.querySelectorAll('select[data-q]').forEach(sel => {
+                            const k = sel.dataset.q, cap = FLC[k] ? t(FLC[k]) : t('fl_status');
+                            const l = document.createElement('label'); l.className = 'fl'; l.innerHTML = '<span>' + cap + '</span>'; sel.before(l); l.append(sel);
+                        });
+                        const b = document.createElement('button'); b.type = 'button'; b.className = 'mini fclear'; b.textContent = '✕ ' + t('fl_clear');
+                        b.onclick = () => { qs.forEach(x => { S[x.dataset.q] = ''; }); render(); };
+                        f.append(b);
                     });
                 }
-                ['input', 'change'].forEach(ev => document.addEventListener(ev, e => { const x = e.target; if (x.dataset && x.dataset.q && PG[location.hash]) PG[location.hash].p = 1; }, true));
-                new MutationObserver(enhanceTables).observe(document.body, { childList: true, subtree: true });
+                new MutationObserver(() => { enhanceTables(); enhanceFilters(); }).observe(document.body, { childList: true, subtree: true });
+
+
+                /* ---------- Backend (FastAPI) sync: products + categories ---------- */
+                var API_BASE = (localStorage.getItem('boda_api') || 'http://127.0.0.1:8000').replace(/\/$/, '');
+                var SRV = { p: {}, c: {} }, syncChain = Promise.resolve();
+                function apiOn() { return !!sessionStorage.getItem('boda_token'); }
+                async function api(path, opt) {
+                    opt = opt || {}; const h = {}, tk = sessionStorage.getItem('boda_token'); let body = opt.body;
+                    if (tk) h.Authorization = 'Bearer ' + tk;
+                    if (opt.json !== undefined) { h['Content-Type'] = 'application/json'; body = JSON.stringify(opt.json); }
+                    let r; try { r = await fetch(API_BASE + path, { method: opt.method || 'GET', headers: h, body }); } catch (e) { throw new Error('NETWORK'); }
+                    if (r.status === 401 && tk) { sessionStorage.removeItem('boda_token'); sessionStorage.removeItem('boda_admin'); gate(); throw new Error('SESSION'); }
+                    const d = await r.json().catch(() => ({}));
+                    if (!r.ok) throw new Error(typeof d.detail === 'string' ? d.detail : JSON.stringify(d.detail || r.status));
+                    return d;
+                }
+                function normP(p) {
+                    const arr = x => Array.isArray(x) ? x.map(String) : (x ? String(x).split(/\n/).map(a => a.trim()).filter(Boolean) : []);
+                    return { name: String(p.name || ''), cat: String(p.cat || ''), sub: String(p.sub || ''), price: +p.price || 0, old: +p.old || 0, qty: p.qty === null || p.qty === undefined || p.qty === '' ? null : Math.max(0, parseInt(p.qty, 10) || 0), brand: String(p.brand || ''), warranty: String(p.warranty || ''), options: arr(p.options), img: String(p.img || ''), gallery: arr(p.gallery), desc: String(p.desc || ''), long: String(p.long || ''), features: arr(p.features), badge: String(p.badge || ''), stock: p.stock !== false, hidden: !!p.hidden };
+                }
+                const normC = c => ({ name: String(c.name), icon: String(c.icon || ''), shop: String(c.shop || ''), desc: String(c.desc || ''), long: String(c.long || ''), subs: (c.subs || []).map(String) });
+                async function loadFromApi() {
+                    let P = [], pg = 1, pages = 1;
+                    do { const r = await api('/api/admin/products?limit=200&page=' + pg); P = P.concat(r.items); pages = r.pages; pg++; } while (pg <= pages);
+                    const C = await api('/api/categories');
+                    SRV.p = {}; P.forEach(p => { SRV.p[p.id] = normP(p); }); SRV.c = {}; C.forEach(c => { SRV.c[c.name] = normC(c); });
+                    const base = BODA_PRODUCTS.map(p => p.id), edits = {}, added = [];
+                    P.forEach(p => { if (base.includes(p.id)) edits[p.id] = p; else added.push(p); });
+                    localStorage.setItem(K.pa, JSON.stringify({ edits, added, deleted: base.filter(id => !SRV.p[id]) }));
+                    localStorage.setItem(K.cats, JSON.stringify(C));
+                }
+                async function apiLogin(u, p) {
+                    const d = await api('/api/auth/login', { method: 'POST', json: { username: u, password: p } });
+                    sessionStorage.setItem('boda_token', d.token);
+                    await loadFromApi();
+                    sessionStorage.setItem('boda_admin', '1'); sessionStorage.setItem('boda_admin_user', d.username); log('log_login'); gate();
+                }
+                async function syncAll() {
+                    const cm = {}; CATS().forEach(c => { cm[c.name] = normC(c); });
+                    for (const n in cm) {
+                        if (!SRV.c[n]) { await api('/api/admin/categories', { method: 'POST', json: cm[n] }); SRV.c[n] = cm[n]; }
+                        else if (JSON.stringify(SRV.c[n]) !== JSON.stringify(cm[n])) { await api('/api/admin/categories/' + encodeURIComponent(n), { method: 'PUT', json: cm[n] }); SRV.c[n] = cm[n]; }
+                    }
+                    const cur = {}; catalog().forEach(p => { cur[p.id] = normP(p); });
+                    for (const id in SRV.p) if (!cur[id]) { await api('/api/admin/products/' + encodeURIComponent(id), { method: 'DELETE' }); delete SRV.p[id]; }
+                    for (const id in cur) {
+                        if (!SRV.p[id]) { await api('/api/admin/products', { method: 'POST', json: { id, ...cur[id] } }); SRV.p[id] = cur[id]; }
+                        else if (JSON.stringify(SRV.p[id]) !== JSON.stringify(cur[id])) { await api('/api/admin/products/' + encodeURIComponent(id), { method: 'PUT', json: cur[id] }); SRV.p[id] = cur[id]; }
+                    }
+                    for (const n in SRV.c) if (!cm[n]) { await api('/api/admin/categories/' + encodeURIComponent(n), { method: 'DELETE' }); delete SRV.c[n]; }
+                }
+                function queueSync() {
+                    syncChain = syncChain.then(syncAll).then(() => toast(t('saved'))).catch(async e => {
+                        if (e.message === 'SESSION') return;
+                        toast('⚠ ' + (e.message === 'NETWORK' ? 'السيرفر مش متاح — التعديل ماتحفظش' : e.message));
+                        try { await loadFromApi(); render(); } catch (_) { }
+                    });
+                }
 
                 /* ---------- Router ---------- */
                 const NAV = [['dash', '📊', dash], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
@@ -7976,7 +8110,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     per: d => { S.per = d.p; render(); },
                     ctab: d => { S.ctab = d.k; render(); },
                     alerts: () => { const A = alertsList(); open(`<h3>🔔 ${t('alerts')}</h3>${A.length ? A.map(a => `<a class="alrow" href="#${a[0]}" data-act="close"><span>${a[1]} ${a[2]}</span><b>${a[3]}</b></a>`).join('') : `<p class="empty">${t('no_alerts')}</p>`}<div class="bar"><button class="btn ghost" data-act="close">${t('close')}</button></div>`); },
-                    logout: () => { sessionStorage.removeItem('boda_admin'); sessionStorage.removeItem('boda_admin_user'); gate(); },
+                    logout: () => { sessionStorage.removeItem('boda_token'); sessionStorage.removeItem('boda_admin'); sessionStorage.removeItem('boda_admin_user'); gate(); },
                     /* hero */
                     hadd: () => open(hform(-1)), hedit: d => open(hform(+d.i)),
                     hdel: d => { if (!confirm(t('h_confirm_del'))) return; const h = HERO(); h.splice(+d.i, 1); wr(K.hero, h); render(); toast(t('deleted')); },
@@ -8045,11 +8179,11 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 });
                 document.addEventListener('input', e => { const x = e.target; if (x.dataset.q) { S[x.dataset.q] = x.value; refresh(x.dataset.v); } });
                 function downscale(file, cb) {
-                    const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const m = 800, k = Math.min(1, m / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); cb(c.toDataURL('image/jpeg', .82)); }; im.src = r.result; }; r.readAsDataURL(file);
+                    const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const m = 800, k = Math.min(1, m / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); if (apiOn()) { c.toBlob(b => { const fd = new FormData(); fd.append('file', b, 'img.jpg'); api('/api/admin/upload', { method: 'POST', body: fd }).then(d => cb(d.url)).catch(e => toast('⚠ ' + e.message)); }, 'image/jpeg', .85); } else cb(c.toDataURL('image/jpeg', .82)); }; im.src = r.result; }; r.readAsDataURL(file);
                 }
                 document.addEventListener('change', e => {
                     const x = e.target, d = x.dataset;
-                    if (x.matches('[data-q]')) { S[d.q] = x.value; refresh(d.v); return; }
+                    if (x.matches('[data-q]')) { if (x.tagName !== 'SELECT') return; S[d.q] = x.value; refresh(d.v); return; }
                     if (x.matches('[data-rp]')) { S.rp[d.rp] = x.value; $('#rep').innerHTML = repBody(); return; }
                     if (x.name === 'cat' && x.form && x.form.id === 'pf') { fillSubs(x.form); return; }
                     if (d.up && x.files[0]) { const f = x.form; downscale(x.files[0], url => { const el = f.elements[d.up]; if (d.up === 'gallery') el.value = (el.value ? el.value + '\n' : '') + url; else { el.value = url; setPrev(f, d.up, url); } }); x.value = ''; return; }
@@ -8074,7 +8208,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 });
                 document.addEventListener('submit', e => {
                     const f = e.target; e.preventDefault(); const err = f.querySelector('.err'), v = n => f.elements[n].value.trim();
-                    if (f.id === 'lf') { if (tryLogin(v('u'), f.elements.p.value)) { sessionStorage.setItem('boda_admin', '1'); sessionStorage.setItem('boda_admin_user', v('u')); log('log_login'); gate(); } else $('#lerr').textContent = t('login_err'); return; }
+                    if (f.id === 'lf') { const lb = f.querySelector('button'); lb.disabled = true; apiLogin(v('u'), f.elements.p.value).catch(e => { sessionStorage.removeItem('boda_token'); $('#lerr').textContent = e.message === 'NETWORK' ? 'مش قادر أوصل للسيرفر: ' + API_BASE : t('login_err'); }).finally(() => { lb.disabled = false; }); return; }
                     if (f.id === 'hf') {
                         const i = +f.dataset.i; if (!v('title')) { err.textContent = t('h_err'); return; }
                         const rec = { badge: v('badge'), title: v('title'), text: v('text'), b1: v('b1'), l1: v('l1'), b2: v('b2'), l2: v('l2'), emojis: v('emojis'), img: v('img') };
@@ -8142,6 +8276,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 });
                 applyLang();
                 gate();
+                if (apiOn()) loadFromApi().then(render).catch(() => { });
             })();
         </script>
     </template>
