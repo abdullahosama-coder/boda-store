@@ -664,7 +664,7 @@ Jewelry || مجوهرات || Bijoux || Schmuck
         return s;
     }
     function doText(n) {
-        if (SKIP.test(n.parentNode.nodeName) || (n.parentNode.closest && n.parentNode.closest('.no-i18n'))) return;
+        if (!n.parentNode || SKIP.test(n.parentNode.nodeName) || (n.parentNode.closest && n.parentNode.closest('.no-i18n'))) return;
         var cur = n.nodeValue, rec = TEXT.get(n), orig = (rec && cur === rec.t) ? rec.o : cur;
         if (!rec && !/[A-Za-z]/.test(orig)) return;
         var out = orig, r = lang === 'en' ? null : tr(orig, lang);
