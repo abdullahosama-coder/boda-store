@@ -6227,7 +6227,7 @@
                 font-size: .88rem;
                 margin-bottom: 14px
             }
-        
+
             /* ===== Admin v2: topbar, language flags, switches, dark mode, charts, tabs ===== */
             [data-theme="dark"] {
                 --paper: #0b1220;
@@ -6761,24 +6761,26 @@
         <input type="file" id="file" accept=".json" hidden>
 
         <script>
-(function () {
-    // ⚠ بيانات الدخول الافتراضية مكتوبة هنا (حماية أولية فقط). غيّر كلمة المرور من الإعدادات، ولما تنشر الموقع فعليًا لازم تحمي اللوحة من السيرفر.
-    const ADMIN = { user: 'admin', pass: 'Boda@2026' };
-    const K = { orders: 'boda_orders', acc: 'boda_accounts', msgs: 'boda_messages', news: 'boda_newsletter', cats: 'boda_categories', pa: 'boda_admin_products', notifs: 'boda_notifs', hero: 'boda_hero', site: 'boda_site',
-        articles: 'boda_news', offers: 'boda_offers', ads: 'boda_ads', comp: 'boda_complaints', warn: 'boda_warnings', govs: 'boda_govs', users: 'boda_admin_users', ustat: 'boda_cust_status', nlog: 'boda_notif_log', log: 'boda_admin_log', apw: 'boda_admin_pw', lang: 'boda_admin_lang', theme: 'boda_admin_theme' };
-    const $ = (s, r = document) => r.querySelector(s);
-    const rd = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
-    const wr = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast(t('quota')); } };
-    const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-    const money = n => '$' + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
+            (function () {
+                // ⚠ بيانات الدخول الافتراضية مكتوبة هنا (حماية أولية فقط). غيّر كلمة المرور من الإعدادات، ولما تنشر الموقع فعليًا لازم تحمي اللوحة من السيرفر.
+                const ADMIN = { user: 'admin', pass: 'Boda@2026' };
+                const K = {
+                    orders: 'boda_orders', acc: 'boda_accounts', msgs: 'boda_messages', news: 'boda_newsletter', cats: 'boda_categories', pa: 'boda_admin_products', notifs: 'boda_notifs', hero: 'boda_hero', site: 'boda_site',
+                    articles: 'boda_news', offers: 'boda_offers', ads: 'boda_ads', comp: 'boda_complaints', warn: 'boda_warnings', govs: 'boda_govs', users: 'boda_admin_users', ustat: 'boda_cust_status', nlog: 'boda_notif_log', log: 'boda_admin_log', apw: 'boda_admin_pw', lang: 'boda_admin_lang', theme: 'boda_admin_theme'
+                };
+                const $ = (s, r = document) => r.querySelector(s);
+                const rd = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
+                const wr = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast(t('quota')); } };
+                const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+                const money = n => '$' + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
 
-    /* ---------- i18n ---------- */
-    const LANGS = { ar: { loc: 'ar-EG', dir: 'rtl', name: 'العربية' }, en: { loc: 'en-US', dir: 'ltr', name: 'English' }, fr: { loc: 'fr-FR', dir: 'ltr', name: 'Français' }, de: { loc: 'de-DE', dir: 'ltr', name: 'Deutsch' } };
-    const LK = ['ar', 'en', 'fr', 'de'];
-    let LG = localStorage.getItem(K.lang); if (!LANGS[LG]) LG = 'ar';
-    let THEME = localStorage.getItem(K.theme) === 'dark' ? 'dark' : 'light';
-    const T = {};
-    `
+                /* ---------- i18n ---------- */
+                const LANGS = { ar: { loc: 'ar-EG', dir: 'rtl', name: 'العربية' }, en: { loc: 'en-US', dir: 'ltr', name: 'English' }, fr: { loc: 'fr-FR', dir: 'ltr', name: 'Français' }, de: { loc: 'de-DE', dir: 'ltr', name: 'Deutsch' } };
+                const LK = ['ar', 'en', 'fr', 'de'];
+                let LG = localStorage.getItem(K.lang); if (!LANGS[LG]) LG = 'ar';
+                let THEME = localStorage.getItem(K.theme) === 'dark' ? 'dark' : 'light';
+                const T = {};
+                `
 title || لوحة تحكم بودا ستور || Boda Store Admin || Administration Boda Store || Boda Store Verwaltung
 panel || لوحة التحكم || Control panel || Panneau de contrôle || Kontrollzentrum
 login_t || تسجيل دخول الأدمن || Admin sign in || Connexion administrateur || Admin-Anmeldung
@@ -6939,6 +6941,7 @@ c_desc || وصف قصير (الصفحة الرئيسية) || Short description (
 c_long || وصف طويل (صفحة الأقسام) || Long description || Description longue || Langbeschreibung
 c_subs || الأقسام الفرعية (واحد في كل سطر أو بفاصلة) || Sub-categories (one per line or comma separated) || Sous-catégories || Unterkategorien
 c_exists || القسم ده موجود بالفعل. || This category already exists. || Catégorie existante. || Kategorie existiert bereits.
+c_last || لازم يفضل قسم واحد على الأقل في المتجر. || At least one category must remain. || Au moins une catégorie doit rester. || Mindestens eine Kategorie muss bleiben.
 c_hasprod || القسم ده فيه منتجات. انقل المنتجات أو احذفها الأول. || This category has products. Move or delete them first. || Cette catégorie contient des produits. || Kategorie enthält Produkte.
 c_note || لو غيّرت اسم قسم فرعي، المنتجات القديمة هتفضل على الاسم القديم لحد ما تعدلها. || If you rename a sub-category, existing products keep the old name until edited. || Renommer une sous-catégorie ne modifie pas les produits existants. || Beim Umbenennen behalten Produkte den alten Namen.
 n_cust_sub || الحسابات اللي اتسجلت من المتجر. || Accounts registered from the store. || Comptes créés depuis la boutique. || Im Shop registrierte Konten.
@@ -7146,100 +7149,100 @@ restore_conf || هيتم استبدال بيانات المتجر الحالية
 restore_ok || تم الاسترجاع || Restored || Restauré || Wiederhergestellt
 restore_bad || الملف مش صالح. || Invalid file. || Fichier invalide. || Ungültige Datei.
 `.trim().split('\n').forEach(l => { const p = l.split('||').map(s => s.trim()); T[p[0]] = p.slice(1); });
-    const t = k => { if (!k) return ''; const a = T[k]; if (!a) return k; return a[LK.indexOf(LG)] || a[1] || a[0] || k; };
-    const loc = () => LANGS[LG].loc;
-    const when = x => new Date(x).toLocaleString(loc(), { dateStyle: 'medium', timeStyle: 'short' });
-    const dfmt = s => s ? new Date(s).toLocaleDateString(loc(), { dateStyle: 'medium' }) : '—';
-    const today = () => new Date().toISOString().slice(0, 10);
-    const FLAG = {
-        ar: '<svg viewBox="0 0 30 20"><rect width="30" height="7" fill="#ce1126"/><rect y="7" width="30" height="6" fill="#fff"/><rect y="13" width="30" height="7" fill="#000"/><path d="M15 8l1.3 3.8h-2.6z" fill="#c09300"/></svg>',
-        en: '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#c8102e" stroke-width="3.4"/></svg>',
-        fr: '<svg viewBox="0 0 30 20"><rect width="10" height="20" fill="#0055a4"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ef4135"/></svg>',
-        de: '<svg viewBox="0 0 30 20"><rect width="30" height="7" fill="#000"/><rect y="7" width="30" height="6" fill="#dd0000"/><rect y="13" width="30" height="7" fill="#ffce00"/></svg>'
-    };
-    const fl = k => `<span class="flag">${FLAG[k]}</span>`;
-    const sw = (type, at, on) => `<span class="sw"><input type="checkbox" data-chg="${type}" ${Object.keys(at || {}).map(a => `data-${a}="${esc(at[a])}"`).join(' ')} ${on ? 'checked' : ''}><i></i></span>`;
-    const tools = () => `<div class="tools"><div class="lang"><button type="button" class="lbtn" data-act="lmenu" aria-label="Language">${fl(LG)}<span>${LG.toUpperCase()}</span><em>▾</em></button><div class="lmenu" hidden>${LK.map(k => `<button type="button" data-act="lang" data-l="${k}" class="${k === LG ? 'on' : ''}">${fl(k)} ${LANGS[k].name}</button>`).join('')}</div></div><label class="tsw" title="${esc(t('dark'))}"><span>☀️</span><span class="sw"><input type="checkbox" data-chg="theme" ${THEME === 'dark' ? 'checked' : ''}><i></i></span><span>🌙</span></label></div>`;
+                const t = k => { if (!k) return ''; const a = T[k]; if (!a) return k; return a[LK.indexOf(LG)] || a[1] || a[0] || k; };
+                const loc = () => LANGS[LG].loc;
+                const when = x => new Date(x).toLocaleString(loc(), { dateStyle: 'medium', timeStyle: 'short' });
+                const dfmt = s => s ? new Date(s).toLocaleDateString(loc(), { dateStyle: 'medium' }) : '—';
+                const today = () => new Date().toISOString().slice(0, 10);
+                const FLAG = {
+                    ar: '<svg viewBox="0 0 30 20"><rect width="30" height="7" fill="#ce1126"/><rect y="7" width="30" height="6" fill="#fff"/><rect y="13" width="30" height="7" fill="#000"/><path d="M15 8l1.3 3.8h-2.6z" fill="#c09300"/></svg>',
+                    en: '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#c8102e" stroke-width="3.4"/></svg>',
+                    fr: '<svg viewBox="0 0 30 20"><rect width="10" height="20" fill="#0055a4"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ef4135"/></svg>',
+                    de: '<svg viewBox="0 0 30 20"><rect width="30" height="7" fill="#000"/><rect y="7" width="30" height="6" fill="#dd0000"/><rect y="13" width="30" height="7" fill="#ffce00"/></svg>'
+                };
+                const fl = k => `<span class="flag">${FLAG[k]}</span>`;
+                const sw = (type, at, on) => `<span class="sw"><input type="checkbox" data-chg="${type}" ${Object.keys(at || {}).map(a => `data-${a}="${esc(at[a])}"`).join(' ')} ${on ? 'checked' : ''}><i></i></span>`;
+                const tools = () => `<div class="tools"><div class="lang"><button type="button" class="lbtn" data-act="lmenu" aria-label="Language">${fl(LG)}<span>${LG.toUpperCase()}</span><em>▾</em></button><div class="lmenu" hidden>${LK.map(k => `<button type="button" data-act="lang" data-l="${k}" class="${k === LG ? 'on' : ''}">${fl(k)} ${LANGS[k].name}</button>`).join('')}</div></div><label class="tsw" title="${esc(t('dark'))}"><span>☀️</span><span class="sw"><input type="checkbox" data-chg="theme" ${THEME === 'dark' ? 'checked' : ''}><i></i></span><span>🌙</span></label></div>`;
 
-    /* ---------- State & data helpers ---------- */
-    const S = { per: 'week', ctab: 'comp', rp: null };
-    const ST = { Pending: 'warn', Processing: 'info', Shipped: 'info', Delivered: 'ok', Cancelled: 'bad' };
-    const STEPS = ['Pending', 'Processing', 'Shipped', 'Delivered'], STEP_MIN = [0, 1, 3, 6];
-    function stOf(o) {
-        if (o.cancelled) return 'Cancelled'; if (o.manual) return o.status;
-        const m = (Date.now() - o.created) / 6e4; let s = 0; STEP_MIN.forEach((x, i) => { if (m >= x) s = i; }); return STEPS[s];
-    }
-    const pill = s => `<span class="pill ${ST[s]}">${t('st_' + s)}</span>`;
-    const orders = () => rd(K.orders, []).map(o => ({ ...o, s: stOf(o) })).sort((a, b) => b.created - a.created);
-    const PA = () => { const d = rd(K.pa, {}); return { edits: d.edits || {}, added: d.added || [], deleted: d.deleted || [] }; };
-    const baseIds = () => BODA_PRODUCTS.map(p => p.id);
-    function catalog() { const a = PA(); return BODA_PRODUCTS.map(p => ({ ...p, ...(a.edits[p.id] || {}) })).concat(a.added).filter(p => !a.deleted.includes(p.id)); }
-    const CATS = () => rd(K.cats, null) || BODA_CATEGORIES_DEFAULT;
-    const SITE = () => {
-        const d = rd(K.site, {}), a = d.announce || {}, c = d.contact || {}, g = d.general || {};
-        return {
-            announce: { show: a.show !== false, text: a.text || '', linkText: a.linkText || '', linkHref: a.linkHref || '' }, contact: { email: c.email || '', phone: c.phone || '', address: c.address || '', hours: c.hours || '' },
-            general: { name: g.name || 'Boda Store', free: g.free ?? 500, low: g.low ?? 5, tax: g.tax ?? 0, maint: !!g.maint, reg: g.reg !== false, guest: g.guest !== false, reviews: g.reviews !== false, mail: g.mail !== false }
-        };
-    };
-    const USERS = () => rd(K.users, []);
-    const ROLES = { super: '*', manager: ['dash', 'orders', 'products', 'cats', 'cust', 'govs', 'news', 'offers', 'ads', 'comp', 'reports', 'notifs', 'msgs', 'hero', 'newsl'], support: ['dash', 'orders', 'cust', 'comp', 'msgs', 'notifs', 'reports'] };
-    const me = () => sessionStorage.getItem('boda_admin_user') || ADMIN.user;
-    const myRole = () => { if (me() === ADMIN.user) return 'super'; const u = USERS().find(x => x.u === me()); return u ? u.role : 'support'; };
-    const can = k => { const r = ROLES[myRole()]; return r === '*' || r.includes(k) || k === 'settings'; };
-    const hash = s => { s = 'boda:' + s; let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0, c; i < s.length; i++) { c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
-    function tryLogin(u, p) {
-        if (u === ADMIN.user) { const o = rd(K.apw, null); return o ? hash(p) === o : p === ADMIN.pass; }
-        const x = USERS().find(a => a.u === u && a.active !== false); return !!x && x.h === hash(p);
-    }
-    const log = (k, a, n) => { const l = rd(K.log, []); l.unshift({ t: Date.now(), u: me(), k, a: a || '', n: n || '' }); wr(K.log, l.slice(0, 60)); };
-    function toast(x) { document.querySelectorAll('.toast').forEach(e => e.remove()); const d = document.createElement('div'); d.className = 'toast'; d.textContent = x; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
-    const thumb = s => s ? `<img class="th" src="${esc(s)}" alt="" onerror="this.style.visibility='hidden'">` : '';
-    const open = html => { const d = $('#dlg'); d.innerHTML = html; if (!d.open) d.showModal(); };
-    const refresh = k => { const e = $('#tbl'); if (e && TBLS[k]) e.innerHTML = TBLS[k](); };
+                /* ---------- State & data helpers ---------- */
+                const S = { per: 'week', ctab: 'comp', rp: null };
+                const ST = { Pending: 'warn', Processing: 'info', Shipped: 'info', Delivered: 'ok', Cancelled: 'bad' };
+                const STEPS = ['Pending', 'Processing', 'Shipped', 'Delivered'], STEP_MIN = [0, 1, 3, 6];
+                function stOf(o) {
+                    if (o.cancelled) return 'Cancelled'; if (o.manual) return o.status;
+                    const m = (Date.now() - o.created) / 6e4; let s = 0; STEP_MIN.forEach((x, i) => { if (m >= x) s = i; }); return STEPS[s];
+                }
+                const pill = s => `<span class="pill ${ST[s]}">${t('st_' + s)}</span>`;
+                const orders = () => rd(K.orders, []).map(o => ({ ...o, s: stOf(o) })).sort((a, b) => b.created - a.created);
+                const PA = () => { const d = rd(K.pa, {}); return { edits: d.edits || {}, added: d.added || [], deleted: d.deleted || [] }; };
+                const baseIds = () => BODA_PRODUCTS.map(p => p.id);
+                function catalog() { const a = PA(); return BODA_PRODUCTS.map(p => ({ ...p, ...(a.edits[p.id] || {}) })).concat(a.added).filter(p => !a.deleted.includes(p.id)); }
+                const CATS = () => { const c = rd(K.cats, null); return Array.isArray(c) && c.length ? c : BODA_CATEGORIES_DEFAULT; };
+                const SITE = () => {
+                    const d = rd(K.site, {}), a = d.announce || {}, c = d.contact || {}, g = d.general || {};
+                    return {
+                        announce: { show: a.show !== false, text: a.text || '', linkText: a.linkText || '', linkHref: a.linkHref || '' }, contact: { email: c.email || '', phone: c.phone || '', address: c.address || '', hours: c.hours || '' },
+                        general: { name: g.name || 'Boda Store', free: g.free ?? 500, low: g.low ?? 5, tax: g.tax ?? 0, maint: !!g.maint, reg: g.reg !== false, guest: g.guest !== false, reviews: g.reviews !== false, mail: g.mail !== false }
+                    };
+                };
+                const USERS = () => rd(K.users, []);
+                const ROLES = { super: '*', manager: ['dash', 'orders', 'products', 'cats', 'cust', 'govs', 'news', 'offers', 'ads', 'comp', 'reports', 'notifs', 'msgs', 'hero', 'newsl'], support: ['dash', 'orders', 'cust', 'comp', 'msgs', 'notifs', 'reports'] };
+                const me = () => sessionStorage.getItem('boda_admin_user') || ADMIN.user;
+                const myRole = () => { if (me() === ADMIN.user) return 'super'; const u = USERS().find(x => x.u === me()); return u ? u.role : 'support'; };
+                const can = k => { const r = ROLES[myRole()]; return r === '*' || r.includes(k) || k === 'settings'; };
+                const hash = s => { s = 'boda:' + s; let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0, c; i < s.length; i++) { c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
+                function tryLogin(u, p) {
+                    if (u === ADMIN.user) { const o = rd(K.apw, null); return o ? hash(p) === o : p === ADMIN.pass; }
+                    const x = USERS().find(a => a.u === u && a.active !== false); return !!x && x.h === hash(p);
+                }
+                const log = (k, a, n) => { const l = rd(K.log, []); l.unshift({ t: Date.now(), u: me(), k, a: a || '', n: n || '' }); wr(K.log, l.slice(0, 60)); };
+                function toast(x) { document.querySelectorAll('.toast').forEach(e => e.remove()); const d = document.createElement('div'); d.className = 'toast'; d.textContent = x; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
+                const thumb = s => s ? `<img class="th" src="${esc(s)}" alt="" onerror="this.style.visibility='hidden'">` : '';
+                const open = html => { const d = $('#dlg'); d.innerHTML = html; if (!d.open) d.showModal(); };
+                const refresh = k => { const e = $('#tbl'); if (e && TBLS[k]) e.innerHTML = TBLS[k](); };
 
-    /* ---------- Dashboard & analytics ---------- */
-    function periodInfo(per) {
-        const now = new Date(), D = 864e5, H = 36e5, d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime(); let b = [], start, end;
-        if (per === 'day') { start = d0; end = d0 + D; for (let i = 0; i < 24; i++) b.push({ f: start + i * H, to: start + (i + 1) * H, l: String(i) }); }
-        else if (per === 'week') { start = d0 - 6 * D; end = d0 + D; for (let i = 0; i < 7; i++) { const f = start + i * D; b.push({ f, to: f + D, l: new Date(f).toLocaleDateString(loc(), { weekday: 'short' }) }); } }
-        else if (per === 'month') { start = d0 - 29 * D; end = d0 + D; for (let i = 0; i < 30; i++) { const f = start + i * D; b.push({ f, to: f + D, l: String(new Date(f).getDate()) }); } }
-        else { for (let i = 11; i >= 0; i--) { const a = new Date(now.getFullYear(), now.getMonth() - i, 1), z = new Date(now.getFullYear(), now.getMonth() - i + 1, 1); b.push({ f: a.getTime(), to: z.getTime(), l: a.toLocaleDateString(loc(), { month: 'short' }) }); } start = b[0].f; end = b[11].to; }
-        return { b, start, end, prev: [start - (end - start), start] };
-    }
-    function chart(vals, labs, fmt, every) {
-        const mx = Math.max(1, ...vals);
-        return `<div class="chart">${vals.map((v, i) => `<div class="col" title="${esc(labs[i] + ': ' + fmt(v))}"><div class="bw"><i style="height:${v ? Math.max(3, v / mx * 100) : 0}%"></i></div><small>${i % every === 0 ? esc(labs[i]) : ''}</small></div>`).join('')}</div>`;
-    }
-    function ordersTbl(list, ro) {
-        return `<div class="tw"><table><thead><tr><th>${t('th_order')}</th><th>${t('th_cust')}</th><th>${t('th_total')}</th><th>${t('th_pay')}</th><th>${t('th_date')}</th><th>${t('th_status')}</th>${ro ? '' : '<th></th>'}</tr></thead><tbody>${list.map(o => `<tr>
+                /* ---------- Dashboard & analytics ---------- */
+                function periodInfo(per) {
+                    const now = new Date(), D = 864e5, H = 36e5, d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime(); let b = [], start, end;
+                    if (per === 'day') { start = d0; end = d0 + D; for (let i = 0; i < 24; i++) b.push({ f: start + i * H, to: start + (i + 1) * H, l: String(i) }); }
+                    else if (per === 'week') { start = d0 - 6 * D; end = d0 + D; for (let i = 0; i < 7; i++) { const f = start + i * D; b.push({ f, to: f + D, l: new Date(f).toLocaleDateString(loc(), { weekday: 'short' }) }); } }
+                    else if (per === 'month') { start = d0 - 29 * D; end = d0 + D; for (let i = 0; i < 30; i++) { const f = start + i * D; b.push({ f, to: f + D, l: String(new Date(f).getDate()) }); } }
+                    else { for (let i = 11; i >= 0; i--) { const a = new Date(now.getFullYear(), now.getMonth() - i, 1), z = new Date(now.getFullYear(), now.getMonth() - i + 1, 1); b.push({ f: a.getTime(), to: z.getTime(), l: a.toLocaleDateString(loc(), { month: 'short' }) }); } start = b[0].f; end = b[11].to; }
+                    return { b, start, end, prev: [start - (end - start), start] };
+                }
+                function chart(vals, labs, fmt, every) {
+                    const mx = Math.max(1, ...vals);
+                    return `<div class="chart">${vals.map((v, i) => `<div class="col" title="${esc(labs[i] + ': ' + fmt(v))}"><div class="bw"><i style="height:${v ? Math.max(3, v / mx * 100) : 0}%"></i></div><small>${i % every === 0 ? esc(labs[i]) : ''}</small></div>`).join('')}</div>`;
+                }
+                function ordersTbl(list, ro) {
+                    return `<div class="tw"><table><thead><tr><th>${t('th_order')}</th><th>${t('th_cust')}</th><th>${t('th_total')}</th><th>${t('th_pay')}</th><th>${t('th_date')}</th><th>${t('th_status')}</th>${ro ? '' : '<th></th>'}</tr></thead><tbody>${list.map(o => `<tr>
 <td><b>${esc(o.id)}</b></td><td>${esc(o.ship?.name)}<br><small>${esc(o.ship?.phone)}</small></td><td>${money(o.total)}</td><td>${esc(o.payment)}</td><td>${when(o.created)}</td>
 <td>${ro ? pill(o.s) : `<select data-chg="ost" data-id="${esc(o.id)}">${Object.keys(ST).map(k => `<option value="${k}" ${k === o.s ? 'selected' : ''}>${t('st_' + k)}</option>`).join('')}</select>`}</td>
 ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${esc(o.id)}">${t('details')}</button><button class="mini del" data-act="odel" data-id="${esc(o.id)}">${t('del')}</button></td>`}</tr>`).join('')}</tbody></table></div>`;
-    }
-    function alertsList() {
-        const o = orders(), low = +SITE().general.low, cat = catalog(), A = [];
-        const add = (h, ic, k, n) => { if (n) A.push([h, ic, t(k), n]); };
-        add('orders', '📦', 'al_pend', o.filter(x => x.s === 'Pending').length);
-        add('msgs', '✉️', 'al_msgs', rd(K.msgs, []).filter(m => !m.read).length);
-        add('comp', '⚠️', 'al_comp', rd(K.comp, []).filter(c => c.status !== 'resolved').length);
-        add('comp', '🚨', 'al_warn', rd(K.warn, []).filter(w => w.active !== false).length);
-        add('products', '🚫', 'al_out', cat.filter(p => p.stock === false).length);
-        add('products', '📉', 'al_low', cat.filter(p => p.stock !== false && p.qty !== undefined && p.qty !== '' && +p.qty <= low).length);
-        return A;
-    }
-    function dash() {
-        const P = periodInfo(S.per), all = orders(), live = all.filter(o => o.s !== 'Cancelled'), inR = (o, a, z) => o.created >= a && o.created < z;
-        const cur = live.filter(o => inR(o, P.start, P.end)), prv = live.filter(o => inR(o, P.prev[0], P.prev[1])), sum = a => a.reduce((s, o) => s + o.total, 0);
-        const rev = sum(cur), prevRev = sum(prv), avg = cur.length ? rev / cur.length : 0, pavg = prv.length ? prevRev / prv.length : 0;
-        const dl = (a, b) => { const d = b ? Math.round((a - b) / b * 100) : (a ? 100 : 0); return `<em class="${d >= 0 ? 'up' : 'dn'}">${d >= 0 ? '▲' : '▼'} ${Math.abs(d)}%</em> <small>${t('k_vsprev')}</small>`; };
-        const revB = P.b.map(x => sum(cur.filter(o => inR(o, x.f, x.to)))), cntB = P.b.map(x => cur.filter(o => inR(o, x.f, x.to)).length), every = S.per === 'month' ? 5 : (S.per === 'day' ? 3 : 1);
-        const items = cur.reduce((s, o) => s + o.items.reduce((a, i) => a + i.qty, 0), 0), cat = catalog(), cmap = {}; cat.forEach(p => cmap[p.id] = p.cat);
-        const top = {}, bycat = {}; cur.forEach(x => x.items.forEach(i => { top[i.id] = top[i.id] || { n: i.name, q: 0, v: 0 }; top[i.id].q += i.qty; top[i.id].v += i.qty * i.price; const c = cmap[i.id] || '—'; bycat[c] = (bycat[c] || 0) + i.qty * i.price; }));
-        const tops = Object.values(top).sort((a, b) => b.q - a.q).slice(0, 5), cats = Object.entries(bycat).sort((a, b) => b[1] - a[1]).slice(0, 6), cmx = Math.max(1, ...cats.map(c => c[1]));
-        const inP = all.filter(o => inR(o, P.start, P.end)), cnt = k => inP.filter(x => x.s === k).length, smx = Math.max(1, ...Object.keys(ST).map(cnt));
-        const acc = Object.keys(rd(K.acc, {})).length, out = cat.filter(p => p.stock === false).length, A = alertsList(), lg = rd(K.log, []).slice(0, 8);
-        return `<div class="head"><div><h1>${t('n_dash')}</h1><p class="sub">${t('d_sub')}</p></div><div class="tabs">${['day', 'week', 'month', 'year'].map(p => `<button class="tab ${S.per === p ? 'on' : ''}" data-act="per" data-p="${p}">${t('p_' + p)}</button>`).join('')}</div></div>
+                }
+                function alertsList() {
+                    const o = orders(), low = +SITE().general.low, cat = catalog(), A = [];
+                    const add = (h, ic, k, n) => { if (n) A.push([h, ic, t(k), n]); };
+                    add('orders', '📦', 'al_pend', o.filter(x => x.s === 'Pending').length);
+                    add('msgs', '✉️', 'al_msgs', rd(K.msgs, []).filter(m => !m.read).length);
+                    add('comp', '⚠️', 'al_comp', rd(K.comp, []).filter(c => c.status !== 'resolved').length);
+                    add('comp', '🚨', 'al_warn', rd(K.warn, []).filter(w => w.active !== false).length);
+                    add('products', '🚫', 'al_out', cat.filter(p => p.stock === false).length);
+                    add('products', '📉', 'al_low', cat.filter(p => p.stock !== false && p.qty != null && p.qty !== '' && +p.qty <= low).length);
+                    return A;
+                }
+                function dash() {
+                    const P = periodInfo(S.per), all = orders(), live = all.filter(o => o.s !== 'Cancelled'), inR = (o, a, z) => o.created >= a && o.created < z;
+                    const cur = live.filter(o => inR(o, P.start, P.end)), prv = live.filter(o => inR(o, P.prev[0], P.prev[1])), sum = a => a.reduce((s, o) => s + o.total, 0);
+                    const rev = sum(cur), prevRev = sum(prv), avg = cur.length ? rev / cur.length : 0, pavg = prv.length ? prevRev / prv.length : 0;
+                    const dl = (a, b) => { const d = b ? Math.round((a - b) / b * 100) : (a ? 100 : 0); return `<em class="${d >= 0 ? 'up' : 'dn'}">${d >= 0 ? '▲' : '▼'} ${Math.abs(d)}%</em> <small>${t('k_vsprev')}</small>`; };
+                    const revB = P.b.map(x => sum(cur.filter(o => inR(o, x.f, x.to)))), cntB = P.b.map(x => cur.filter(o => inR(o, x.f, x.to)).length), every = S.per === 'month' ? 5 : (S.per === 'day' ? 3 : 1);
+                    const items = cur.reduce((s, o) => s + o.items.reduce((a, i) => a + i.qty, 0), 0), cat = catalog(), cmap = {}; cat.forEach(p => cmap[p.id] = p.cat);
+                    const top = {}, bycat = {}; cur.forEach(x => x.items.forEach(i => { top[i.id] = top[i.id] || { n: i.name, q: 0, v: 0 }; top[i.id].q += i.qty; top[i.id].v += i.qty * i.price; const c = cmap[i.id] || '—'; bycat[c] = (bycat[c] || 0) + i.qty * i.price; }));
+                    const tops = Object.values(top).sort((a, b) => b.q - a.q).slice(0, 5), cats = Object.entries(bycat).sort((a, b) => b[1] - a[1]).slice(0, 6), cmx = Math.max(1, ...cats.map(c => c[1]));
+                    const inP = all.filter(o => inR(o, P.start, P.end)), cnt = k => inP.filter(x => x.s === k).length, smx = Math.max(1, ...Object.keys(ST).map(cnt));
+                    const acc = Object.keys(rd(K.acc, {})).length, out = cat.filter(p => p.stock === false).length, A = alertsList(), lg = rd(K.log, []).slice(0, 8);
+                    return `<div class="head"><div><h1>${t('n_dash')}</h1><p class="sub">${t('d_sub')}</p></div><div class="tabs">${['day', 'week', 'month', 'year'].map(p => `<button class="tab ${S.per === p ? 'on' : ''}" data-act="per" data-p="${p}">${t('p_' + p)}</button>`).join('')}</div></div>
 <div class="kpis">
 <div class="kpi"><span>${t('k_rev')}</span><strong>${money(rev)}</strong>${dl(rev, prevRev)}</div>
 <div class="kpi"><span>${t('k_orders')}</span><strong>${cur.length}</strong>${dl(cur.length, prv.length)}</div>
@@ -7254,39 +7257,39 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
 <div class="box"><h2>${t('alerts')}</h2>${A.length ? A.map(a => `<a class="alrow" href="#${a[0]}"><span>${a[1]} ${a[2]}</span><b>${a[3]}</b></a>`).join('') : `<p class="empty">${t('no_alerts')}</p>`}</div></div>
 <div class="cols"><div class="box"><h2>${t('c_last')}</h2>${all.length ? ordersTbl(all.slice(0, 6), true) : `<p class="empty">${t('no_orders_hint')}</p>`}</div>
 <div class="box"><h2>${t('c_act')}</h2>${lg.length ? lg.map(x => `<div class="logrow"><b>${esc(x.u)}</b> ${t(x.k)}${x.a ? ' ' + t(x.a) : ''}${x.n ? ' — ' + esc(x.n) : ''}<br><small>${when(x.t)}</small></div>`).join('') : `<p class="empty">${t('no_act')}</p>`}</div></div>`;
-    }
+                }
 
-    /* ---------- Orders ---------- */
-    function ordersList() {
-        const q = (S.oq || '').toLowerCase();
-        const l = orders().filter(o => (!S.ost || o.s === S.ost) && (!q || (o.id + ' ' + (o.ship?.name || '') + ' ' + (o.ship?.phone || '')).toLowerCase().includes(q)));
-        return l.length ? ordersTbl(l) : `<div class="empty tw">${t('none')}</div>`;
-    }
-    const ordersView = () => `<div class="head"><div><h1>${t('n_orders')}</h1><p class="sub">${t('o_sub')}</p></div><button class="btn ghost" data-act="csv">${t('exp_csv')}</button></div>
+                /* ---------- Orders ---------- */
+                function ordersList() {
+                    const q = (S.oq || '').toLowerCase();
+                    const l = orders().filter(o => (!S.ost || o.s === S.ost) && (!q || (o.id + ' ' + (o.ship?.name || '') + ' ' + (o.ship?.phone || '')).toLowerCase().includes(q)));
+                    return l.length ? ordersTbl(l) : `<div class="empty tw">${t('none')}</div>`;
+                }
+                const ordersView = () => `<div class="head"><div><h1>${t('n_orders')}</h1><p class="sub">${t('o_sub')}</p></div><button class="btn ghost" data-act="csv">${t('exp_csv')}</button></div>
 <div class="filters"><input type="search" placeholder="${t('o_search')}" value="${esc(S.oq || '')}" data-q="oq" data-v="orders"><select data-q="ost" data-v="orders"><option value="">${t('o_all')}</option>${Object.keys(ST).map(k => `<option value="${k}" ${S.ost === k ? 'selected' : ''}>${t('st_' + k)}</option>`).join('')}</select></div><div id="tbl">${ordersList()}</div>`;
 
-    /* ---------- Products ---------- */
-    function patchProduct(id, f) { const a = PA(), i = a.added.findIndex(p => p.id === id); if (i > -1) a.added[i] = { ...a.added[i], ...f }; else a.edits[id] = { ...(a.edits[id] || {}), ...f }; wr(K.pa, a); }
-    function prodList() {
-        const q = (S.pq || '').toLowerCase(), low = +SITE().general.low;
-        const l = catalog().filter(p => (!S.pc || p.cat === S.pc) && (!q || (p.name + p.id + (p.brand || '')).toLowerCase().includes(q)));
-        return l.length ? `<div class="tw"><table><thead><tr><th></th><th>${t('th_prod')}</th><th>${t('th_cat')}</th><th>${t('th_price')}</th><th>${t('f_qty')}</th><th>${t('f_instock')}</th><th>${t('th_vis')}</th><th></th></tr></thead><tbody>${l.map(p => `<tr>
+                /* ---------- Products ---------- */
+                function patchProduct(id, f) { const a = PA(), i = a.added.findIndex(p => p.id === id); if (i > -1) a.added[i] = { ...a.added[i], ...f }; else a.edits[id] = { ...(a.edits[id] || {}), ...f }; wr(K.pa, a); }
+                function prodList() {
+                    const q = (S.pq || '').toLowerCase(), low = +SITE().general.low;
+                    const l = catalog().filter(p => (!S.pc || p.cat === S.pc) && (!q || (p.name + p.id + (p.brand || '')).toLowerCase().includes(q)));
+                    return l.length ? `<div class="tw"><table><thead><tr><th></th><th>${t('th_prod')}</th><th>${t('th_cat')}</th><th>${t('th_price')}</th><th>${t('f_qty')}</th><th>${t('f_instock')}</th><th>${t('th_vis')}</th><th></th></tr></thead><tbody>${l.map(p => `<tr>
 <td>${thumb(p.img)}</td><td class="wrap"><b>${esc(p.name)}</b><br><small>${esc(p.id)}${p.brand ? ' · ' + esc(p.brand) : ''}</small></td><td>${esc(p.cat)}<br><small>${esc(p.sub)}</small></td>
 <td>${p.old > p.price ? `<del><small>${money(p.old)}</small></del> ` : ''}<b>${money(p.price)}</b></td>
-<td>${p.qty === undefined || p.qty === '' ? '—' : `${p.qty}${+p.qty <= low ? ` <span class="pill warn">${t('low')}</span>` : ''}`}</td>
+<td>${p.qty == null || p.qty === '' ? '—' : `${p.qty}${+p.qty <= low ? ` <span class="pill warn">${t('low')}</span>` : ''}`}</td>
 <td>${sw('pstock', { id: p.id }, p.stock !== false)}</td><td>${sw('pvis', { id: p.id }, !p.hidden)}</td>
 <td class="nw"><button class="mini" data-act="pedit" data-id="${esc(p.id)}">${t('edit')}</button><button class="mini" data-act="pdup" data-id="${esc(p.id)}">${t('p_dup')}</button><button class="mini del" data-act="pdel" data-id="${esc(p.id)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`;
-    }
-    function productsView() {
-        const del = PA().deleted.length;
-        return `<div class="head"><div><h1>${t('n_products')}</h1><p class="sub">${t('p_sub')}</p></div><div>${del ? `<button class="btn ghost" data-act="prestore">${t('p_restore')} (${del})</button> ` : ''}<button class="btn" data-act="padd">+ ${t('p_new')}</button></div></div>
+                }
+                function productsView() {
+                    const del = PA().deleted.length;
+                    return `<div class="head"><div><h1>${t('n_products')}</h1><p class="sub">${t('p_sub')}</p></div><div>${del ? `<button class="btn ghost" data-act="prestore">${t('p_restore')} (${del})</button> ` : ''}<button class="btn" data-act="padd">+ ${t('p_new')}</button></div></div>
 <div class="filters"><input type="search" placeholder="${t('p_search')}" value="${esc(S.pq || '')}" data-q="pq" data-v="products"><select data-q="pc" data-v="products"><option value="">${t('p_allcats')}</option>${CATS().map(c => `<option ${S.pc === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div><div id="tbl">${prodList()}</div>`;
-    }
-    const imgField = (n, v, label) => `<div class="imgf wide"><label>${label}<input name="${n}" value="${esc(v)}" placeholder="https://... / icon/photo.jpg"></label><div class="imgrow"><img src="${esc(v)}" alt="" class="prev" data-prev="${n}" onerror="this.style.visibility='hidden'" onload="this.style.visibility='visible'"><label class="mini up">📁 ${t('upload')}<input type="file" accept="image/*" data-up="${n}" hidden></label></div></div>`;
-    function badgeKind(b) { if (!b) return 'none'; if (b === 'NEW') return 'new'; if (/\d+%/.test(b)) return 'auto'; return 'custom'; }
-    function pform(p) {
-        const cs = CATS(); p = p || { cat: cs[0].name, stock: true }; const bk = badgeKind(p.badge);
-        return `<form id="pf" data-id="${esc(p.id || '')}" data-sub="${esc(p.sub || '')}"><h3>${p.id ? t('p_edit') : t('p_new')}</h3>
+                }
+                const imgField = (n, v, label) => `<div class="imgf wide"><label>${label}<input name="${n}" value="${esc(v)}" placeholder="https://... / icon/photo.jpg"></label><div class="imgrow"><img src="${esc(v)}" alt="" class="prev" data-prev="${n}" onerror="this.style.visibility='hidden'" onload="this.style.visibility='visible'"><label class="mini up">📁 ${t('upload')}<input type="file" accept="image/*" data-up="${n}" hidden></label></div></div>`;
+                function badgeKind(b) { if (!b) return 'none'; if (b === 'NEW') return 'new'; if (/\d+%/.test(b)) return 'auto'; return 'custom'; }
+                function pform(p) {
+                    const cs = CATS(); p = p || { cat: cs[0].name, stock: true }; const bk = badgeKind(p.badge);
+                    return `<form id="pf" data-id="${esc(p.id || '')}" data-sub="${esc(p.sub || '')}"><h3>${p.id ? t('p_edit') : t('p_new')}</h3>
 <div class="g2"><label>${t('f_name')}<input name="name" required value="${esc(p.name)}"></label>
 ${p.id ? `<label>${t('f_code')}<input value="${esc(p.id)}" disabled></label>` : `<label>${t('f_code')}<input name="code" placeholder="PRD001"></label>`}
 <label>${t('f_cat')}<select name="cat">${cs.map(c => `<option ${c.name === p.cat ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
@@ -7308,226 +7311,226 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
 <label class="swl"><span class="sw"><input type="checkbox" name="stock" ${p.stock !== false ? 'checked' : ''}><i></i></span> ${t('f_instock')}</label>
 <label class="swl"><span class="sw"><input type="checkbox" name="visible" ${!p.hidden ? 'checked' : ''}><i></i></span> ${t('f_visible')}</label></div>
 <p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
-    }
-    function fillSubs(f) {
-        const c = CATS().find(x => x.name === f.elements.cat.value), cur = f.dataset.sub;
-        f.elements.sub.innerHTML = '<option value="">—</option>' + (c ? c.subs : []).map(s => `<option ${s === cur ? 'selected' : ''}>${esc(s)}</option>`).join('');
-    }
+                }
+                function fillSubs(f) {
+                    const c = CATS().find(x => x.name === f.elements.cat.value), cur = f.dataset.sub;
+                    f.elements.sub.innerHTML = '<option value="">—</option>' + (c ? c.subs : []).map(s => `<option ${s === cur ? 'selected' : ''}>${esc(s)}</option>`).join('');
+                }
 
-    /* ---------- Categories ---------- */
-    function catsView() {
-        const cs = CATS(), cat = catalog();
-        return `<div class="head"><div><h1>${t('n_cats')}</h1><p class="sub">${t('c_sub')}</p></div><button class="btn" data-act="cadd">+ ${t('c_new')}</button></div>
+                /* ---------- Categories ---------- */
+                function catsView() {
+                    const cs = CATS(), cat = catalog();
+                    return `<div class="head"><div><h1>${t('n_cats')}</h1><p class="sub">${t('c_sub')}</p></div><button class="btn" data-act="cadd">+ ${t('c_new')}</button></div>
 <div class="tw"><table><thead><tr><th>${t('th_cat')}</th><th>${t('th_subs')}</th><th>${t('th_nprod')}</th><th></th></tr></thead><tbody>${cs.map(c => `<tr><td><b>${esc(c.icon || '')} ${esc(c.name)}</b></td>
 <td class="wrap">${c.subs.length ? c.subs.map(s => `<span class="chip">${esc(s)} <small>${cat.filter(p => p.cat === c.name && p.sub === s).length}</small></span>`).join('') : '—'}</td><td>${cat.filter(p => p.cat === c.name).length}</td>
 <td class="nw"><button class="mini" data-act="cedit" data-id="${esc(c.name)}">${t('edit')}</button><button class="mini del" data-act="cdel" data-id="${esc(c.name)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>`;
-    }
-    function cform(c) {
-        c = c || { subs: [] };
-        return `<form id="cf" data-id="${esc(c.name || '')}"><h3>${c.name ? t('c_edit') : t('c_new')}</h3>
+                }
+                function cform(c) {
+                    c = c || { subs: [] };
+                    return `<form id="cf" data-id="${esc(c.name || '')}"><h3>${c.name ? t('c_edit') : t('c_new')}</h3>
 <div class="g2"><label>${t('c_name')}<input name="name" required value="${esc(c.name)}" ${c.name ? 'readonly' : ''}></label><label>${t('c_icon')}<input name="icon" value="${esc(c.icon)}" maxlength="4"></label>
 <label class="wide">${t('c_shop')}<input name="shop" value="${esc(c.shop)}" placeholder="Shop ..."></label>
 <label class="wide">${t('c_desc')}<input name="desc" value="${esc(c.desc)}"></label><label class="wide">${t('c_long')}<input name="long" value="${esc(c.long)}"></label>
 <label class="wide">${t('c_subs')}<textarea name="subs" rows="4">${esc(c.subs.join('\n'))}</textarea></label></div><div class="note">${t('c_note')}</div>
 <p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
-    }
+                }
 
-    /* ---------- Customers ---------- */
-    function custList() {
-        const acc = rd(K.acc, {}), o = orders().filter(x => x.s !== 'Cancelled'), us = rd(K.ustat, {}), q = (S.cq || '').toLowerCase();
-        const rows = Object.keys(acc).map(id => { const mine = o.filter(x => x.user === id); return { a: acc[id], id, n: mine.length, v: mine.reduce((s, x) => s + x.total, 0) }; }).filter(r => !q || (r.a.name + ' ' + r.id).toLowerCase().includes(q));
-        return rows.length ? `<div class="tw"><table><thead><tr><th>${t('th_name')}</th><th>${t('th_contact')}</th><th>${t('th_orders')}</th><th>${t('th_spent')}</th><th>${t('cu_active')}</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${esc(r.a.name)}</b></td><td>${esc(r.id)}</td><td>${r.n}</td><td>${money(r.v)}</td><td>${sw('cublock', { id: r.id }, !(us[r.id] && us[r.id].blocked))}</td>
+                /* ---------- Customers ---------- */
+                function custList() {
+                    const acc = rd(K.acc, {}), o = orders().filter(x => x.s !== 'Cancelled'), us = rd(K.ustat, {}), q = (S.cq || '').toLowerCase();
+                    const rows = Object.keys(acc).map(id => { const mine = o.filter(x => x.user === id); return { a: acc[id], id, n: mine.length, v: mine.reduce((s, x) => s + x.total, 0) }; }).filter(r => !q || (r.a.name + ' ' + r.id).toLowerCase().includes(q));
+                    return rows.length ? `<div class="tw"><table><thead><tr><th>${t('th_name')}</th><th>${t('th_contact')}</th><th>${t('th_orders')}</th><th>${t('th_spent')}</th><th>${t('cu_active')}</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${esc(r.a.name)}</b></td><td>${esc(r.id)}</td><td>${r.n}</td><td>${money(r.v)}</td><td>${sw('cublock', { id: r.id }, !(us[r.id] && us[r.id].blocked))}</td>
 <td class="nw"><button class="mini" data-act="cudet" data-id="${esc(r.id)}">${t('details')}</button><button class="mini del" data-act="cudel" data-id="${esc(r.id)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('cu_none')}</div>`;
-    }
-    function custView() {
-        const news = rd(K.news, []);
-        return `<h1>${t('n_cust')}</h1><p class="sub">${t('n_cust_sub')}</p><div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.cq || '')}" data-q="cq" data-v="cust"></div><div id="tbl">${custList()}</div><div class="note">${t('cu_hint')}</div>
+                }
+                function custView() {
+                    const news = rd(K.news, []);
+                    return `<h1>${t('n_cust')}</h1><p class="sub">${t('n_cust_sub')}</p><div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.cq || '')}" data-q="cq" data-v="cust"></div><div id="tbl">${custList()}</div><div class="note">${t('cu_hint')}</div>
 <div class="box" style="margin-top:14px"><h2>${t('subscribers')} (${news.length})</h2>${news.length ? news.map(e => `<span class="pill info" style="margin:3px">${esc(e)}</span>`).join('') : `<p class="empty">${t('no_subs')}</p>`}</div>`;
-    }
+                }
 
-    /* ---------- Generic CRUD modules ---------- */
-    const O = (...a) => a.map(x => [x, x.replace(/^/, '')]);
-    const runState = r => { if (r.active === false) return ['off', 'bad']; const n = Date.now(), a = r.start ? new Date(r.start).getTime() : 0, z = r.end ? new Date(r.end).getTime() + 864e5 : Infinity; return n < a ? ['scheduled', 'info'] : n >= z ? ['expired', 'warn'] : ['running', 'ok']; };
-    const rs = r => { const x = runState(r); return `<span class="pill ${x[1]}">${t('rs_' + x[0])}</span>`; };
-    const per = r => `${dfmt(r.start)} → ${dfmt(r.end)}`;
-    const PRIO = { low: 'info', med: 'warn', high: 'bad' }, CST = { open: 'bad', progress: 'warn', resolved: 'ok' }, SEV = { info: 'info', warn: 'warn', crit: 'bad' };
-    const MODS = {
-        articles: {
-            k: K.articles, ti: 'm_news', su: 'news_sub', nw: 'news_new', tog: 'active', togL: 'published', def: () => ({ active: true, date: today() }), q: r => r.title + ' ' + r.summary + ' ' + r.tag,
-            fields: [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'tag', l: 'f_tag', ty: 'text' }, { n: 'date', l: 'f_date', ty: 'date' }, { n: 'active', l: 'published', ty: 'sw' }, { n: 'summary', l: 'f_summary', ty: 'area', rows: 2 }, { n: 'body', l: 'f_body', ty: 'area', rows: 6 }, { n: 'img', l: 'f_img', ty: 'img' }],
-            cols: [{ l: '', f: r => thumb(r.img) }, { l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.summary || '').slice(0, 80))}</small>` }, { l: 'f_tag', f: r => esc(r.tag) }, { l: 'f_date', f: r => dfmt(r.date) }]
-        },
-        offers: {
-            k: K.offers, ti: 'm_offers', su: 'off_sub', nw: 'off_new', tog: 'active', def: () => ({ active: true, discount: 10, products: [] }), q: r => r.title + ' ' + r.code,
-            fields: [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'discount', l: 'f_discount', ty: 'num', req: 1 }, { n: 'code', l: 'f_code2', ty: 'text' }, { n: 'active', l: 'active', ty: 'sw' }, { n: 'start', l: 'f_start', ty: 'date' }, { n: 'end', l: 'f_end', ty: 'date' }, { n: 'desc', l: 'f_desc', ty: 'area', rows: 2 }, { n: 'products', l: 'f_products', ty: 'multi', o: () => catalog().map(p => [p.id, p.name + ' (' + p.id + ')']) }],
-            cols: [{ l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.desc || '').slice(0, 70))}</small>` }, { l: 'f_discount', f: r => `<b>${esc(r.discount)}%</b>` }, { l: 'f_code2', f: r => esc(r.code) || '—' }, { l: 'th_period', f: per }, { l: 'f_products', f: r => (r.products || []).length || '—' }, { l: 'th_status', f: rs }]
-        },
-        ads: {
-            k: K.ads, ti: 'm_ads', su: 'ads_sub', nw: 'ads_new', tog: 'active', def: () => ({ active: true, place: 'home' }), q: r => r.title + ' ' + r.link,
-            fields: [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'place', l: 'f_place', ty: 'sel', o: [['header', 'pl_header'], ['home', 'pl_home'], ['sidebar', 'pl_sidebar'], ['popup', 'pl_popup'], ['footer', 'pl_footer']] }, { n: 'link', l: 'f_link', ty: 'text' }, { n: 'active', l: 'active', ty: 'sw' }, { n: 'start', l: 'f_start', ty: 'date' }, { n: 'end', l: 'f_end', ty: 'date' }, { n: 'img', l: 'f_img', ty: 'img' }],
-            cols: [{ l: '', f: r => thumb(r.img) }, { l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc(r.link)}</small>` }, { l: 'f_place', f: r => t('pl_' + r.place) }, { l: 'th_period', f: per }, { l: 'th_status', f: rs }]
-        },
-        comp: {
-            k: K.comp, ti: 'm_comp', su: 'comp_sub', nw: 'comp_new', def: () => ({ prio: 'med', status: 'open' }), q: r => (r.no || '') + r.customer + r.subject + r.contact, flt: { n: 'status', o: [['open', 'cs_open'], ['progress', 'cs_progress'], ['resolved', 'cs_resolved']] },
-            pre: (r, old, list) => { if (!old) r.no = 'C-' + String(list.length + 1).padStart(3, '0'); },
-            fields: [{ n: 'customer', l: 'f_cname', ty: 'text', req: 1 }, { n: 'contact', l: 'f_contact', ty: 'text' }, { n: 'order', l: 'f_orderno', ty: 'text' }, { n: 'subject', l: 'f_subject', ty: 'text', req: 1 }, { n: 'prio', l: 'f_prio', ty: 'sel', o: [['low', 'pr_low'], ['med', 'pr_med'], ['high', 'pr_high']] }, { n: 'status', l: 'th_status', ty: 'sel', o: [['open', 'cs_open'], ['progress', 'cs_progress'], ['resolved', 'cs_resolved']] }, { n: 'msg', l: 'f_msg', ty: 'area', req: 1, rows: 4 }, { n: 'reply', l: 'f_reply', ty: 'area', rows: 3 }],
-            cols: [{ l: '#', f: r => `<b>${esc(r.no || '')}</b>` }, { l: 'th_cust', f: r => `${esc(r.customer)}<br><small>${esc(r.contact)}</small>` }, { l: 'f_subject', w: 1, f: r => `${esc(r.subject)}${r.order ? `<br><small>${esc(r.order)}</small>` : ''}` }, { l: 'f_prio', f: r => `<span class="pill ${PRIO[r.prio]}">${t('pr_' + r.prio)}</span>` }, { l: 'th_status', f: r => `<span class="pill ${CST[r.status]}">${t('cs_' + r.status)}</span>` }, { l: 'f_date', f: r => when(r.created) }]
-        },
-        warn: {
-            k: K.warn, ti: 'm_comp', su: 'comp_sub', nw: 'warn_new', tog: 'active', togL: 'w_active', def: () => ({ kind: 'system', sev: 'warn', active: true }), q: r => r.target + r.msg, flt: { n: 'sev', o: [['info', 'sv_info'], ['warn', 'sv_warn'], ['crit', 'sv_crit']] },
-            fields: [{ n: 'target', l: 'f_target', ty: 'text', req: 1 }, { n: 'kind', l: 'f_kind', ty: 'sel', o: [['fraud', 'k_fraud'], ['payment', 'k_payment'], ['abuse', 'k_abuse'], ['policy', 'k_policy'], ['system', 'k_system']] }, { n: 'sev', l: 'f_sev', ty: 'sel', o: [['info', 'sv_info'], ['warn', 'sv_warn'], ['crit', 'sv_crit']] }, { n: 'active', l: 'w_active', ty: 'sw' }, { n: 'msg', l: 'f_msg', ty: 'area', req: 1, rows: 4 }],
-            cols: [{ l: 'f_target', f: r => `<b>${esc(r.target)}</b>` }, { l: 'f_kind', f: r => t('k_' + r.kind) }, { l: 'f_sev', f: r => `<span class="pill ${SEV[r.sev]}">${t('sv_' + r.sev)}</span>` }, { l: 'f_msg', w: 1, f: r => esc((r.msg || '').slice(0, 120)) }, { l: 'f_date', f: r => when(r.created) }]
-        },
-        users: {
-            k: K.users, ti: 'm_users', su: 'u_sub', nw: 'u_new', tog: 'active', def: () => ({ active: true, role: 'manager' }), q: r => r.name + r.u,
-            val: (r, old, list) => { if (r.u === ADMIN.user || list.some(x => x.u === r.u && (!old || x.id !== old.id))) return 'u_err_dup'; if (!old && r.pw.length < 6) return 'u_err_pass'; if (r.pw && r.pw.length < 6) return 'u_err_pass'; return null; },
-            pre: (r, old) => { if (r.pw) r.h = hash(r.pw); else if (old) r.h = old.h; delete r.pw; },
-            fields: [{ n: 'name', l: 'u_name', ty: 'text', req: 1 }, { n: 'u', l: 'u_user', ty: 'text', req: 1 }, { n: 'pw', l: 'u_pass', ty: 'pass' }, { n: 'role', l: 'u_role', ty: 'sel', o: [['manager', 'role_manager'], ['support', 'role_support'], ['super', 'role_super']] }, { n: 'active', l: 'active', ty: 'sw' }],
-            cols: [{ l: 'th_name', f: r => `<b>${esc(r.name)}</b>` }, { l: 'u_user', f: r => esc(r.u) }, { l: 'u_role', f: r => `<span class="pill info">${t('role_' + r.role)}</span>` }, { l: 'th_date', f: r => dfmt(r.created) }]
-        }
-    };
-    const GL = k => rd(MODS[k].k, []);
-    function fld(x, v) {
-        const L = t(x.l), r = x.req ? ' required' : '';
-        if (x.ty === 'area') return `<label class="wide">${L}<textarea name="${x.n}" rows="${x.rows || 3}"${r}>${esc(v)}</textarea></label>`;
-        if (x.ty === 'sel') return `<label>${L}<select name="${x.n}">${x.o.map(o => `<option value="${o[0]}" ${o[0] === (v ?? x.o[0][0]) ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select></label>`;
-        if (x.ty === 'multi') { const sel = v || []; return `<label class="wide">${L}<select name="${x.n}" multiple size="6">${x.o().map(o => `<option value="${esc(o[0])}" ${sel.includes(o[0]) ? 'selected' : ''}>${esc(o[1])}</option>`).join('')}</select><small>${t('multi_hint')}</small></label>`; }
-        if (x.ty === 'sw') return `<label class="swl"><span class="sw"><input type="checkbox" name="${x.n}" ${v ? 'checked' : ''}><i></i></span> ${L}</label>`;
-        if (x.ty === 'img') return imgField(x.n, v || '', L);
-        const ty = x.ty === 'num' ? 'type="number" step="any" min="0"' : x.ty === 'date' ? 'type="date"' : x.ty === 'pass' ? 'type="password" autocomplete="new-password"' : '';
-        return `<label>${L}<input name="${x.n}" ${ty} value="${esc(v)}"${r}></label>`;
-    }
-    function gForm(k, r) {
-        const m = MODS[k], isNew = !r; r = r || m.def();
-        return `<form id="gf" data-m="${k}" data-id="${esc(r.id || '')}"><h3>${isNew ? t(m.nw) : t('edit')}</h3><div class="g2">${m.fields.map(x => fld(x, r[x.n])).join('')}</div><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
-    }
-    function readForm(m, f) {
-        const r = {}; m.fields.forEach(x => { const e = f.elements[x.n]; if (x.ty === 'sw') r[x.n] = e.checked; else if (x.ty === 'num') r[x.n] = e.value === '' ? '' : +e.value; else if (x.ty === 'multi') r[x.n] = [...e.selectedOptions].map(o => o.value); else r[x.n] = e.value.trim(); }); return r;
-    }
-    function gTable(k) {
-        const m = MODS[k], q = (S['q_' + k] || '').toLowerCase(), fv = S['f_' + k] || '';
-        const l = GL(k).filter(r => (!fv || r[m.flt.n] === fv) && (!q || m.q(r).toLowerCase().includes(q)));
-        if (!l.length) return `<div class="empty tw">${t('none')}</div>`;
-        return `<div class="tw"><table><thead><tr>${m.cols.map(c => `<th>${t(c.l)}</th>`).join('')}${m.tog ? `<th>${t(m.togL || 'active')}</th>` : ''}<th></th></tr></thead><tbody>${l.map(r => `<tr>${m.cols.map(c => `<td${c.w ? ' class="wrap"' : ''}>${c.f(r)}</td>`).join('')}${m.tog ? `<td>${sw('tog', { m: k, id: r.id, f: m.tog }, r[m.tog] !== false && !!r[m.tog])}</td>` : ''}<td class="nw"><button class="mini" data-act="gedit" data-m="${k}" data-id="${r.id}">${t('edit')}</button><button class="mini del" data-act="gdel" data-m="${k}" data-id="${r.id}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>`;
-    }
-    function gFilters(k) {
-        const m = MODS[k];
-        return `<div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S['q_' + k] || '')}" data-q="q_${k}" data-v="${k}">${m.flt ? `<select data-q="f_${k}" data-v="${k}"><option value="">${t('all')}</option>${m.flt.o.map(o => `<option value="${o[0]}" ${S['f_' + k] === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select>` : ''}</div>`;
-    }
-    function gView(k, nohead) {
-        const m = MODS[k];
-        return `${nohead ? '' : `<div class="head"><div><h1>${t(m.ti)}</h1><p class="sub">${t(m.su)}</p></div><button class="btn" data-act="gadd" data-m="${k}">+ ${t(m.nw)}</button></div>`}${gFilters(k)}<div id="tbl">${gTable(k)}</div>`;
-    }
-    function usersView() {
-        return `<div class="head"><div><h1>${t('n_users')}</h1><p class="sub">${t('u_sub')}</p></div><button class="btn" data-act="gadd" data-m="users">+ ${t('u_new')}</button></div>
+                /* ---------- Generic CRUD modules ---------- */
+                const O = (...a) => a.map(x => [x, x.replace(/^/, '')]);
+                const runState = r => { if (r.active === false) return ['off', 'bad']; const n = Date.now(), a = r.start ? new Date(r.start).getTime() : 0, z = r.end ? new Date(r.end).getTime() + 864e5 : Infinity; return n < a ? ['scheduled', 'info'] : n >= z ? ['expired', 'warn'] : ['running', 'ok']; };
+                const rs = r => { const x = runState(r); return `<span class="pill ${x[1]}">${t('rs_' + x[0])}</span>`; };
+                const per = r => `${dfmt(r.start)} → ${dfmt(r.end)}`;
+                const PRIO = { low: 'info', med: 'warn', high: 'bad' }, CST = { open: 'bad', progress: 'warn', resolved: 'ok' }, SEV = { info: 'info', warn: 'warn', crit: 'bad' };
+                const MODS = {
+                    articles: {
+                        k: K.articles, ti: 'm_news', su: 'news_sub', nw: 'news_new', tog: 'active', togL: 'published', def: () => ({ active: true, date: today() }), q: r => r.title + ' ' + r.summary + ' ' + r.tag,
+                        fields: [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'tag', l: 'f_tag', ty: 'text' }, { n: 'date', l: 'f_date', ty: 'date' }, { n: 'active', l: 'published', ty: 'sw' }, { n: 'summary', l: 'f_summary', ty: 'area', rows: 2 }, { n: 'body', l: 'f_body', ty: 'area', rows: 6 }, { n: 'img', l: 'f_img', ty: 'img' }],
+                        cols: [{ l: '', f: r => thumb(r.img) }, { l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.summary || '').slice(0, 80))}</small>` }, { l: 'f_tag', f: r => esc(r.tag) }, { l: 'f_date', f: r => dfmt(r.date) }]
+                    },
+                    offers: {
+                        k: K.offers, ti: 'm_offers', su: 'off_sub', nw: 'off_new', tog: 'active', def: () => ({ active: true, discount: 10, products: [] }), q: r => r.title + ' ' + r.code,
+                        fields: [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'discount', l: 'f_discount', ty: 'num', req: 1 }, { n: 'code', l: 'f_code2', ty: 'text' }, { n: 'active', l: 'active', ty: 'sw' }, { n: 'start', l: 'f_start', ty: 'date' }, { n: 'end', l: 'f_end', ty: 'date' }, { n: 'desc', l: 'f_desc', ty: 'area', rows: 2 }, { n: 'products', l: 'f_products', ty: 'multi', o: () => catalog().map(p => [p.id, p.name + ' (' + p.id + ')']) }],
+                        cols: [{ l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.desc || '').slice(0, 70))}</small>` }, { l: 'f_discount', f: r => `<b>${esc(r.discount)}%</b>` }, { l: 'f_code2', f: r => esc(r.code) || '—' }, { l: 'th_period', f: per }, { l: 'f_products', f: r => (r.products || []).length || '—' }, { l: 'th_status', f: rs }]
+                    },
+                    ads: {
+                        k: K.ads, ti: 'm_ads', su: 'ads_sub', nw: 'ads_new', tog: 'active', def: () => ({ active: true, place: 'home' }), q: r => r.title + ' ' + r.link,
+                        fields: [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'place', l: 'f_place', ty: 'sel', o: [['header', 'pl_header'], ['home', 'pl_home'], ['sidebar', 'pl_sidebar'], ['popup', 'pl_popup'], ['footer', 'pl_footer']] }, { n: 'link', l: 'f_link', ty: 'text' }, { n: 'active', l: 'active', ty: 'sw' }, { n: 'start', l: 'f_start', ty: 'date' }, { n: 'end', l: 'f_end', ty: 'date' }, { n: 'img', l: 'f_img', ty: 'img' }],
+                        cols: [{ l: '', f: r => thumb(r.img) }, { l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc(r.link)}</small>` }, { l: 'f_place', f: r => t('pl_' + r.place) }, { l: 'th_period', f: per }, { l: 'th_status', f: rs }]
+                    },
+                    comp: {
+                        k: K.comp, ti: 'm_comp', su: 'comp_sub', nw: 'comp_new', def: () => ({ prio: 'med', status: 'open' }), q: r => (r.no || '') + r.customer + r.subject + r.contact, flt: { n: 'status', o: [['open', 'cs_open'], ['progress', 'cs_progress'], ['resolved', 'cs_resolved']] },
+                        pre: (r, old, list) => { if (!old) r.no = 'C-' + String(list.length + 1).padStart(3, '0'); },
+                        fields: [{ n: 'customer', l: 'f_cname', ty: 'text', req: 1 }, { n: 'contact', l: 'f_contact', ty: 'text' }, { n: 'order', l: 'f_orderno', ty: 'text' }, { n: 'subject', l: 'f_subject', ty: 'text', req: 1 }, { n: 'prio', l: 'f_prio', ty: 'sel', o: [['low', 'pr_low'], ['med', 'pr_med'], ['high', 'pr_high']] }, { n: 'status', l: 'th_status', ty: 'sel', o: [['open', 'cs_open'], ['progress', 'cs_progress'], ['resolved', 'cs_resolved']] }, { n: 'msg', l: 'f_msg', ty: 'area', req: 1, rows: 4 }, { n: 'reply', l: 'f_reply', ty: 'area', rows: 3 }],
+                        cols: [{ l: '#', f: r => `<b>${esc(r.no || '')}</b>` }, { l: 'th_cust', f: r => `${esc(r.customer)}<br><small>${esc(r.contact)}</small>` }, { l: 'f_subject', w: 1, f: r => `${esc(r.subject)}${r.order ? `<br><small>${esc(r.order)}</small>` : ''}` }, { l: 'f_prio', f: r => `<span class="pill ${PRIO[r.prio]}">${t('pr_' + r.prio)}</span>` }, { l: 'th_status', f: r => `<span class="pill ${CST[r.status]}">${t('cs_' + r.status)}</span>` }, { l: 'f_date', f: r => when(r.created) }]
+                    },
+                    warn: {
+                        k: K.warn, ti: 'm_comp', su: 'comp_sub', nw: 'warn_new', tog: 'active', togL: 'w_active', def: () => ({ kind: 'system', sev: 'warn', active: true }), q: r => r.target + r.msg, flt: { n: 'sev', o: [['info', 'sv_info'], ['warn', 'sv_warn'], ['crit', 'sv_crit']] },
+                        fields: [{ n: 'target', l: 'f_target', ty: 'text', req: 1 }, { n: 'kind', l: 'f_kind', ty: 'sel', o: [['fraud', 'k_fraud'], ['payment', 'k_payment'], ['abuse', 'k_abuse'], ['policy', 'k_policy'], ['system', 'k_system']] }, { n: 'sev', l: 'f_sev', ty: 'sel', o: [['info', 'sv_info'], ['warn', 'sv_warn'], ['crit', 'sv_crit']] }, { n: 'active', l: 'w_active', ty: 'sw' }, { n: 'msg', l: 'f_msg', ty: 'area', req: 1, rows: 4 }],
+                        cols: [{ l: 'f_target', f: r => `<b>${esc(r.target)}</b>` }, { l: 'f_kind', f: r => t('k_' + r.kind) }, { l: 'f_sev', f: r => `<span class="pill ${SEV[r.sev]}">${t('sv_' + r.sev)}</span>` }, { l: 'f_msg', w: 1, f: r => esc((r.msg || '').slice(0, 120)) }, { l: 'f_date', f: r => when(r.created) }]
+                    },
+                    users: {
+                        k: K.users, ti: 'm_users', su: 'u_sub', nw: 'u_new', tog: 'active', def: () => ({ active: true, role: 'manager' }), q: r => r.name + r.u,
+                        val: (r, old, list) => { if (r.u === ADMIN.user || list.some(x => x.u === r.u && (!old || x.id !== old.id))) return 'u_err_dup'; if (!old && r.pw.length < 6) return 'u_err_pass'; if (r.pw && r.pw.length < 6) return 'u_err_pass'; return null; },
+                        pre: (r, old) => { if (r.pw) r.h = hash(r.pw); else if (old) r.h = old.h; delete r.pw; },
+                        fields: [{ n: 'name', l: 'u_name', ty: 'text', req: 1 }, { n: 'u', l: 'u_user', ty: 'text', req: 1 }, { n: 'pw', l: 'u_pass', ty: 'pass' }, { n: 'role', l: 'u_role', ty: 'sel', o: [['manager', 'role_manager'], ['support', 'role_support'], ['super', 'role_super']] }, { n: 'active', l: 'active', ty: 'sw' }],
+                        cols: [{ l: 'th_name', f: r => `<b>${esc(r.name)}</b>` }, { l: 'u_user', f: r => esc(r.u) }, { l: 'u_role', f: r => `<span class="pill info">${t('role_' + r.role)}</span>` }, { l: 'th_date', f: r => dfmt(r.created) }]
+                    }
+                };
+                const GL = k => rd(MODS[k].k, []);
+                function fld(x, v) {
+                    const L = t(x.l), r = x.req ? ' required' : '';
+                    if (x.ty === 'area') return `<label class="wide">${L}<textarea name="${x.n}" rows="${x.rows || 3}"${r}>${esc(v)}</textarea></label>`;
+                    if (x.ty === 'sel') return `<label>${L}<select name="${x.n}">${x.o.map(o => `<option value="${o[0]}" ${o[0] === (v ?? x.o[0][0]) ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select></label>`;
+                    if (x.ty === 'multi') { const sel = v || []; return `<label class="wide">${L}<select name="${x.n}" multiple size="6">${x.o().map(o => `<option value="${esc(o[0])}" ${sel.includes(o[0]) ? 'selected' : ''}>${esc(o[1])}</option>`).join('')}</select><small>${t('multi_hint')}</small></label>`; }
+                    if (x.ty === 'sw') return `<label class="swl"><span class="sw"><input type="checkbox" name="${x.n}" ${v ? 'checked' : ''}><i></i></span> ${L}</label>`;
+                    if (x.ty === 'img') return imgField(x.n, v || '', L);
+                    const ty = x.ty === 'num' ? 'type="number" step="any" min="0"' : x.ty === 'date' ? 'type="date"' : x.ty === 'pass' ? 'type="password" autocomplete="new-password"' : '';
+                    return `<label>${L}<input name="${x.n}" ${ty} value="${esc(v)}"${r}></label>`;
+                }
+                function gForm(k, r) {
+                    const m = MODS[k], isNew = !r; r = r || m.def();
+                    return `<form id="gf" data-m="${k}" data-id="${esc(r.id || '')}"><h3>${isNew ? t(m.nw) : t('edit')}</h3><div class="g2">${m.fields.map(x => fld(x, r[x.n])).join('')}</div><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
+                }
+                function readForm(m, f) {
+                    const r = {}; m.fields.forEach(x => { const e = f.elements[x.n]; if (x.ty === 'sw') r[x.n] = e.checked; else if (x.ty === 'num') r[x.n] = e.value === '' ? '' : +e.value; else if (x.ty === 'multi') r[x.n] = [...e.selectedOptions].map(o => o.value); else r[x.n] = e.value.trim(); }); return r;
+                }
+                function gTable(k) {
+                    const m = MODS[k], q = (S['q_' + k] || '').toLowerCase(), fv = S['f_' + k] || '';
+                    const l = GL(k).filter(r => (!fv || r[m.flt.n] === fv) && (!q || m.q(r).toLowerCase().includes(q)));
+                    if (!l.length) return `<div class="empty tw">${t('none')}</div>`;
+                    return `<div class="tw"><table><thead><tr>${m.cols.map(c => `<th>${t(c.l)}</th>`).join('')}${m.tog ? `<th>${t(m.togL || 'active')}</th>` : ''}<th></th></tr></thead><tbody>${l.map(r => `<tr>${m.cols.map(c => `<td${c.w ? ' class="wrap"' : ''}>${c.f(r)}</td>`).join('')}${m.tog ? `<td>${sw('tog', { m: k, id: r.id, f: m.tog }, r[m.tog] !== false && !!r[m.tog])}</td>` : ''}<td class="nw"><button class="mini" data-act="gedit" data-m="${k}" data-id="${r.id}">${t('edit')}</button><button class="mini del" data-act="gdel" data-m="${k}" data-id="${r.id}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>`;
+                }
+                function gFilters(k) {
+                    const m = MODS[k];
+                    return `<div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S['q_' + k] || '')}" data-q="q_${k}" data-v="${k}">${m.flt ? `<select data-q="f_${k}" data-v="${k}"><option value="">${t('all')}</option>${m.flt.o.map(o => `<option value="${o[0]}" ${S['f_' + k] === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select>` : ''}</div>`;
+                }
+                function gView(k, nohead) {
+                    const m = MODS[k];
+                    return `${nohead ? '' : `<div class="head"><div><h1>${t(m.ti)}</h1><p class="sub">${t(m.su)}</p></div><button class="btn" data-act="gadd" data-m="${k}">+ ${t(m.nw)}</button></div>`}${gFilters(k)}<div id="tbl">${gTable(k)}</div>`;
+                }
+                function usersView() {
+                    return `<div class="head"><div><h1>${t('n_users')}</h1><p class="sub">${t('u_sub')}</p></div><button class="btn" data-act="gadd" data-m="users">+ ${t('u_new')}</button></div>
 <div class="box slim"><b>${esc(ADMIN.user)}</b> <span class="pill ok">${t('role_super')}</span> <span class="pill info">${t('u_builtin')}</span></div>${gFilters('users')}<div id="tbl">${gTable('users')}</div>`;
-    }
-    function compView() {
-        const k = S.ctab, sys = alertsList().filter(a => ['al_out', 'al_low', 'al_pend'].some(x => a[2] === t(x)));
-        return `<div class="head"><div><h1>${t('n_comp')}</h1><p class="sub">${t('comp_sub')}</p></div><button class="btn" data-act="gadd" data-m="${k}">+ ${t(MODS[k].nw)}</button></div>
+                }
+                function compView() {
+                    const k = S.ctab, sys = alertsList().filter(a => ['al_out', 'al_low', 'al_pend'].some(x => a[2] === t(x)));
+                    return `<div class="head"><div><h1>${t('n_comp')}</h1><p class="sub">${t('comp_sub')}</p></div><button class="btn" data-act="gadd" data-m="${k}">+ ${t(MODS[k].nw)}</button></div>
 <div class="tabs" style="margin-bottom:12px">${[['comp', 'tab_comp'], ['warn', 'tab_warn']].map(x => `<button class="tab ${k === x[0] ? 'on' : ''}" data-act="ctab" data-k="${x[0]}">${t(x[1])} <b>${GL(x[0]).filter(r => x[0] === 'comp' ? r.status !== 'resolved' : r.active !== false).length}</b></button>`).join('')}</div>
 ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2>${sys.map(a => `<a class="alrow" href="#${a[0]}"><span>${a[1]} ${a[2]}</span><b>${a[3]}</b></a>`).join('')}</div>` : ''}${gView(k, true)}`;
-    }
+                }
 
-    /* ---------- Governorates ---------- */
-    const GSEED = 'Cairo|القاهرة|5|مدينة نصر,المعادي,مصر الجديدة,حلوان,التجمع الخامس,شبرا,الزيتون;Giza|الجيزة|5|الدقي,المهندسين,6 أكتوبر,الهرم,فيصل,الشيخ زايد,العجوزة;Alexandria|الإسكندرية|5|سموحة,سيدي جابر,المنتزه,العجمي,محرم بك,ستانلي,العطارين;Qalyubia|القليوبية|6|;Port Said|بورسعيد|7|;Suez|السويس|7|;Dakahlia|الدقهلية|7|;Sharqia|الشرقية|7|;Gharbia|الغربية|7|;Monufia|المنوفية|7|;Beheira|البحيرة|7|;Kafr El Sheikh|كفر الشيخ|7|;Damietta|دمياط|7|;Ismailia|الإسماعيلية|7|;Faiyum|الفيوم|8|;Beni Suef|بني سويف|8|;Minya|المنيا|9|;Asyut|أسيوط|9|;Sohag|سوهاج|10|;Qena|قنا|10|;Luxor|الأقصر|11|;Aswan|أسوان|12|;Red Sea|البحر الأحمر|12|;New Valley|الوادي الجديد|14|;Matrouh|مطروح|12|;North Sinai|شمال سيناء|14|;South Sinai|جنوب سيناء|14|';
-    const GOVS = () => rd(K.govs, null) || GSEED.split(';').map((s, i) => { const p = s.split('|'); return { id: 'G' + (i + 1), en: p[0], n: p[1], fee: +p[2], active: true, areas: (p[3] || '').split(',').filter(Boolean).map(a => ({ n: a, fee: '', active: true })) }; });
-    const gName = g => LG === 'ar' ? g.n : (g.en || g.n);
-    function govTable() {
-        const q = (S.gq || '').toLowerCase(), l = GOVS().filter(g => !q || (g.n + ' ' + g.en).toLowerCase().includes(q));
-        return l.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('th_name')}</th><th>${t('g_areas')}</th><th>${t('g_fee')}</th><th>${t('active')}</th><th></th></tr></thead><tbody>${l.map((g, i) => `<tr><td>${i + 1}</td><td><b>${esc(gName(g))}</b><br><small>${esc(LG === 'ar' ? g.en : g.n)}</small></td><td>${g.areas.length}</td><td>${money(g.fee)}</td><td>${sw('govact', { id: g.id }, g.active !== false)}</td>
+                /* ---------- Governorates ---------- */
+                const GSEED = 'Cairo|القاهرة|5|مدينة نصر,المعادي,مصر الجديدة,حلوان,التجمع الخامس,شبرا,الزيتون;Giza|الجيزة|5|الدقي,المهندسين,6 أكتوبر,الهرم,فيصل,الشيخ زايد,العجوزة;Alexandria|الإسكندرية|5|سموحة,سيدي جابر,المنتزه,العجمي,محرم بك,ستانلي,العطارين;Qalyubia|القليوبية|6|;Port Said|بورسعيد|7|;Suez|السويس|7|;Dakahlia|الدقهلية|7|;Sharqia|الشرقية|7|;Gharbia|الغربية|7|;Monufia|المنوفية|7|;Beheira|البحيرة|7|;Kafr El Sheikh|كفر الشيخ|7|;Damietta|دمياط|7|;Ismailia|الإسماعيلية|7|;Faiyum|الفيوم|8|;Beni Suef|بني سويف|8|;Minya|المنيا|9|;Asyut|أسيوط|9|;Sohag|سوهاج|10|;Qena|قنا|10|;Luxor|الأقصر|11|;Aswan|أسوان|12|;Red Sea|البحر الأحمر|12|;New Valley|الوادي الجديد|14|;Matrouh|مطروح|12|;North Sinai|شمال سيناء|14|;South Sinai|جنوب سيناء|14|';
+                const GOVS = () => rd(K.govs, null) || GSEED.split(';').map((s, i) => { const p = s.split('|'); return { id: 'G' + (i + 1), en: p[0], n: p[1], fee: +p[2], active: true, areas: (p[3] || '').split(',').filter(Boolean).map(a => ({ n: a, fee: '', active: true })) }; });
+                const gName = g => LG === 'ar' ? g.n : (g.en || g.n);
+                function govTable() {
+                    const q = (S.gq || '').toLowerCase(), l = GOVS().filter(g => !q || (g.n + ' ' + g.en).toLowerCase().includes(q));
+                    return l.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('th_name')}</th><th>${t('g_areas')}</th><th>${t('g_fee')}</th><th>${t('active')}</th><th></th></tr></thead><tbody>${l.map((g, i) => `<tr><td>${i + 1}</td><td><b>${esc(gName(g))}</b><br><small>${esc(LG === 'ar' ? g.en : g.n)}</small></td><td>${g.areas.length}</td><td>${money(g.fee)}</td><td>${sw('govact', { id: g.id }, g.active !== false)}</td>
 <td class="nw"><button class="mini" data-act="gvareas" data-id="${g.id}">${t('g_manage')} (${g.areas.length})</button><button class="mini" data-act="gvedit" data-id="${g.id}">${t('edit')}</button><button class="mini del" data-act="gvdel" data-id="${g.id}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`;
-    }
-    const govsView = () => `<div class="head"><div><h1>${t('n_govs')}</h1><p class="sub">${t('g_sub')}</p></div><div>${rd(K.govs, null) ? `<button class="btn ghost" data-act="gvreset">${t('g_reset')}</button> ` : ''}<button class="btn" data-act="gvadd">+ ${t('g_new')}</button></div></div><div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.gq || '')}" data-q="gq" data-v="govs"></div><div id="tbl">${govTable()}</div>`;
-    function gvForm(g) {
-        g = g || { active: true, fee: 7, areas: [] };
-        return `<form id="gvf" data-id="${esc(g.id || '')}"><h3>${g.id ? t('g_edit') : t('g_new')}</h3><div class="g2"><label>${t('g_name')}<input name="n" required value="${esc(g.n)}"></label><label>${t('g_en')}<input name="en" value="${esc(g.en)}"></label><label>${t('g_fee')}<input name="fee" type="number" min="0" step="any" value="${g.fee ?? ''}"></label>
+                }
+                const govsView = () => `<div class="head"><div><h1>${t('n_govs')}</h1><p class="sub">${t('g_sub')}</p></div><div>${rd(K.govs, null) ? `<button class="btn ghost" data-act="gvreset">${t('g_reset')}</button> ` : ''}<button class="btn" data-act="gvadd">+ ${t('g_new')}</button></div></div><div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.gq || '')}" data-q="gq" data-v="govs"></div><div id="tbl">${govTable()}</div>`;
+                function gvForm(g) {
+                    g = g || { active: true, fee: 7, areas: [] };
+                    return `<form id="gvf" data-id="${esc(g.id || '')}"><h3>${g.id ? t('g_edit') : t('g_new')}</h3><div class="g2"><label>${t('g_name')}<input name="n" required value="${esc(g.n)}"></label><label>${t('g_en')}<input name="en" value="${esc(g.en)}"></label><label>${t('g_fee')}<input name="fee" type="number" min="0" step="any" value="${g.fee ?? ''}"></label>
 <label class="swl"><span class="sw"><input type="checkbox" name="active" ${g.active !== false ? 'checked' : ''}><i></i></span> ${t('active')}</label></div><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
-    }
-    function areasHtml(id) {
-        const g = GOVS().find(x => x.id === id); if (!g) return '';
-        return `<h3>${t('g_areas')} — ${esc(gName(g))}</h3><form id="af" data-g="${esc(id)}" class="arow"><input name="n" required placeholder="${t('g_areaname')}"><input name="fee" type="number" min="0" step="any" placeholder="${t('g_areafee')}"><button class="btn">+ ${t('g_addarea')}</button></form>
+                }
+                function areasHtml(id) {
+                    const g = GOVS().find(x => x.id === id); if (!g) return '';
+                    return `<h3>${t('g_areas')} — ${esc(gName(g))}</h3><form id="af" data-g="${esc(id)}" class="arow"><input name="n" required placeholder="${t('g_areaname')}"><input name="fee" type="number" min="0" step="any" placeholder="${t('g_areafee')}"><button class="btn">+ ${t('g_addarea')}</button></form>
 <div class="tw">${g.areas.length ? `<table><tbody>${g.areas.map((a, i) => `<tr><td class="wrap"><b>${esc(a.n)}</b></td><td><input type="number" class="fee" min="0" step="any" value="${a.fee ?? ''}" placeholder="${g.fee}" data-chg="afee" data-g="${esc(id)}" data-i="${i}"></td><td>${sw('aact', { g: id, i }, a.active !== false)}</td><td><button class="mini del" data-act="gvareadel" data-g="${esc(id)}" data-i="${i}">${t('del')}</button></td></tr>`).join('')}</tbody></table>` : `<p class="empty">${t('g_noareas')}</p>`}</div><div class="bar"><button class="btn ghost" data-act="gvdone">${t('close')}</button></div>`;
-    }
-    function saveGov(gs) { wr(K.govs, gs); }
+                }
+                function saveGov(gs) { wr(K.govs, gs); }
 
-    /* ---------- Reports ---------- */
-    function repInit() { if (!S.rp) { const d = new Date(); S.rp = { type: 'orders', from: new Date(d.getTime() - 29 * 864e5).toISOString().slice(0, 10), to: d.toISOString().slice(0, 10) }; } }
-    function repData() {
-        repInit(); const r = S.rp, a = r.from ? new Date(r.from + 'T00:00:00').getTime() : 0, z = r.to ? new Date(r.to + 'T23:59:59').getTime() : Infinity;
-        const os = orders().filter(o => o.created >= a && o.created <= z), live = os.filter(o => o.s !== 'Cancelled'), sum = x => x.reduce((s, o) => s + o.total, 0), cat = catalog(), acc = rd(K.acc, {});
-        if (r.type === 'orders') return { head: ['th_order', 'th_date', 'th_cust', 'r_phone', 'r_city', 'th_pay', 'th_total', 'th_status'], rows: os.map(o => [o.id, when(o.created), o.ship?.name || '', o.ship?.phone || '', o.ship?.city || '', o.payment || '', money(o.total), t('st_' + o.s)]), sum: [['r_orders', os.length], ['r_rev', money(sum(live))], ['r_cancel', os.length - live.length], ['r_avg', money(live.length ? sum(live) / live.length : 0)]] };
-        if (r.type === 'products') {
-            const u = {}; live.forEach(o => o.items.forEach(i => { u[i.id] = u[i.id] || { q: 0, v: 0 }; u[i.id].q += i.qty; u[i.id].v += i.qty * i.price; }));
-            const rows = cat.map(p => [p.id, p.name, p.cat, money(p.price), p.qty ?? '—', p.stock === false ? t('r_unavail') : t('r_avail'), (u[p.id] || { q: 0 }).q, (u[p.id] || { v: 0 }).v]).sort((x, y) => y[6] - x[6]);
-            return { head: ['r_code', 'th_prod', 'th_cat', 'th_price', 'f_qty', 'th_stock', 'r_units', 'r_revenue'], rows: rows.map(x => { x[7] = money(x[7]); return x; }), sum: [['k_prod', cat.length], ['r_units', rows.reduce((s, x) => s + x[6], 0)], ['r_rev', money(sum(live))], ['al_out', cat.filter(p => p.stock === false).length]] };
-        }
-        if (r.type === 'customers') {
-            const m = {}; live.forEach(o => { const id = o.user || o.ship?.phone || '—'; m[id] = m[id] || { n: (acc[id] && acc[id].name) || o.ship?.name || id, c: 0, v: 0 }; m[id].c++; m[id].v += o.total; });
-            const rows = Object.keys(m).map(id => [m[id].n, id, m[id].c, m[id].v]).sort((x, y) => y[3] - x[3]);
-            return { head: ['th_name', 'th_contact', 'th_orders', 'th_spent'], rows: rows.map(x => [x[0], x[1], x[2], money(x[3])]), sum: [['k_cust', rows.length], ['r_rev', money(sum(live))]] };
-        }
-        const m = {}; live.forEach(o => { const c = (o.ship?.city || '—').trim(); m[c] = m[c] || { c: 0, v: 0 }; m[c].c++; m[c].v += o.total; });
-        const rows = Object.keys(m).map(c => [c, m[c].c, m[c].v]).sort((x, y) => y[2] - x[2]);
-        return { head: ['r_city', 'th_orders', 'r_revenue'], rows: rows.map(x => [x[0], x[1], money(x[2])]), sum: [['r_orders', live.length], ['r_rev', money(sum(live))]] };
-    }
-    function repBody() {
-        const d = repData();
-        return `<div class="kpis">${d.sum.map(s => `<div class="kpi"><span>${t(s[0])}</span><strong>${s[1]}</strong></div>`).join('')}</div>${d.rows.length ? `<div class="tw"><table><thead><tr>${d.head.map(h => `<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${d.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`}`;
-    }
-    function reportsView() {
-        repInit(); const r = S.rp;
-        return `<div class="head"><div><h1>${t('n_reports')}</h1><p class="sub">${t('r_sub')}</p></div><div><button class="btn ghost" data-act="rcsv">${t('exp_csv')}</button> <button class="btn ghost" data-act="rprint">${t('r_print')}</button></div></div>
+                /* ---------- Reports ---------- */
+                function repInit() { if (!S.rp) { const d = new Date(); S.rp = { type: 'orders', from: new Date(d.getTime() - 29 * 864e5).toISOString().slice(0, 10), to: d.toISOString().slice(0, 10) }; } }
+                function repData() {
+                    repInit(); const r = S.rp, a = r.from ? new Date(r.from + 'T00:00:00').getTime() : 0, z = r.to ? new Date(r.to + 'T23:59:59').getTime() : Infinity;
+                    const os = orders().filter(o => o.created >= a && o.created <= z), live = os.filter(o => o.s !== 'Cancelled'), sum = x => x.reduce((s, o) => s + o.total, 0), cat = catalog(), acc = rd(K.acc, {});
+                    if (r.type === 'orders') return { head: ['th_order', 'th_date', 'th_cust', 'r_phone', 'r_city', 'th_pay', 'th_total', 'th_status'], rows: os.map(o => [o.id, when(o.created), o.ship?.name || '', o.ship?.phone || '', o.ship?.city || '', o.payment || '', money(o.total), t('st_' + o.s)]), sum: [['r_orders', os.length], ['r_rev', money(sum(live))], ['r_cancel', os.length - live.length], ['r_avg', money(live.length ? sum(live) / live.length : 0)]] };
+                    if (r.type === 'products') {
+                        const u = {}; live.forEach(o => o.items.forEach(i => { u[i.id] = u[i.id] || { q: 0, v: 0 }; u[i.id].q += i.qty; u[i.id].v += i.qty * i.price; }));
+                        const rows = cat.map(p => [p.id, p.name, p.cat, money(p.price), p.qty ?? '—', p.stock === false ? t('r_unavail') : t('r_avail'), (u[p.id] || { q: 0 }).q, (u[p.id] || { v: 0 }).v]).sort((x, y) => y[6] - x[6]);
+                        return { head: ['r_code', 'th_prod', 'th_cat', 'th_price', 'f_qty', 'th_stock', 'r_units', 'r_revenue'], rows: rows.map(x => { x[7] = money(x[7]); return x; }), sum: [['k_prod', cat.length], ['r_units', rows.reduce((s, x) => s + x[6], 0)], ['r_rev', money(sum(live))], ['al_out', cat.filter(p => p.stock === false).length]] };
+                    }
+                    if (r.type === 'customers') {
+                        const m = {}; live.forEach(o => { const id = o.user || o.ship?.phone || '—'; m[id] = m[id] || { n: (acc[id] && acc[id].name) || o.ship?.name || id, c: 0, v: 0 }; m[id].c++; m[id].v += o.total; });
+                        const rows = Object.keys(m).map(id => [m[id].n, id, m[id].c, m[id].v]).sort((x, y) => y[3] - x[3]);
+                        return { head: ['th_name', 'th_contact', 'th_orders', 'th_spent'], rows: rows.map(x => [x[0], x[1], x[2], money(x[3])]), sum: [['k_cust', rows.length], ['r_rev', money(sum(live))]] };
+                    }
+                    const m = {}; live.forEach(o => { const c = (o.ship?.city || '—').trim(); m[c] = m[c] || { c: 0, v: 0 }; m[c].c++; m[c].v += o.total; });
+                    const rows = Object.keys(m).map(c => [c, m[c].c, m[c].v]).sort((x, y) => y[2] - x[2]);
+                    return { head: ['r_city', 'th_orders', 'r_revenue'], rows: rows.map(x => [x[0], x[1], money(x[2])]), sum: [['r_orders', live.length], ['r_rev', money(sum(live))]] };
+                }
+                function repBody() {
+                    const d = repData();
+                    return `<div class="kpis">${d.sum.map(s => `<div class="kpi"><span>${t(s[0])}</span><strong>${s[1]}</strong></div>`).join('')}</div>${d.rows.length ? `<div class="tw"><table><thead><tr>${d.head.map(h => `<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${d.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`}`;
+                }
+                function reportsView() {
+                    repInit(); const r = S.rp;
+                    return `<div class="head"><div><h1>${t('n_reports')}</h1><p class="sub">${t('r_sub')}</p></div><div><button class="btn ghost" data-act="rcsv">${t('exp_csv')}</button> <button class="btn ghost" data-act="rprint">${t('r_print')}</button></div></div>
 <div class="filters"><select data-rp="type">${['orders', 'products', 'customers', 'cities'].map(k => `<option value="${k}" ${r.type === k ? 'selected' : ''}>${t('r_' + k + '_t')}</option>`).join('')}</select><label class="inl">${t('r_from')} <input type="date" data-rp="from" value="${r.from}"></label><label class="inl">${t('r_to')} <input type="date" data-rp="to" value="${r.to}"></label></div><div id="rep">${repBody()}</div>`;
-    }
+                }
 
-    /* ---------- Notifications ---------- */
-    function notifView() {
-        const h = rd(K.nlog, []);
-        return `<div class="head"><div><h1>${t('n_notifs')}</h1><p class="sub">${t('nt_sub')}</p></div><button class="btn ghost" data-act="nclear">${t('nt_clear')}</button></div>
+                /* ---------- Notifications ---------- */
+                function notifView() {
+                    const h = rd(K.nlog, []);
+                    return `<div class="head"><div><h1>${t('n_notifs')}</h1><p class="sub">${t('nt_sub')}</p></div><button class="btn ghost" data-act="nclear">${t('nt_clear')}</button></div>
 <form id="nf" class="box"><div class="g2"><label class="wide">${t('nt_text')}<textarea name="text" rows="2" required></textarea></label><label class="wide">${t('nt_link')}<input name="href" value="index.html?page=offers"></label></div><p class="err"></p><div class="bar"><button class="btn">🔔 ${t('nt_send')}</button></div><small>${t('nt_note')}</small></form>
 <div class="box" style="margin-top:14px"><h2>${t('nt_history')}</h2>${h.length ? `<div class="tw"><table><tbody>${h.map(x => `<tr><td class="wrap">${esc(x.text)}<br><small>${esc(x.href)}</small></td><td>${when(x.time)}</td><td><button class="mini del" data-act="nldel" data-id="${x.time}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<p class="empty">${t('nt_none')}</p>`}</div>`;
-    }
+                }
 
-    /* ---------- Messages / Hero / Newsletter ---------- */
-    function msgsView() {
-        const m = rd(K.msgs, []);
-        return `<h1>${t('n_msgs')}</h1><p class="sub">${t('msg_sub')}</p>` + (m.length ? m.map(x => `<div class="msg ${x.read ? '' : 'new'}"><b>${esc(x.name)}</b> <span class="pill info">${esc(x.subject)}</span><br><small>${esc(x.email)} · ${esc(x.phone)} · ${when(x.time)}</small><p>${esc(x.message)}</p>
+                /* ---------- Messages / Hero / Newsletter ---------- */
+                function msgsView() {
+                    const m = rd(K.msgs, []);
+                    return `<h1>${t('n_msgs')}</h1><p class="sub">${t('msg_sub')}</p>` + (m.length ? m.map(x => `<div class="msg ${x.read ? '' : 'new'}"><b>${esc(x.name)}</b> <span class="pill info">${esc(x.subject)}</span><br><small>${esc(x.email)} · ${esc(x.phone)} · ${when(x.time)}</small><p>${esc(x.message)}</p>
 <a class="mini" href="mailto:${esc(x.email)}">${t('msg_reply')}</a><button class="mini" data-act="mread" data-id="${esc(x.id)}">${x.read ? t('msg_unread') : t('msg_read')}</button><button class="mini del" data-act="mdel" data-id="${esc(x.id)}">${t('del')}</button></div>`).join('') : `<div class="empty tw">${t('msg_none')}</div>`);
-    }
-    Object.assign(K, { hero: 'boda_hero', site: 'boda_site' });
-    const DEF_HERO = [
-        { badge: 'All-in-One Online Store', title: 'Everything You Need, All in One Place.', text: 'Discover a wide range of products for your everyday needs, all in one place — electronics, home, fashion, sports, and books.', b1: 'Shop Now', l1: 'index.html?page=products', b2: 'Explore Categories', l2: '#categories', emojis: '💻 📱 👕 🏠 🎮 🎧', img: '' },
-        { badge: '🔥 Special Offers', title: 'Big Savings Across All Departments.', text: 'Grab limited-time discounts on laptops, monitors, perfumes, and everyday fashion.', b1: 'View Offers', l1: 'index.html?page=offers', b2: 'All Products', l2: 'index.html?page=products', emojis: '', img: 'icon/magnific_Xmyng87Bfo.png' },
-        { badge: '🆕 New Arrivals', title: 'Fresh Arrivals Every Week.', text: 'Explore newly added 5G phones, educational toys, automotive tech, and hardcover books.', b1: 'See New Arrivals', l1: '#new-arrivals', b2: 'Explore Categories', l2: '#categories', emojis: '🛋️ 🚗 📖', img: '' }
-    ];
-    const HERO = () => { const h = rd(K.hero, null); return Array.isArray(h) && h.length ? h : DEF_HERO.map(x => ({ ...x })); };
-    function heroView() {
-        const h = HERO(), custom = Array.isArray(rd(K.hero, null));
-        return `<div class="head"><div><h1>${t('h_title_page')}</h1><p class="sub">${t('h_sub')}</p></div><div>${custom ? `<button class="btn ghost" data-act="hreset">${t('h_reset')}</button> ` : ''}<button class="btn" data-act="hadd">+ ${t('h_add')}</button></div></div>
+                }
+                Object.assign(K, { hero: 'boda_hero', site: 'boda_site' });
+                const DEF_HERO = [
+                    { badge: 'All-in-One Online Store', title: 'Everything You Need, All in One Place.', text: 'Discover a wide range of products for your everyday needs, all in one place — electronics, home, fashion, sports, and books.', b1: 'Shop Now', l1: 'index.html?page=products', b2: 'Explore Categories', l2: '#categories', emojis: '💻 📱 👕 🏠 🎮 🎧', img: '' },
+                    { badge: '🔥 Special Offers', title: 'Big Savings Across All Departments.', text: 'Grab limited-time discounts on laptops, monitors, perfumes, and everyday fashion.', b1: 'View Offers', l1: 'index.html?page=offers', b2: 'All Products', l2: 'index.html?page=products', emojis: '', img: 'icon/magnific_Xmyng87Bfo.png' },
+                    { badge: '🆕 New Arrivals', title: 'Fresh Arrivals Every Week.', text: 'Explore newly added 5G phones, educational toys, automotive tech, and hardcover books.', b1: 'See New Arrivals', l1: '#new-arrivals', b2: 'Explore Categories', l2: '#categories', emojis: '🛋️ 🚗 📖', img: '' }
+                ];
+                const HERO = () => { const h = rd(K.hero, null); return Array.isArray(h) && h.length ? h : DEF_HERO.map(x => ({ ...x })); };
+                function heroView() {
+                    const h = HERO(), custom = Array.isArray(rd(K.hero, null));
+                    return `<div class="head"><div><h1>${t('h_title_page')}</h1><p class="sub">${t('h_sub')}</p></div><div>${custom ? `<button class="btn ghost" data-act="hreset">${t('h_reset')}</button> ` : ''}<button class="btn" data-act="hadd">+ ${t('h_add')}</button></div></div>
 <div class="note">${custom ? t('h_custom') : t('h_default')}</div>
 ${h.map((x, i) => `<div class="slide-card"><span class="no">${i + 1}</span><div><b>${esc(x.title)}</b> <span class="pill info">${esc(x.badge)}</span><p>${esc(x.text)}</p><small>${esc(x.b1)} → ${esc(x.l1)}</small></div>
 <div class="acts"><button class="mini" data-act="hup" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button><button class="mini" data-act="hdown" data-i="${i}" ${i === h.length - 1 ? 'disabled' : ''}>↓</button><button class="mini" data-act="hedit" data-i="${i}">${t('edit')}</button><button class="mini del" data-act="hdel" data-i="${i}">${t('del')}</button></div></div>`).join('')}`;
-    }
-    function hform(i) {
-        const x = i >= 0 ? HERO()[i] : { badge: '', title: '', text: '', b1: 'Shop Now', l1: 'index.html?page=products', b2: '', l2: '', emojis: '', img: '' };
-        return `<form id="hf" data-i="${i}"><h3>${i >= 0 ? t('h_edit') : t('h_add')}</h3>
+                }
+                function hform(i) {
+                    const x = i >= 0 ? HERO()[i] : { badge: '', title: '', text: '', b1: 'Shop Now', l1: 'index.html?page=products', b2: '', l2: '', emojis: '', img: '' };
+                    return `<form id="hf" data-i="${i}"><h3>${i >= 0 ? t('h_edit') : t('h_add')}</h3>
 <div class="g2"><label>${t('h_badge')}<input name="badge" value="${esc(x.badge)}"></label><label>${t('h_title')}<input name="title" required value="${esc(x.title)}"></label>
 <label class="wide">${t('h_text')}<textarea name="text" rows="3">${esc(x.text)}</textarea></label>
 <label>${t('h_b1')}<input name="b1" value="${esc(x.b1)}"></label><label>${t('h_l1')}<input name="l1" value="${esc(x.l1)}"></label><label>${t('h_b2')}<input name="b2" value="${esc(x.b2)}"></label><label>${t('h_l2')}<input name="l2" value="${esc(x.l2)}"></label>
 ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<input name="emojis" value="${esc(x.emojis)}"></label></div>
 <p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
-    }
-    function newsView() {
-        const n = rd(K.news, []);
-        return `<div class="head"><div><h1>${t('n_newsl')}</h1><p class="sub">${t('nl_sub')} (${n.length})</p></div><div><button class="btn ghost" data-act="ncopy">${t('nl_copy')}</button> <button class="btn ghost" data-act="ncsv">${t('exp_csv')}</button></div></div>
+                }
+                function newsView() {
+                    const n = rd(K.news, []);
+                    return `<div class="head"><div><h1>${t('n_newsl')}</h1><p class="sub">${t('nl_sub')} (${n.length})</p></div><div><button class="btn ghost" data-act="ncopy">${t('nl_copy')}</button> <button class="btn ghost" data-act="ncsv">${t('exp_csv')}</button></div></div>
 ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</th><th></th></tr></thead><tbody>${n.map((e, i) => `<tr><td>${i + 1}</td><td>${esc(e)}</td><td class="nw"><a class="mini" href="mailto:${esc(e)}">${t('nl_write')}</a><button class="mini del" data-act="ndel" data-id="${esc(e)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('nl_none')}</div>`}`;
-    }
+                }
 
-    /* ---------- Settings ---------- */
-    function settingsView() {
-        const s = SITE(), g = s.general, sc = (n, l, on) => `<label class="swl"><span class="sw"><input type="checkbox" name="${n}" ${on ? 'checked' : ''}><i></i></span> ${t(l)}</label>`;
-        return `<h1>${t('n_settings')}</h1><p class="sub">${t('s_sub')}</p>
+                /* ---------- Settings ---------- */
+                function settingsView() {
+                    const s = SITE(), g = s.general, sc = (n, l, on) => `<label class="swl"><span class="sw"><input type="checkbox" name="${n}" ${on ? 'checked' : ''}><i></i></span> ${t(l)}</label>`;
+                    return `<h1>${t('n_settings')}</h1><p class="sub">${t('s_sub')}</p>
 <div class="set-grid"><div class="box"><h2>${t('s_ui')}</h2><label>${t('s_lang')}</label><div class="langs">${LK.map(k => `<button type="button" class="lchip ${k === LG ? 'on' : ''}" data-act="lang" data-l="${k}">${fl(k)} ${LANGS[k].name}</button>`).join('')}</div>
 <label class="swl" style="margin-top:14px">${sw('theme', {}, THEME === 'dark')} ${t('s_theme')}</label></div>
 <form id="pwf" class="box"><h2>${t('s_pw')}</h2><label>${t('s_curpw')}<input name="cur" type="password" autocomplete="current-password" required></label><label>${t('s_newpw')}<input name="nw" type="password" autocomplete="new-password" minlength="6" required></label><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div></form></div>
@@ -7538,206 +7541,206 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
 <div class="chks col">${sc('maint', 's_maint', g.maint)}${sc('reg', 's_reg', g.reg)}${sc('guest', 's_guest', g.guest)}${sc('reviews', 's_reviews', g.reviews)}${sc('mail', 's_mail', g.mail)}</div></div></div>
 <div class="bar"><button class="btn">${t('s_save')}</button><button type="button" class="btn ghost" data-act="sreset">${t('s_reset')}</button><button type="button" class="btn ghost" data-act="lclear">${t('s_clearlog')}</button></div></form>
 <div class="note" style="margin-top:16px">${t('s_note')}<br>${t('s_store_note')}</div>`;
-    }
+                }
 
-    /* ---------- Router ---------- */
-    const NAV = [['dash', '📊', dash], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
-    const TBLS = { orders: ordersList, products: prodList, cust: custList, govs: govTable, articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users') };
-    function render() {
-        const k = location.hash.slice(1), vis = NAV.filter(n => can(n[0])), cur = vis.find(n => n[0] === k) || vis[0];
-        const a = orders().filter(o => ['Pending', 'Processing'].includes(o.s)).length, unread = rd(K.msgs, []).filter(m => !m.read).length, oc = rd(K.comp, []).filter(c => c.status === 'open').length;
-        const bd = { orders: a, msgs: unread, comp: oc };
-        $('#side').innerHTML = `<div class="logo">Boda Store<small>${t('panel')}</small></div><nav id="nav">${vis.map(n => `<a href="#${n[0]}" class="${n === cur ? 'on' : ''}">${n[1]} ${t('n_' + n[0])}${bd[n[0]] ? `<b>${bd[n[0]]}</b>` : ''}</a>`).join('')}</nav>
+                /* ---------- Router ---------- */
+                const NAV = [['dash', '📊', dash], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
+                const TBLS = { orders: ordersList, products: prodList, cust: custList, govs: govTable, articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users') };
+                function render() {
+                    const k = location.hash.slice(1), vis = NAV.filter(n => can(n[0])), cur = vis.find(n => n[0] === k) || vis[0];
+                    const a = orders().filter(o => ['Pending', 'Processing'].includes(o.s)).length, unread = rd(K.msgs, []).filter(m => !m.read).length, oc = rd(K.comp, []).filter(c => c.status === 'open').length;
+                    const bd = { orders: a, msgs: unread, comp: oc };
+                    $('#side').innerHTML = `<div class="logo">Boda Store<small>${t('panel')}</small></div><nav id="nav">${vis.map(n => `<a href="#${n[0]}" class="${n === cur ? 'on' : ''}">${n[1]} ${t('n_' + n[0])}${bd[n[0]] ? `<b>${bd[n[0]]}</b>` : ''}</a>`).join('')}</nav>
 <div class="side-foot"><a href="index.html" target="_blank">${t('open_store')}</a><button data-act="backup">${t('backup')}</button><button data-act="restore">${t('restore')}</button><button data-act="logout">${t('logout')}</button></div>`;
-        const nA = alertsList().reduce((s, x) => s + x[3], 0);
-        $('#view').innerHTML = `<div class="topbar"><span class="who">👤 ${t('hello')} <b>${esc(me())}</b> <span class="pill info">${t('role_' + myRole())}</span></span><span class="sp"></span><button class="bell" data-act="alerts" title="${t('alerts')}">🔔${nA ? `<b>${nA}</b>` : ''}</button>${tools()}</div><div class="content">${cur[2]()}</div>`;
-        document.title = t('n_' + cur[0]) + ' | ' + t('title');
-    }
-    function applyLang() { const d = document.documentElement; d.lang = LG; d.dir = LANGS[LG].dir; d.dataset.theme = THEME; document.title = t('title'); }
-    function drawLogin() {
-        $('#login').innerHTML = `<div class="ltools">${tools()}</div><form id="lf"><div class="lico">🛒</div><h1>Boda Store</h1><p class="sub">${t('login_t')}</p><label>${t('user')}<input name="u" autocomplete="username" required></label><label>${t('pass')}<input name="p" type="password" autocomplete="current-password" required></label><p class="err" id="lerr"></p><button class="btn">${t('login')}</button></form>`;
-    }
-    function gate() { const ok = sessionStorage.getItem('boda_admin') === '1'; $('#login').hidden = ok; $('#app').hidden = !ok; if (ok) render(); else drawLogin(); }
-    addEventListener('hashchange', () => { if (!$('#app').hidden) render(); });
-    setInterval(() => { if (!$('#app').hidden && !$('#dlg').open && !document.activeElement.matches('input,select,textarea') && !document.querySelector('.lmenu:not([hidden])')) render(); }, 15000);
+                    const nA = alertsList().reduce((s, x) => s + x[3], 0);
+                    $('#view').innerHTML = `<div class="topbar"><span class="who">👤 ${t('hello')} <b>${esc(me())}</b> <span class="pill info">${t('role_' + myRole())}</span></span><span class="sp"></span><button class="bell" data-act="alerts" title="${t('alerts')}">🔔${nA ? `<b>${nA}</b>` : ''}</button>${tools()}</div><div class="content">${cur[2]()}</div>`;
+                    document.title = t('n_' + cur[0]) + ' | ' + t('title');
+                }
+                function applyLang() { const d = document.documentElement; d.lang = LG; d.dir = LANGS[LG].dir; d.dataset.theme = THEME; document.title = t('title'); }
+                function drawLogin() {
+                    $('#login').innerHTML = `<div class="ltools">${tools()}</div><form id="lf"><div class="lico">🛒</div><h1>Boda Store</h1><p class="sub">${t('login_t')}</p><label>${t('user')}<input name="u" autocomplete="username" required></label><label>${t('pass')}<input name="p" type="password" autocomplete="current-password" required></label><p class="err" id="lerr"></p><button class="btn">${t('login')}</button></form>`;
+                }
+                function gate() { const ok = sessionStorage.getItem('boda_admin') === '1'; $('#login').hidden = ok; $('#app').hidden = !ok; if (ok) render(); else drawLogin(); }
+                addEventListener('hashchange', () => { if (!$('#app').hidden) render(); });
+                setInterval(() => { if (!$('#app').hidden && !$('#dlg').open && !document.activeElement.matches('input,select,textarea') && !document.querySelector('.lmenu:not([hidden])')) render(); }, 15000);
 
-    /* ---------- Actions ---------- */
-    const dl = (name, blob) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); };
-    const csvOf = rows => '\ufeff' + rows.map(r => r.map(c => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(',')).join('\n');
-    const ACT = {
-        close: () => $('#dlg').close(),
-        lmenu: (d, b) => { const m = b.nextElementSibling; const was = m.hidden; document.querySelectorAll('.lmenu').forEach(x => x.hidden = true); m.hidden = !was; },
-        lang: d => { LG = d.l; localStorage.setItem(K.lang, LG); applyLang(); gate(); },
-        per: d => { S.per = d.p; render(); },
-        ctab: d => { S.ctab = d.k; render(); },
-        alerts: () => { const A = alertsList(); open(`<h3>🔔 ${t('alerts')}</h3>${A.length ? A.map(a => `<a class="alrow" href="#${a[0]}" data-act="close"><span>${a[1]} ${a[2]}</span><b>${a[3]}</b></a>`).join('') : `<p class="empty">${t('no_alerts')}</p>`}<div class="bar"><button class="btn ghost" data-act="close">${t('close')}</button></div>`); },
-        logout: () => { sessionStorage.removeItem('boda_admin'); sessionStorage.removeItem('boda_admin_user'); gate(); },
-        /* hero */
-        hadd: () => open(hform(-1)), hedit: d => open(hform(+d.i)),
-        hdel: d => { if (!confirm(t('h_confirm_del'))) return; const h = HERO(); h.splice(+d.i, 1); wr(K.hero, h); render(); toast(t('deleted')); },
-        hup: d => { const h = HERO(), i = +d.i; if (i < 1) return;[h[i - 1], h[i]] = [h[i], h[i - 1]]; wr(K.hero, h); render(); },
-        hdown: d => { const h = HERO(), i = +d.i; if (i >= h.length - 1) return;[h[i + 1], h[i]] = [h[i], h[i + 1]]; wr(K.hero, h); render(); },
-        hreset: () => { if (!confirm(t('h_confirm_reset'))) return; localStorage.removeItem(K.hero); render(); toast(t('saved')); },
-        /* newsletter */
-        ndel: d => { wr(K.news, rd(K.news, []).filter(e => e !== d.id)); render(); },
-        ncopy: () => { const x = rd(K.news, []).join(', '); (navigator.clipboard ? navigator.clipboard.writeText(x) : Promise.reject()).then(() => toast(t('nl_copied')), () => prompt('Emails:', x)); },
-        ncsv: () => dl('boda-newsletter.csv', new Blob(['\ufeffemail\n' + rd(K.news, []).join('\n')], { type: 'text/csv' })),
-        /* settings */
-        sreset: () => { if (!confirm(t('s_confirm_reset'))) return; localStorage.removeItem(K.site); render(); toast(t('saved')); },
-        lclear: () => { wr(K.log, []); render(); toast(t('deleted')); },
-        /* orders */
-        odetail: d => {
-            const o = orders().find(x => x.id === d.id); if (!o) return;
-            open(`<h3>${t('o_order')} ${esc(o.id)} ${pill(o.s)}</h3><div class="tw"><table><tbody>${o.items.map(i => `<tr><td class="wrap">${esc(i.name)}</td><td>× ${i.qty}</td><td>${money(i.price * i.qty)}</td></tr>`).join('')}<tr><td><b>${t('th_total')}</b></td><td></td><td><b>${money(o.total)}</b></td></tr></tbody></table></div>
+                /* ---------- Actions ---------- */
+                const dl = (name, blob) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); };
+                const csvOf = rows => '\ufeff' + rows.map(r => r.map(c => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(',')).join('\n');
+                const ACT = {
+                    close: () => $('#dlg').close(),
+                    lmenu: (d, b) => { const m = b.nextElementSibling; const was = m.hidden; document.querySelectorAll('.lmenu').forEach(x => x.hidden = true); m.hidden = !was; },
+                    lang: d => { LG = d.l; localStorage.setItem(K.lang, LG); applyLang(); gate(); },
+                    per: d => { S.per = d.p; render(); },
+                    ctab: d => { S.ctab = d.k; render(); },
+                    alerts: () => { const A = alertsList(); open(`<h3>🔔 ${t('alerts')}</h3>${A.length ? A.map(a => `<a class="alrow" href="#${a[0]}" data-act="close"><span>${a[1]} ${a[2]}</span><b>${a[3]}</b></a>`).join('') : `<p class="empty">${t('no_alerts')}</p>`}<div class="bar"><button class="btn ghost" data-act="close">${t('close')}</button></div>`); },
+                    logout: () => { sessionStorage.removeItem('boda_admin'); sessionStorage.removeItem('boda_admin_user'); gate(); },
+                    /* hero */
+                    hadd: () => open(hform(-1)), hedit: d => open(hform(+d.i)),
+                    hdel: d => { if (!confirm(t('h_confirm_del'))) return; const h = HERO(); h.splice(+d.i, 1); wr(K.hero, h); render(); toast(t('deleted')); },
+                    hup: d => { const h = HERO(), i = +d.i; if (i < 1) return;[h[i - 1], h[i]] = [h[i], h[i - 1]]; wr(K.hero, h); render(); },
+                    hdown: d => { const h = HERO(), i = +d.i; if (i >= h.length - 1) return;[h[i + 1], h[i]] = [h[i], h[i + 1]]; wr(K.hero, h); render(); },
+                    hreset: () => { if (!confirm(t('h_confirm_reset'))) return; localStorage.removeItem(K.hero); render(); toast(t('saved')); },
+                    /* newsletter */
+                    ndel: d => { wr(K.news, rd(K.news, []).filter(e => e !== d.id)); render(); },
+                    ncopy: () => { const x = rd(K.news, []).join(', '); (navigator.clipboard ? navigator.clipboard.writeText(x) : Promise.reject()).then(() => toast(t('nl_copied')), () => prompt('Emails:', x)); },
+                    ncsv: () => dl('boda-newsletter.csv', new Blob(['\ufeffemail\n' + rd(K.news, []).join('\n')], { type: 'text/csv' })),
+                    /* settings */
+                    sreset: () => { if (!confirm(t('s_confirm_reset'))) return; localStorage.removeItem(K.site); render(); toast(t('saved')); },
+                    lclear: () => { wr(K.log, []); render(); toast(t('deleted')); },
+                    /* orders */
+                    odetail: d => {
+                        const o = orders().find(x => x.id === d.id); if (!o) return;
+                        open(`<h3>${t('o_order')} ${esc(o.id)} ${pill(o.s)}</h3><div class="tw"><table><tbody>${o.items.map(i => `<tr><td class="wrap">${esc(i.name)}</td><td>× ${i.qty}</td><td>${money(i.price * i.qty)}</td></tr>`).join('')}<tr><td><b>${t('th_total')}</b></td><td></td><td><b>${money(o.total)}</b></td></tr></tbody></table></div>
 <p style="margin:14px 0"><b>${t('o_ship')}:</b> ${esc(o.ship?.name)} — ${esc(o.ship?.phone)}<br>${esc(o.ship?.address)}, ${esc(o.ship?.city)}<br><b>${t('th_pay')}:</b> ${esc(o.payment)}<br><b>${t('th_date')}:</b> ${when(o.created)}</p><button class="btn ghost" data-act="close">${t('close')}</button>`);
-        },
-        odel: d => { if (!confirm(t('o_confirm_del'))) return; wr(K.orders, rd(K.orders, []).filter(o => o.id !== d.id)); log('log_del', 'n_orders', d.id); render(); toast(t('deleted')); },
-        csv: () => dl('boda-orders.csv', new Blob([csvOf([[t('th_order'), t('th_date'), t('th_cust'), t('r_phone'), t('r_city'), t('th_pay'), t('th_total'), t('th_status')]].concat(orders().map(o => [o.id, new Date(o.created).toISOString(), o.ship?.name, o.ship?.phone, o.ship?.city, o.payment, o.total, t('st_' + o.s)])))], { type: 'text/csv' })),
-        /* products */
-        padd: () => { open(pform()); fillSubs($('#pf')); },
-        pedit: d => { open(pform(catalog().find(x => x.id === d.id))); fillSubs($('#pf')); },
-        pdup: d => { const p = catalog().find(x => x.id === d.id); if (!p) return; const a = PA(); a.added.push({ ...p, id: 'ADM' + Date.now().toString(36).toUpperCase(), name: p.name + ' (copy)' }); wr(K.pa, a); log('log_save', 'm_products', p.name); render(); toast(t('saved')); },
-        pdel: d => {
-            if (!confirm(t('p_confirm_del'))) return; const a = PA();
-            if (baseIds().includes(d.id)) { a.deleted.push(d.id); delete a.edits[d.id]; } else a.added = a.added.filter(p => p.id !== d.id);
-            wr(K.pa, a); log('log_del', 'm_products', d.id); render(); toast(t('deleted'));
-        },
-        prestore: () => { const a = PA(); a.deleted = []; wr(K.pa, a); render(); toast(t('saved')); },
-        /* categories */
-        cadd: () => open(cform()), cedit: d => open(cform(CATS().find(c => c.name === d.id))),
-        cdel: d => { if (catalog().some(p => p.cat === d.id)) return alert(t('c_hasprod')); if (!confirm(t('confirm_del'))) return; wr(K.cats, CATS().filter(c => c.name !== d.id)); log('log_del', 'm_cats', d.id); render(); toast(t('deleted')); },
-        /* customers */
-        cudet: d => {
-            const acc = rd(K.acc, {})[d.id] || {}, us = rd(K.ustat, {})[d.id] || {}, o = orders().filter(x => x.user === d.id);
-            open(`<form id="cnf" data-id="${esc(d.id)}"><h3>${esc(acc.name || d.id)}</h3><p><small>${esc(d.id)}</small></p><div class="tw">${o.length ? ordersTbl(o, true) : `<p class="empty">${t('none')}</p>`}</div><label>${t('cu_note')}<textarea name="note" rows="3">${esc(us.note)}</textarea></label><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('close')}</button></div></form>`);
-        },
-        cudel: d => { if (!confirm(t('cu_delconf'))) return; const a = rd(K.acc, {}); delete a[d.id]; wr(K.acc, a); log('log_del', 'n_cust', d.id); render(); toast(t('deleted')); },
-        /* generic */
-        gadd: d => open(gForm(d.m)),
-        gedit: d => open(gForm(d.m, GL(d.m).find(x => x.id === d.id))),
-        gdel: d => { if (!confirm(t('confirm_del'))) return; wr(MODS[d.m].k, GL(d.m).filter(x => x.id !== d.id)); log('log_del', MODS[d.m].ti); render(); toast(t('deleted')); },
-        /* governorates */
-        gvadd: () => open(gvForm()), gvedit: d => open(gvForm(GOVS().find(g => g.id === d.id))),
-        gvdel: d => { if (!confirm(t('confirm_del'))) return; saveGov(GOVS().filter(g => g.id !== d.id)); log('log_del', 'n_govs'); render(); toast(t('deleted')); },
-        gvreset: () => { if (!confirm(t('g_confirm_reset'))) return; localStorage.removeItem(K.govs); render(); },
-        gvareas: d => open(areasHtml(d.id)), gvdone: () => { $('#dlg').close(); render(); },
-        gvareadel: d => { const gs = GOVS(), g = gs.find(x => x.id === d.g); g.areas.splice(+d.i, 1); saveGov(gs); open(areasHtml(d.g)); },
-        /* notifications */
-        nclear: () => { wr(K.notifs, []); toast(t('deleted')); },
-        nldel: d => { wr(K.nlog, rd(K.nlog, []).filter(x => String(x.time) !== d.id)); wr(K.notifs, rd(K.notifs, []).filter(x => String(x.time) !== d.id)); render(); },
-        /* reports */
-        rcsv: () => { const d = repData(); dl('boda-report-' + S.rp.type + '.csv', new Blob([csvOf([d.head.map(t)].concat(d.rows))], { type: 'text/csv' })); },
-        rprint: () => window.print(),
-        /* messages */
-        mread: d => { wr(K.msgs, rd(K.msgs, []).map(m => m.id === d.id ? { ...m, read: !m.read } : m)); render(); },
-        mdel: d => { wr(K.msgs, rd(K.msgs, []).filter(m => m.id !== d.id)); render(); },
-        backup: () => { const all = {}; Object.keys(localStorage).filter(k => k.startsWith('boda_')).forEach(k => all[k] = localStorage.getItem(k)); dl('boda-backup-' + today() + '.json', new Blob([JSON.stringify(all)], { type: 'application/json' })); },
-        restore: () => $('#file').click()
-    };
-    document.addEventListener('click', e => {
-        if (!e.target.closest('.lang')) document.querySelectorAll('.lmenu').forEach(x => x.hidden = true);
-        const b = e.target.closest('[data-act]'); if (b && ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset, b);
-    });
-    document.addEventListener('input', e => { const x = e.target; if (x.dataset.q) { S[x.dataset.q] = x.value; refresh(x.dataset.v); } });
-    function downscale(file, cb) {
-        const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const m = 800, k = Math.min(1, m / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); cb(c.toDataURL('image/jpeg', .82)); }; im.src = r.result; }; r.readAsDataURL(file);
-    }
-    document.addEventListener('change', e => {
-        const x = e.target, d = x.dataset;
-        if (x.matches('[data-q]')) { S[d.q] = x.value; refresh(d.v); return; }
-        if (x.matches('[data-rp]')) { S.rp[d.rp] = x.value; $('#rep').innerHTML = repBody(); return; }
-        if (x.name === 'cat' && x.form && x.form.id === 'pf') { fillSubs(x.form); return; }
-        if (d.up && x.files[0]) { const f = x.form; downscale(x.files[0], url => { const el = f.elements[d.up]; if (d.up === 'gallery') el.value = (el.value ? el.value + '\n' : '') + url; else { el.value = url; const pv = f.querySelector('[data-prev="' + d.up + '"]'); if (pv) pv.src = url; } }); x.value = ''; return; }
-        if (d.chg === 'theme') { THEME = x.checked ? 'dark' : 'light'; localStorage.setItem(K.theme, THEME); applyLang(); document.querySelectorAll('[data-chg="theme"]').forEach(i => i.checked = x.checked); return; }
-        if (d.chg === 'ost') {
-            const all = rd(K.orders, []), o = all.find(y => y.id === d.id); if (!o) return;
-            o.cancelled = x.value === 'Cancelled'; o.status = x.value; o.manual = true; wr(K.orders, all);
-            const n = rd(K.notifs, []); n.unshift({ text: 'Order ' + o.id + ' is now ' + x.value, href: 'index.html?page=orders', time: Date.now(), read: false }); wr(K.notifs, n.slice(0, 30));
-            log('log_order', '', o.id + ' → ' + x.value); render(); toast(t('o_updated')); return;
-        }
-        if (d.chg === 'pstock') { patchProduct(d.id, { stock: x.checked }); toast(t('saved')); return; }
-        if (d.chg === 'pvis') { patchProduct(d.id, { hidden: !x.checked }); toast(t('saved')); return; }
-        if (d.chg === 'tog') { const l = GL(d.m), r = l.find(y => y.id === d.id); if (r) { r[d.f] = x.checked; wr(MODS[d.m].k, l); } if (d.m === 'comp' || d.m === 'warn') render(); else toast(t('saved')); return; }
-        if (d.chg === 'cublock') { const u = rd(K.ustat, {}); u[d.id] = { ...(u[d.id] || {}), blocked: !x.checked }; wr(K.ustat, u); toast(t('saved')); return; }
-        if (d.chg === 'govact') { const gs = GOVS(), g = gs.find(y => y.id === d.id); g.active = x.checked; saveGov(gs); toast(t('saved')); return; }
-        if (d.chg === 'aact' || d.chg === 'afee') { const gs = GOVS(), g = gs.find(y => y.id === d.g), a = g.areas[+d.i]; if (d.chg === 'aact') a.active = x.checked; else a.fee = x.value === '' ? '' : +x.value; saveGov(gs); return; }
-        if (x.id === 'file' && x.files[0]) {
-            const r = new FileReader(); r.onload = () => {
-                try { const j = JSON.parse(r.result); if (!confirm(t('restore_conf'))) return; Object.keys(j).filter(k => k.startsWith('boda_')).forEach(k => localStorage.setItem(k, j[k])); LG = localStorage.getItem(K.lang) || LG; THEME = localStorage.getItem(K.theme) === 'dark' ? 'dark' : 'light'; applyLang(); render(); toast(t('restore_ok')); } catch (z) { alert(t('restore_bad')); }
-            }; r.readAsText(x.files[0]); x.value = '';
-        }
-    });
-    document.addEventListener('submit', e => {
-        const f = e.target; e.preventDefault(); const err = f.querySelector('.err'), v = n => f.elements[n].value.trim();
-        if (f.id === 'lf') { if (tryLogin(v('u'), f.elements.p.value)) { sessionStorage.setItem('boda_admin', '1'); sessionStorage.setItem('boda_admin_user', v('u')); log('log_login'); gate(); } else $('#lerr').textContent = t('login_err'); return; }
-        if (f.id === 'hf') {
-            const i = +f.dataset.i; if (!v('title')) { err.textContent = t('h_err'); return; }
-            const rec = { badge: v('badge'), title: v('title'), text: v('text'), b1: v('b1'), l1: v('l1'), b2: v('b2'), l2: v('l2'), emojis: v('emojis'), img: v('img') };
-            const h = HERO(); if (i >= 0) h[i] = rec; else h.push(rec); wr(K.hero, h); $('#dlg').close(); log('log_save', 'n_hero'); render(); toast(t('saved')); return;
-        }
-        if (f.id === 'sf') {
-            const c = n => f.elements[n].checked;
-            wr(K.site, { announce: { show: c('show'), text: v('text'), linkText: v('linkText'), linkHref: v('linkHref') }, contact: { email: v('email'), phone: v('phone'), address: v('address'), hours: v('hours') }, general: { name: v('gname') || 'Boda Store', free: +v('free') || 0, low: +v('low') || 0, tax: +v('tax') || 0, maint: c('maint'), reg: c('reg'), guest: c('guest'), reviews: c('reviews'), mail: c('mail') } });
-            log('log_save', 'n_settings'); toast(t('s_saved')); return;
-        }
-        if (f.id === 'pwf') {
-            if (!tryLogin(me(), f.elements.cur.value)) { err.textContent = t('s_pwbad'); return; }
-            const np = f.elements.nw.value; if (np.length < 6) { err.textContent = t('u_err_pass'); return; }
-            if (me() === ADMIN.user) wr(K.apw, hash(np)); else { const us = USERS(), u = us.find(a => a.u === me()); if (u) { u.h = hash(np); wr(K.users, us); } }
-            f.reset(); err.textContent = ''; toast(t('s_pwok')); return;
-        }
-        if (f.id === 'nf') {
-            const text = v('text'); if (!text) return; const now = Date.now(), href = v('href') || 'index.html';
-            const n = rd(K.notifs, []); n.unshift({ text, href, time: now, read: false }); wr(K.notifs, n.slice(0, 50));
-            const h = rd(K.nlog, []); h.unshift({ text, href, time: now }); wr(K.nlog, h.slice(0, 100));
-            log('log_notif', '', text.slice(0, 40)); render(); toast(t('nt_sent')); return;
-        }
-        if (f.id === 'cnf') { const u = rd(K.ustat, {}); u[f.dataset.id] = { ...(u[f.dataset.id] || {}), note: v('note') }; wr(K.ustat, u); $('#dlg').close(); toast(t('saved')); return; }
-        if (f.id === 'af') {
-            const gs = GOVS(), g = gs.find(x => x.id === f.dataset.g), n = v('n'); if (!n) return;
-            g.areas.push({ n, fee: v('fee') === '' ? '' : +v('fee'), active: true }); saveGov(gs); open(areasHtml(g.id)); return;
-        }
-        if (f.id === 'gvf') {
-            const gs = GOVS(), id = f.dataset.id, rec = { n: v('n'), en: v('en'), fee: +v('fee') || 0, active: f.elements.active.checked };
-            if (!rec.n) { err.textContent = t('req_err'); return; }
-            if (id) Object.assign(gs.find(g => g.id === id), rec); else gs.push({ id: 'G' + Date.now().toString(36), areas: [], ...rec });
-            saveGov(gs); $('#dlg').close(); log('log_save', 'n_govs', rec.n); render(); toast(t('saved')); return;
-        }
-        if (f.id === 'gf') {
-            const k = f.dataset.m, m = MODS[k], id = f.dataset.id, r = readForm(m, f);
-            const miss = m.fields.find(x => x.req && (r[x.n] === '' || r[x.n] == null)); if (miss) { err.textContent = t('req_err'); return; }
-            const list = GL(k), old = id ? list.find(x => x.id === id) : null;
-            if (m.val) { const z = m.val(r, old, list); if (z) { err.textContent = t(z); return; } }
-            if (m.pre) m.pre(r, old, list);
-            if (old) Object.assign(old, r); else list.unshift({ id: 'X' + Date.now().toString(36), created: Date.now(), ...r });
-            wr(m.k, list); $('#dlg').close(); log('log_save', m.ti); render(); toast(t('saved')); return;
-        }
-        if (f.id === 'pf') {
-            const price = +f.elements.price.value, old = +f.elements.old.value || 0, name = v('name'); if (!name || !(price >= 0)) { err.textContent = t('p_err'); return; }
-            const bk = f.elements.bk.value, qty = v('qty');
-            const rec = {
-                name, cat: f.elements.cat.value, sub: f.elements.sub.value, price, old: old > price ? old : 0, qty: qty === '' ? undefined : +qty, brand: v('brand'), warranty: v('warranty'), options: v('options').split(/[,،]/).map(s => s.trim()).filter(Boolean),
-                img: v('img'), gallery: f.elements.gallery.value.split('\n').map(s => s.trim()).filter(Boolean), desc: v('desc'), long: v('long'), features: f.elements.features.value.split('\n').map(s => s.trim()).filter(Boolean),
-                badge: bk === 'new' ? 'NEW' : bk === 'auto' ? (old > price ? '🔥 ' + Math.round((old - price) / old * 100) + '% OFF' : '') : bk === 'custom' ? v('bt') : '', stock: f.elements.stock.checked, hidden: !f.elements.visible.checked
-            };
-            if (rec.qty === 0) rec.stock = false;
-            const id = f.dataset.id;
-            if (id) patchProduct(id, rec);
-            else { const a = PA(), code = f.elements.code ? v('code') : ''; if (code && (catalog().some(p => p.id === code) || baseIds().includes(code))) { err.textContent = t('p_dupcode'); return; } a.added.push({ ...rec, id: code || 'ADM' + Date.now().toString(36).toUpperCase() }); wr(K.pa, a); }
-            $('#dlg').close(); log('log_save', 'm_products', name); render(); toast(t('saved')); return;
-        }
-        if (f.id === 'cf') {
-            const cs = CATS().map(c => ({ ...c })), name = v('name'), id = f.dataset.id;
-            const rec = { name, icon: v('icon'), shop: v('shop') || 'Shop ' + name, desc: v('desc'), long: v('long') || v('desc'), subs: f.elements.subs.value.split(/[\n,،]/).map(s => s.trim()).filter(Boolean) };
-            if (!name) { err.textContent = t('req_err'); return; }
-            if (id) { const i = cs.findIndex(c => c.name === id); cs[i] = { ...cs[i], ...rec, name: id }; }
-            else { if (cs.some(c => c.name.toLowerCase() === name.toLowerCase())) { err.textContent = t('c_exists'); return; } cs.push(rec); }
-            wr(K.cats, cs); $('#dlg').close(); log('log_save', 'm_cats', name); render(); toast(t('saved'));
-        }
-    });
-    applyLang();
-    gate();
-})();
+                    },
+                    odel: d => { if (!confirm(t('o_confirm_del'))) return; wr(K.orders, rd(K.orders, []).filter(o => o.id !== d.id)); log('log_del', 'n_orders', d.id); render(); toast(t('deleted')); },
+                    csv: () => dl('boda-orders.csv', new Blob([csvOf([[t('th_order'), t('th_date'), t('th_cust'), t('r_phone'), t('r_city'), t('th_pay'), t('th_total'), t('th_status')]].concat(orders().map(o => [o.id, new Date(o.created).toISOString(), o.ship?.name, o.ship?.phone, o.ship?.city, o.payment, o.total, t('st_' + o.s)])))], { type: 'text/csv' })),
+                    /* products */
+                    padd: () => { open(pform()); fillSubs($('#pf')); },
+                    pedit: d => { open(pform(catalog().find(x => x.id === d.id))); fillSubs($('#pf')); },
+                    pdup: d => { const p = catalog().find(x => x.id === d.id); if (!p) return; const a = PA(); a.added.push({ ...p, id: 'ADM' + Date.now().toString(36).toUpperCase(), name: p.name + ' (copy)' }); wr(K.pa, a); log('log_save', 'm_products', p.name); render(); toast(t('saved')); },
+                    pdel: d => {
+                        if (!confirm(t('p_confirm_del'))) return; const a = PA();
+                        if (baseIds().includes(d.id)) { a.deleted.push(d.id); delete a.edits[d.id]; } else a.added = a.added.filter(p => p.id !== d.id);
+                        wr(K.pa, a); log('log_del', 'm_products', d.id); render(); toast(t('deleted'));
+                    },
+                    prestore: () => { const a = PA(); a.deleted = []; wr(K.pa, a); render(); toast(t('saved')); },
+                    /* categories */
+                    cadd: () => open(cform()), cedit: d => open(cform(CATS().find(c => c.name === d.id))),
+                    cdel: d => { if (CATS().length <= 1) return alert(t('c_last')); if (catalog().some(p => p.cat === d.id)) return alert(t('c_hasprod')); if (!confirm(t('confirm_del'))) return; wr(K.cats, CATS().filter(c => c.name !== d.id)); log('log_del', 'm_cats', d.id); render(); toast(t('deleted')); },
+                    /* customers */
+                    cudet: d => {
+                        const acc = rd(K.acc, {})[d.id] || {}, us = rd(K.ustat, {})[d.id] || {}, o = orders().filter(x => x.user === d.id);
+                        open(`<form id="cnf" data-id="${esc(d.id)}"><h3>${esc(acc.name || d.id)}</h3><p><small>${esc(d.id)}</small></p><div class="tw">${o.length ? ordersTbl(o, true) : `<p class="empty">${t('none')}</p>`}</div><label>${t('cu_note')}<textarea name="note" rows="3">${esc(us.note)}</textarea></label><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('close')}</button></div></form>`);
+                    },
+                    cudel: d => { if (!confirm(t('cu_delconf'))) return; const a = rd(K.acc, {}); delete a[d.id]; wr(K.acc, a); log('log_del', 'n_cust', d.id); render(); toast(t('deleted')); },
+                    /* generic */
+                    gadd: d => open(gForm(d.m)),
+                    gedit: d => open(gForm(d.m, GL(d.m).find(x => x.id === d.id))),
+                    gdel: d => { if (!confirm(t('confirm_del'))) return; wr(MODS[d.m].k, GL(d.m).filter(x => x.id !== d.id)); log('log_del', MODS[d.m].ti); render(); toast(t('deleted')); },
+                    /* governorates */
+                    gvadd: () => open(gvForm()), gvedit: d => open(gvForm(GOVS().find(g => g.id === d.id))),
+                    gvdel: d => { if (!confirm(t('confirm_del'))) return; saveGov(GOVS().filter(g => g.id !== d.id)); log('log_del', 'n_govs'); render(); toast(t('deleted')); },
+                    gvreset: () => { if (!confirm(t('g_confirm_reset'))) return; localStorage.removeItem(K.govs); render(); },
+                    gvareas: d => open(areasHtml(d.id)), gvdone: () => { $('#dlg').close(); render(); },
+                    gvareadel: d => { const gs = GOVS(), g = gs.find(x => x.id === d.g); g.areas.splice(+d.i, 1); saveGov(gs); open(areasHtml(d.g)); },
+                    /* notifications */
+                    nclear: () => { wr(K.notifs, []); toast(t('deleted')); },
+                    nldel: d => { wr(K.nlog, rd(K.nlog, []).filter(x => String(x.time) !== d.id)); wr(K.notifs, rd(K.notifs, []).filter(x => String(x.time) !== d.id)); render(); },
+                    /* reports */
+                    rcsv: () => { const d = repData(); dl('boda-report-' + S.rp.type + '.csv', new Blob([csvOf([d.head.map(t)].concat(d.rows))], { type: 'text/csv' })); },
+                    rprint: () => window.print(),
+                    /* messages */
+                    mread: d => { wr(K.msgs, rd(K.msgs, []).map(m => m.id === d.id ? { ...m, read: !m.read } : m)); render(); },
+                    mdel: d => { wr(K.msgs, rd(K.msgs, []).filter(m => m.id !== d.id)); render(); },
+                    backup: () => { const all = {}; Object.keys(localStorage).filter(k => k.startsWith('boda_')).forEach(k => all[k] = localStorage.getItem(k)); dl('boda-backup-' + today() + '.json', new Blob([JSON.stringify(all)], { type: 'application/json' })); },
+                    restore: () => $('#file').click()
+                };
+                document.addEventListener('click', e => {
+                    if (!e.target.closest('.lang')) document.querySelectorAll('.lmenu').forEach(x => x.hidden = true);
+                    const b = e.target.closest('[data-act]'); if (b && ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset, b);
+                });
+                document.addEventListener('input', e => { const x = e.target; if (x.dataset.q) { S[x.dataset.q] = x.value; refresh(x.dataset.v); } });
+                function downscale(file, cb) {
+                    const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const m = 800, k = Math.min(1, m / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); cb(c.toDataURL('image/jpeg', .82)); }; im.src = r.result; }; r.readAsDataURL(file);
+                }
+                document.addEventListener('change', e => {
+                    const x = e.target, d = x.dataset;
+                    if (x.matches('[data-q]')) { S[d.q] = x.value; refresh(d.v); return; }
+                    if (x.matches('[data-rp]')) { S.rp[d.rp] = x.value; $('#rep').innerHTML = repBody(); return; }
+                    if (x.name === 'cat' && x.form && x.form.id === 'pf') { fillSubs(x.form); return; }
+                    if (d.up && x.files[0]) { const f = x.form; downscale(x.files[0], url => { const el = f.elements[d.up]; if (d.up === 'gallery') el.value = (el.value ? el.value + '\n' : '') + url; else { el.value = url; const pv = f.querySelector('[data-prev="' + d.up + '"]'); if (pv) pv.src = url; } }); x.value = ''; return; }
+                    if (d.chg === 'theme') { THEME = x.checked ? 'dark' : 'light'; localStorage.setItem(K.theme, THEME); applyLang(); document.querySelectorAll('[data-chg="theme"]').forEach(i => i.checked = x.checked); return; }
+                    if (d.chg === 'ost') {
+                        const all = rd(K.orders, []), o = all.find(y => y.id === d.id); if (!o) return;
+                        o.cancelled = x.value === 'Cancelled'; o.status = x.value; o.manual = true; wr(K.orders, all);
+                        const n = rd(K.notifs, []); n.unshift({ text: 'Order ' + o.id + ' is now ' + x.value, href: 'index.html?page=orders', time: Date.now(), read: false }); wr(K.notifs, n.slice(0, 30));
+                        log('log_order', '', o.id + ' → ' + x.value); render(); toast(t('o_updated')); return;
+                    }
+                    if (d.chg === 'pstock') { patchProduct(d.id, { stock: x.checked }); toast(t('saved')); return; }
+                    if (d.chg === 'pvis') { patchProduct(d.id, { hidden: !x.checked }); toast(t('saved')); return; }
+                    if (d.chg === 'tog') { const l = GL(d.m), r = l.find(y => y.id === d.id); if (r) { r[d.f] = x.checked; wr(MODS[d.m].k, l); } if (d.m === 'comp' || d.m === 'warn') render(); else toast(t('saved')); return; }
+                    if (d.chg === 'cublock') { const u = rd(K.ustat, {}); u[d.id] = { ...(u[d.id] || {}), blocked: !x.checked }; wr(K.ustat, u); toast(t('saved')); return; }
+                    if (d.chg === 'govact') { const gs = GOVS(), g = gs.find(y => y.id === d.id); g.active = x.checked; saveGov(gs); toast(t('saved')); return; }
+                    if (d.chg === 'aact' || d.chg === 'afee') { const gs = GOVS(), g = gs.find(y => y.id === d.g), a = g.areas[+d.i]; if (d.chg === 'aact') a.active = x.checked; else a.fee = x.value === '' ? '' : +x.value; saveGov(gs); return; }
+                    if (x.id === 'file' && x.files[0]) {
+                        const r = new FileReader(); r.onload = () => {
+                            try { const j = JSON.parse(r.result); if (!confirm(t('restore_conf'))) return; Object.keys(j).filter(k => k.startsWith('boda_')).forEach(k => localStorage.setItem(k, j[k])); LG = localStorage.getItem(K.lang) || LG; THEME = localStorage.getItem(K.theme) === 'dark' ? 'dark' : 'light'; applyLang(); render(); toast(t('restore_ok')); } catch (z) { alert(t('restore_bad')); }
+                        }; r.readAsText(x.files[0]); x.value = '';
+                    }
+                });
+                document.addEventListener('submit', e => {
+                    const f = e.target; e.preventDefault(); const err = f.querySelector('.err'), v = n => f.elements[n].value.trim();
+                    if (f.id === 'lf') { if (tryLogin(v('u'), f.elements.p.value)) { sessionStorage.setItem('boda_admin', '1'); sessionStorage.setItem('boda_admin_user', v('u')); log('log_login'); gate(); } else $('#lerr').textContent = t('login_err'); return; }
+                    if (f.id === 'hf') {
+                        const i = +f.dataset.i; if (!v('title')) { err.textContent = t('h_err'); return; }
+                        const rec = { badge: v('badge'), title: v('title'), text: v('text'), b1: v('b1'), l1: v('l1'), b2: v('b2'), l2: v('l2'), emojis: v('emojis'), img: v('img') };
+                        const h = HERO(); if (i >= 0) h[i] = rec; else h.push(rec); wr(K.hero, h); $('#dlg').close(); log('log_save', 'n_hero'); render(); toast(t('saved')); return;
+                    }
+                    if (f.id === 'sf') {
+                        const c = n => f.elements[n].checked;
+                        wr(K.site, { announce: { show: c('show'), text: v('text'), linkText: v('linkText'), linkHref: v('linkHref') }, contact: { email: v('email'), phone: v('phone'), address: v('address'), hours: v('hours') }, general: { name: v('gname') || 'Boda Store', free: +v('free') || 0, low: +v('low') || 0, tax: +v('tax') || 0, maint: c('maint'), reg: c('reg'), guest: c('guest'), reviews: c('reviews'), mail: c('mail') } });
+                        log('log_save', 'n_settings'); toast(t('s_saved')); return;
+                    }
+                    if (f.id === 'pwf') {
+                        if (!tryLogin(me(), f.elements.cur.value)) { err.textContent = t('s_pwbad'); return; }
+                        const np = f.elements.nw.value; if (np.length < 6) { err.textContent = t('u_err_pass'); return; }
+                        if (me() === ADMIN.user) wr(K.apw, hash(np)); else { const us = USERS(), u = us.find(a => a.u === me()); if (u) { u.h = hash(np); wr(K.users, us); } }
+                        f.reset(); err.textContent = ''; toast(t('s_pwok')); return;
+                    }
+                    if (f.id === 'nf') {
+                        const text = v('text'); if (!text) return; const now = Date.now(), href = v('href') || 'index.html';
+                        const n = rd(K.notifs, []); n.unshift({ text, href, time: now, read: false }); wr(K.notifs, n.slice(0, 50));
+                        const h = rd(K.nlog, []); h.unshift({ text, href, time: now }); wr(K.nlog, h.slice(0, 100));
+                        log('log_notif', '', text.slice(0, 40)); render(); toast(t('nt_sent')); return;
+                    }
+                    if (f.id === 'cnf') { const u = rd(K.ustat, {}); u[f.dataset.id] = { ...(u[f.dataset.id] || {}), note: v('note') }; wr(K.ustat, u); $('#dlg').close(); toast(t('saved')); return; }
+                    if (f.id === 'af') {
+                        const gs = GOVS(), g = gs.find(x => x.id === f.dataset.g), n = v('n'); if (!n) return;
+                        g.areas.push({ n, fee: v('fee') === '' ? '' : +v('fee'), active: true }); saveGov(gs); open(areasHtml(g.id)); return;
+                    }
+                    if (f.id === 'gvf') {
+                        const gs = GOVS(), id = f.dataset.id, rec = { n: v('n'), en: v('en'), fee: +v('fee') || 0, active: f.elements.active.checked };
+                        if (!rec.n) { err.textContent = t('req_err'); return; }
+                        if (id) Object.assign(gs.find(g => g.id === id), rec); else gs.push({ id: 'G' + Date.now().toString(36), areas: [], ...rec });
+                        saveGov(gs); $('#dlg').close(); log('log_save', 'n_govs', rec.n); render(); toast(t('saved')); return;
+                    }
+                    if (f.id === 'gf') {
+                        const k = f.dataset.m, m = MODS[k], id = f.dataset.id, r = readForm(m, f);
+                        const miss = m.fields.find(x => x.req && (r[x.n] === '' || r[x.n] == null)); if (miss) { err.textContent = t('req_err'); return; }
+                        const list = GL(k), old = id ? list.find(x => x.id === id) : null;
+                        if (m.val) { const z = m.val(r, old, list); if (z) { err.textContent = t(z); return; } }
+                        if (m.pre) m.pre(r, old, list);
+                        if (old) Object.assign(old, r); else list.unshift({ id: 'X' + Date.now().toString(36), created: Date.now(), ...r });
+                        wr(m.k, list); $('#dlg').close(); log('log_save', m.ti); render(); toast(t('saved')); return;
+                    }
+                    if (f.id === 'pf') {
+                        const price = +f.elements.price.value, old = +f.elements.old.value || 0, name = v('name'); if (!name || !(price >= 0)) { err.textContent = t('p_err'); return; }
+                        const bk = f.elements.bk.value, qty = v('qty');
+                        const rec = {
+                            name, cat: f.elements.cat.value, sub: f.elements.sub.value, price, old: old > price ? old : 0, qty: qty === '' ? null : +qty, brand: v('brand'), warranty: v('warranty'), options: v('options').split(/[,،]/).map(s => s.trim()).filter(Boolean),
+                            img: v('img'), gallery: f.elements.gallery.value.split('\n').map(s => s.trim()).filter(Boolean), desc: v('desc'), long: v('long'), features: f.elements.features.value.split('\n').map(s => s.trim()).filter(Boolean),
+                            badge: bk === 'new' ? 'NEW' : bk === 'auto' ? (old > price ? '🔥 ' + Math.round((old - price) / old * 100) + '% OFF' : '') : bk === 'custom' ? v('bt') : '', stock: f.elements.stock.checked, hidden: !f.elements.visible.checked
+                        };
+                        if (rec.qty === 0) rec.stock = false;
+                        const id = f.dataset.id;
+                        if (id) patchProduct(id, rec);
+                        else { const a = PA(), code = f.elements.code ? v('code') : ''; if (code && (catalog().some(p => p.id === code) || baseIds().includes(code))) { err.textContent = t('p_dupcode'); return; } a.added.push({ ...rec, id: code || 'ADM' + Date.now().toString(36).toUpperCase() }); wr(K.pa, a); }
+                        $('#dlg').close(); log('log_save', 'm_products', name); render(); toast(t('saved')); return;
+                    }
+                    if (f.id === 'cf') {
+                        const cs = CATS().map(c => ({ ...c })), name = v('name'), id = f.dataset.id;
+                        const rec = { name, icon: v('icon'), shop: v('shop') || 'Shop ' + name, desc: v('desc'), long: v('long') || v('desc'), subs: f.elements.subs.value.split(/[\n,،]/).map(s => s.trim()).filter(Boolean) };
+                        if (!name) { err.textContent = t('req_err'); return; }
+                        if (id) { const i = cs.findIndex(c => c.name === id); cs[i] = { ...cs[i], ...rec, name: id }; }
+                        else { if (cs.some(c => c.name.toLowerCase() === name.toLowerCase())) { err.textContent = t('c_exists'); return; } cs.push(rec); }
+                        wr(K.cats, cs); $('#dlg').close(); log('log_save', 'm_cats', name); render(); toast(t('saved'));
+                    }
+                });
+                applyLang();
+                gate();
+            })();
         </script>
     </template>
     <script>
