@@ -17,7 +17,7 @@
         (function () {
             var admin = /[?&]page=admin(&|$)/.test(location.search);
             window.BODA_ADMIN = admin;
-            (admin ? ['products-data.js'] : ['language.js', 'products-data.js', 'app.js']).forEach(function (f) {
+            (admin ? ['products-data.js'] : ['language.js', 'products-data.js', 'app.js', 'order-flow.js', 'product-extras.js']).forEach(function (f) {
                 document.write('<script src="' + f + '" defer><\/script>');
             });
             if (admin) document.write('<style>link[href="style.css"]{display:none}</style>');
@@ -6750,8 +6750,6 @@
                     background: #fff
                 }
             }
-<<<<<<< HEAD
-=======
 
             /* ===== Admin: bigger search + modern selects + image preview ===== */
             .filters {
@@ -7198,7 +7196,6 @@
                 line-height: 44px;
                 overflow: hidden
             }
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
         </style>
         <div id="login" hidden></div>
 
@@ -7212,22 +7209,14 @@
         <script>
             (function () {
                 // ⚠ بيانات الدخول الافتراضية مكتوبة هنا (حماية أولية فقط). غيّر كلمة المرور من الإعدادات، ولما تنشر الموقع فعليًا لازم تحمي اللوحة من السيرفر.
-<<<<<<< HEAD
-                const ADMIN = { user: 'admin', pass: 'Boda@2026' };
-=======
                 const ADMIN = { user: 'admin', pass: '' };
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 const K = {
                     orders: 'boda_orders', acc: 'boda_accounts', msgs: 'boda_messages', news: 'boda_newsletter', cats: 'boda_categories', pa: 'boda_admin_products', notifs: 'boda_notifs', hero: 'boda_hero', site: 'boda_site',
                     articles: 'boda_news', offers: 'boda_offers', ads: 'boda_ads', comp: 'boda_complaints', warn: 'boda_warnings', govs: 'boda_govs', users: 'boda_admin_users', ustat: 'boda_cust_status', nlog: 'boda_notif_log', log: 'boda_admin_log', apw: 'boda_admin_pw', lang: 'boda_admin_lang', theme: 'boda_admin_theme'
                 };
                 const $ = (s, r = document) => r.querySelector(s);
                 const rd = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
-<<<<<<< HEAD
-                const wr = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast(t('quota')); } };
-=======
                 const wr = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast(t('quota')); } if ((k === K.pa || k === K.cats) && apiOn()) queueSync(); };
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
                 const money = n => '$' + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
 
@@ -7286,8 +7275,6 @@ req_err || كمّل الحقول المطلوبة. || Fill in the required field
 quota || مساحة التخزين امتلأت — صغّر الصور أو احذف بيانات قديمة. || Storage is full — use smaller images or delete old data. || Stockage plein. || Speicher voll.
 active || مفعّل || Active || Actif || Aktiv
 upload || رفع صورة || Upload image || Téléverser une image || Bild hochladen
-<<<<<<< HEAD
-=======
 fl_title || الفلاتر الأساسية || Basic filters || Filtres de base || Basisfilter
 fl_cat || القسم || Category || Catégorie || Kategorie
 fl_stock || التوفر || Availability || Disponibilité || Verfügbarkeit
@@ -7313,7 +7300,6 @@ m_st_new || غير مقروءة || Unread || Non lus || Ungelesen
 m_st_read || مقروءة || Read || Lus || Gelesen
 c_search || ابحث عن قسم أو قسم فرعي || Search a category or sub-category || Rechercher une catégorie || Kategorie suchen
 nl_search || ابحث عن بريد إلكتروني || Search an email || Rechercher un e-mail || E-Mail suchen
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
 multi_hint || اضغط Ctrl للاختيار المتعدد. || Hold Ctrl to select several. || Ctrl pour en choisir plusieurs. || Strg für Mehrfachauswahl.
 alerts || التنبيهات || Alerts || Alertes || Hinweise
 no_alerts || مفيش تنبيهات دلوقتي ✅ || No alerts right now ✅ || Aucune alerte ✅ || Keine Hinweise ✅
@@ -7682,11 +7668,7 @@ restore_bad || الملف مش صالح. || Invalid file. || Fichier invalide. |
                 }
                 const log = (k, a, n) => { const l = rd(K.log, []); l.unshift({ t: Date.now(), u: me(), k, a: a || '', n: n || '' }); wr(K.log, l.slice(0, 60)); };
                 function toast(x) { document.querySelectorAll('.toast').forEach(e => e.remove()); const d = document.createElement('div'); d.className = 'toast'; d.textContent = x; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
-<<<<<<< HEAD
-                const thumb = s => s ? `<img class="th" src="${esc(s)}" alt="" onerror="this.style.visibility='hidden'">` : '';
-=======
                 const thumb = (s, id) => s ? `<img class="th" src="${esc(s)}" alt="" referrerpolicy="no-referrer" ${id ? `data-act="pedit" data-id="${esc(id)}" title="${t('edit')}"` : ''} onerror="this.classList.add('bad');this.alt='⚠';this.title='الصورة مش شغالة — اضغط لتعديل اللينك'">` : '';
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 const open = html => { const d = $('#dlg'); d.innerHTML = html; if (!d.open) d.showModal(); };
                 const refresh = k => { const e = $('#tbl'); if (e && TBLS[k]) e.innerHTML = TBLS[k](); };
 
@@ -7761,15 +7743,9 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
                 function patchProduct(id, f) { const a = PA(), i = a.added.findIndex(p => p.id === id); if (i > -1) a.added[i] = { ...a.added[i], ...f }; else a.edits[id] = { ...(a.edits[id] || {}), ...f }; wr(K.pa, a); }
                 function prodList() {
                     const q = (S.pq || '').toLowerCase(), low = +SITE().general.low;
-<<<<<<< HEAD
-                    const l = catalog().filter(p => (!S.pc || p.cat === S.pc) && (!q || (p.name + p.id + (p.brand || '')).toLowerCase().includes(q)));
-                    return l.length ? `<div class="tw"><table><thead><tr><th></th><th>${t('th_prod')}</th><th>${t('th_cat')}</th><th>${t('th_price')}</th><th>${t('f_qty')}</th><th>${t('f_instock')}</th><th>${t('th_vis')}</th><th></th></tr></thead><tbody>${l.map(p => `<tr>
-<td>${thumb(p.img)}</td><td class="wrap"><b>${esc(p.name)}</b><br><small>${esc(p.id)}${p.brand ? ' · ' + esc(p.brand) : ''}</small></td><td>${esc(p.cat)}<br><small>${esc(p.sub)}</small></td>
-=======
                     const l = catalog().filter(p => (!S.pc || p.cat === S.pc) && (!S.ps || (S.ps === 'in' ? p.stock !== false : S.ps === 'out' ? p.stock === false : (p.stock !== false && p.qty !== '' && p.qty != null && +p.qty <= low))) && (!S.pv || (S.pv === 'shown' ? !p.hidden : !!p.hidden)) && (!q || (p.name + ' ' + p.id + ' ' + (p.brand || '') + ' ' + (p.sub || '')).toLowerCase().includes(q)));
                     return l.length ? `<div class="tw"><table><thead><tr><th></th><th>${t('th_prod')}</th><th>${t('th_cat')}</th><th>${t('th_price')}</th><th>${t('f_qty')}</th><th>${t('f_instock')}</th><th>${t('th_vis')}</th><th></th></tr></thead><tbody>${l.map(p => `<tr>
 <td>${thumb(p.img, p.id)}</td><td class="wrap"><b>${esc(p.name)}</b><br><small>${esc(p.id)}${p.brand ? ' · ' + esc(p.brand) : ''}</small></td><td>${esc(p.cat)}<br><small>${esc(p.sub)}</small></td>
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
 <td>${p.old > p.price ? `<del><small>${money(p.old)}</small></del> ` : ''}<b>${money(p.price)}</b></td>
 <td>${p.qty == null || p.qty === '' ? '—' : `${p.qty}${+p.qty <= low ? ` <span class="pill warn">${t('low')}</span>` : ''}`}</td>
 <td>${sw('pstock', { id: p.id }, p.stock !== false)}</td><td>${sw('pvis', { id: p.id }, !p.hidden)}</td>
@@ -7778,11 +7754,6 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
                 function productsView() {
                     const del = PA().deleted.length;
                     return `<div class="head"><div><h1>${t('n_products')}</h1><p class="sub">${t('p_sub')}</p></div><div>${del ? `<button class="btn ghost" data-act="prestore">${t('p_restore')} (${del})</button> ` : ''}<button class="btn" data-act="padd">+ ${t('p_new')}</button></div></div>
-<<<<<<< HEAD
-<div class="filters"><input type="search" placeholder="${t('p_search')}" value="${esc(S.pq || '')}" data-q="pq" data-v="products"><select data-q="pc" data-v="products"><option value="">${t('p_allcats')}</option>${CATS().map(c => `<option ${S.pc === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div><div id="tbl">${prodList()}</div>`;
-                }
-                const imgField = (n, v, label) => `<div class="imgf wide"><label>${label}<input name="${n}" value="${esc(v)}" placeholder="https://... / icon/photo.jpg"></label><div class="imgrow"><img src="${esc(v)}" alt="" class="prev" data-prev="${n}" onerror="this.style.visibility='hidden'" onload="this.style.visibility='visible'"><label class="mini up">📁 ${t('upload')}<input type="file" accept="image/*" data-up="${n}" hidden></label></div></div>`;
-=======
 <div class="filters"><input type="search" placeholder="${t('p_search')}" value="${esc(S.pq || '')}" data-q="pq" data-v="products"><select data-q="pc" data-v="products"><option value="">${t('p_allcats')}</option>${CATS().map(c => `<option ${S.pc === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select><select data-q="ps" data-v="products"><option value="">${t('p_allstock')}</option>${[['in', 'p_instock'], ['out', 'p_outstock'], ['low', 'p_lowstock']].map(o => `<option value="${o[0]}" ${S.ps === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select><select data-q="pv" data-v="products"><option value="">${t('p_allvis')}</option>${[['shown', 'p_shown'], ['hidden', 'p_hidden']].map(o => `<option value="${o[0]}" ${S.pv === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select></div><div id="tbl">${prodList()}</div>`;
                 }
                 const imgField = (n, v, label) => `<div class="imgf wide"><label>${label}<input name="${n}" value="${esc(v)}" placeholder="https://... / icon/photo.jpg" data-imgurl="${n}" autocomplete="off"></label><div class="imgrow"><div class="pvbox ${v ? 'load' : 'empty'}" data-pvbox="${n}"><img src="${esc(v)}" alt="" class="prev" data-prev="${n}" referrerpolicy="no-referrer"></div><div class="pvside"><span class="pvmsg" data-pvmsg="${n}">${v ? t('img_loading') : t('img_empty')}</span><label class="mini up">📁 ${t('upload')}<input type="file" accept="image/*" data-up="${n}" hidden></label></div></div></div>`;
@@ -7803,7 +7774,6 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
                 document.addEventListener('paste', e => { const x = e.target; if (x.dataset && x.dataset.imgurl && x.form) setTimeout(() => setPrev(x.form, x.dataset.imgurl, x.value), 50); });
                 document.addEventListener('focusout', e => { const x = e.target; if (x.dataset && x.dataset.imgurl && x.form) setPrev(x.form, x.dataset.imgurl, x.value); });
                 new MutationObserver(() => { document.querySelectorAll('form [data-imgurl]').forEach(x => { if (!x.dataset.pvInit) { x.dataset.pvInit = '1'; if (x.value.trim()) setPrev(x.form, x.dataset.imgurl, x.value); } }); }).observe(document.body, { childList: true, subtree: true });
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 function badgeKind(b) { if (!b) return 'none'; if (b === 'NEW') return 'new'; if (/\d+%/.test(b)) return 'auto'; return 'custom'; }
                 function pform(p) {
                     const cs = CATS(); p = p || { cat: cs[0].name, stock: true }; const bk = badgeKind(p.badge);
@@ -7836,14 +7806,6 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                 }
 
                 /* ---------- Categories ---------- */
-<<<<<<< HEAD
-                function catsView() {
-                    const cs = CATS(), cat = catalog();
-                    return `<div class="head"><div><h1>${t('n_cats')}</h1><p class="sub">${t('c_sub')}</p></div><button class="btn" data-act="cadd">+ ${t('c_new')}</button></div>
-<div class="tw"><table><thead><tr><th>${t('th_cat')}</th><th>${t('th_subs')}</th><th>${t('th_nprod')}</th><th></th></tr></thead><tbody>${cs.map(c => `<tr><td><b>${esc(c.icon || '')} ${esc(c.name)}</b></td>
-<td class="wrap">${c.subs.length ? c.subs.map(s => `<span class="chip">${esc(s)} <small>${cat.filter(p => p.cat === c.name && p.sub === s).length}</small></span>`).join('') : '—'}</td><td>${cat.filter(p => p.cat === c.name).length}</td>
-<td class="nw"><button class="mini" data-act="cedit" data-id="${esc(c.name)}">${t('edit')}</button><button class="mini del" data-act="cdel" data-id="${esc(c.name)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>`;
-=======
                 function catList() {
                     const cs = CATS(), cat = catalog(), q = (S.ccq || '').toLowerCase();
                     const l = cs.filter(c => !q || (c.name + ' ' + c.subs.join(' ')).toLowerCase().includes(q));
@@ -7854,7 +7816,6 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                 function catsView() {
                     return `<div class="head"><div><h1>${t('n_cats')}</h1><p class="sub">${t('c_sub')}</p></div><button class="btn" data-act="cadd">+ ${t('c_new')}</button></div>
 <div class="filters"><input type="search" placeholder="${t('c_search')}" value="${esc(S.ccq || '')}" data-q="ccq" data-v="cats"></div><div id="tbl">${catList()}</div>`;
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 }
                 function cform(c) {
                     c = c || { subs: [] };
@@ -7869,21 +7830,13 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                 /* ---------- Customers ---------- */
                 function custList() {
                     const acc = rd(K.acc, {}), o = orders().filter(x => x.s !== 'Cancelled'), us = rd(K.ustat, {}), q = (S.cq || '').toLowerCase();
-<<<<<<< HEAD
-                    const rows = Object.keys(acc).map(id => { const mine = o.filter(x => x.user === id); return { a: acc[id], id, n: mine.length, v: mine.reduce((s, x) => s + x.total, 0) }; }).filter(r => !q || (r.a.name + ' ' + r.id).toLowerCase().includes(q));
-=======
                     const rows = Object.keys(acc).map(id => { const mine = o.filter(x => x.user === id); return { a: acc[id], id, n: mine.length, v: mine.reduce((s, x) => s + x.total, 0) }; }).filter(r => (!q || (r.a.name + ' ' + r.id).toLowerCase().includes(q)) && (!S.cs || (S.cs === 'blk') === !!(us[r.id] && us[r.id].blocked)));
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                     return rows.length ? `<div class="tw"><table><thead><tr><th>${t('th_name')}</th><th>${t('th_contact')}</th><th>${t('th_orders')}</th><th>${t('th_spent')}</th><th>${t('cu_active')}</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${esc(r.a.name)}</b></td><td>${esc(r.id)}</td><td>${r.n}</td><td>${money(r.v)}</td><td>${sw('cublock', { id: r.id }, !(us[r.id] && us[r.id].blocked))}</td>
 <td class="nw"><button class="mini" data-act="cudet" data-id="${esc(r.id)}">${t('details')}</button><button class="mini del" data-act="cudel" data-id="${esc(r.id)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('cu_none')}</div>`;
                 }
                 function custView() {
                     const news = rd(K.news, []);
-<<<<<<< HEAD
-                    return `<h1>${t('n_cust')}</h1><p class="sub">${t('n_cust_sub')}</p><div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.cq || '')}" data-q="cq" data-v="cust"></div><div id="tbl">${custList()}</div><div class="note">${t('cu_hint')}</div>
-=======
                     return `<h1>${t('n_cust')}</h1><p class="sub">${t('n_cust_sub')}</p><div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.cq || '')}" data-q="cq" data-v="cust"><select data-q="cs" data-v="cust"><option value="">${t('cu_allst')}</option><option value="act" ${S.cs === 'act' ? 'selected' : ''}>${t('cu_st_act')}</option><option value="blk" ${S.cs === 'blk' ? 'selected' : ''}>${t('cu_st_blk')}</option></select></div><div id="tbl">${custList()}</div><div class="note">${t('cu_hint')}</div>
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
 <div class="box" style="margin-top:14px"><h2>${t('subscribers')} (${news.length})</h2>${news.length ? news.map(e => `<span class="pill info" style="margin:3px">${esc(e)}</span>`).join('') : `<p class="empty">${t('no_subs')}</p>`}</div>`;
                 }
 
@@ -8028,16 +7981,6 @@ ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2
                     const h = rd(K.nlog, []);
                     return `<div class="head"><div><h1>${t('n_notifs')}</h1><p class="sub">${t('nt_sub')}</p></div><button class="btn ghost" data-act="nclear">${t('nt_clear')}</button></div>
 <form id="nf" class="box"><div class="g2"><label class="wide">${t('nt_text')}<textarea name="text" rows="2" required></textarea></label><label class="wide">${t('nt_link')}<input name="href" value="index.html?page=offers"></label></div><p class="err"></p><div class="bar"><button class="btn">🔔 ${t('nt_send')}</button></div><small>${t('nt_note')}</small></form>
-<<<<<<< HEAD
-<div class="box" style="margin-top:14px"><h2>${t('nt_history')}</h2>${h.length ? `<div class="tw"><table><tbody>${h.map(x => `<tr><td class="wrap">${esc(x.text)}<br><small>${esc(x.href)}</small></td><td>${when(x.time)}</td><td><button class="mini del" data-act="nldel" data-id="${x.time}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<p class="empty">${t('nt_none')}</p>`}</div>`;
-                }
-
-                /* ---------- Messages / Hero / Newsletter ---------- */
-                function msgsView() {
-                    const m = rd(K.msgs, []);
-                    return `<h1>${t('n_msgs')}</h1><p class="sub">${t('msg_sub')}</p>` + (m.length ? m.map(x => `<div class="msg ${x.read ? '' : 'new'}"><b>${esc(x.name)}</b> <span class="pill info">${esc(x.subject)}</span><br><small>${esc(x.email)} · ${esc(x.phone)} · ${when(x.time)}</small><p>${esc(x.message)}</p>
-<a class="mini" href="mailto:${esc(x.email)}">${t('msg_reply')}</a><button class="mini" data-act="mread" data-id="${esc(x.id)}">${x.read ? t('msg_unread') : t('msg_read')}</button><button class="mini del" data-act="mdel" data-id="${esc(x.id)}">${t('del')}</button></div>`).join('') : `<div class="empty tw">${t('msg_none')}</div>`);
-=======
 <div class="box" style="margin-top:14px"><h2>${t('nt_history')}</h2>${h.length ? `<div id="tbl"><div class="tw"><table><thead><tr><th>${t('nt_text')}</th><th></th><th></th></tr></thead><tbody>${h.map(x => `<tr><td class="wrap">${esc(x.text)}<br><small>${esc(x.href)}</small></td><td>${when(x.time)}</td><td><button class="mini del" data-act="nldel" data-id="${x.time}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div></div>` : `<p class="empty">${t('nt_none')}</p>`}</div>`;
                 }
 
@@ -8049,7 +7992,6 @@ ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2
                 }
                 function msgsView() {
                     return `<h1>${t('n_msgs')}</h1><p class="sub">${t('msg_sub')}</p><div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.mq || '')}" data-q="mq" data-v="msgs"><select data-q="ms" data-v="msgs"><option value="">${t('m_allst')}</option><option value="new" ${S.ms === 'new' ? 'selected' : ''}>${t('m_st_new')}</option><option value="read" ${S.ms === 'read' ? 'selected' : ''}>${t('m_st_read')}</option></select></div><div id="tbl">${msgList()}</div>`;
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 }
                 Object.assign(K, { hero: 'boda_hero', site: 'boda_site' });
                 const DEF_HERO = [
@@ -8062,13 +8004,8 @@ ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2
                     const h = HERO(), custom = Array.isArray(rd(K.hero, null));
                     return `<div class="head"><div><h1>${t('h_title_page')}</h1><p class="sub">${t('h_sub')}</p></div><div>${custom ? `<button class="btn ghost" data-act="hreset">${t('h_reset')}</button> ` : ''}<button class="btn" data-act="hadd">+ ${t('h_add')}</button></div></div>
 <div class="note">${custom ? t('h_custom') : t('h_default')}</div>
-<<<<<<< HEAD
-${h.map((x, i) => `<div class="slide-card"><span class="no">${i + 1}</span><div><b>${esc(x.title)}</b> <span class="pill info">${esc(x.badge)}</span><p>${esc(x.text)}</p><small>${esc(x.b1)} → ${esc(x.l1)}</small></div>
-<div class="acts"><button class="mini" data-act="hup" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button><button class="mini" data-act="hdown" data-i="${i}" ${i === h.length - 1 ? 'disabled' : ''}>↓</button><button class="mini" data-act="hedit" data-i="${i}">${t('edit')}</button><button class="mini del" data-act="hdel" data-i="${i}">${t('del')}</button></div></div>`).join('')}`;
-=======
 <div id="tbl">${h.map((x, i) => `<div class="slide-card"><span class="no">${i + 1}</span><div><b>${esc(x.title)}</b> <span class="pill info">${esc(x.badge)}</span><p>${esc(x.text)}</p><small>${esc(x.b1)} → ${esc(x.l1)}</small></div>
 <div class="acts"><button class="mini" data-act="hup" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button><button class="mini" data-act="hdown" data-i="${i}" ${i === h.length - 1 ? 'disabled' : ''}>↓</button><button class="mini" data-act="hedit" data-i="${i}">${t('edit')}</button><button class="mini del" data-act="hdel" data-i="${i}">${t('del')}</button></div></div>`).join('')}</div>`;
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 }
                 function hform(i) {
                     const x = i >= 0 ? HERO()[i] : { badge: '', title: '', text: '', b1: 'Shop Now', l1: 'index.html?page=products', b2: '', l2: '', emojis: '', img: '' };
@@ -8079,12 +8016,6 @@ ${h.map((x, i) => `<div class="slide-card"><span class="no">${i + 1}</span><div>
 ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<input name="emojis" value="${esc(x.emojis)}"></label></div>
 <p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
                 }
-<<<<<<< HEAD
-                function newsView() {
-                    const n = rd(K.news, []);
-                    return `<div class="head"><div><h1>${t('n_newsl')}</h1><p class="sub">${t('nl_sub')} (${n.length})</p></div><div><button class="btn ghost" data-act="ncopy">${t('nl_copy')}</button> <button class="btn ghost" data-act="ncsv">${t('exp_csv')}</button></div></div>
-${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</th><th></th></tr></thead><tbody>${n.map((e, i) => `<tr><td>${i + 1}</td><td>${esc(e)}</td><td class="nw"><a class="mini" href="mailto:${esc(e)}">${t('nl_write')}</a><button class="mini del" data-act="ndel" data-id="${esc(e)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('nl_none')}</div>`}`;
-=======
                 function newsList() {
                     const q = (S.nq || '').toLowerCase(), all = rd(K.news, []), n = all.filter(e => !q || String(e).toLowerCase().includes(q));
                     return n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</th><th></th></tr></thead><tbody>${n.map((e, i) => `<tr><td>${i + 1}</td><td>${esc(e)}</td><td class="nw"><a class="mini" href="mailto:${esc(e)}">${t('nl_write')}</a><button class="mini del" data-act="ndel" data-id="${esc(e)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('nl_none')}</div>`;
@@ -8093,7 +8024,6 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
                     const n = rd(K.news, []);
                     return `<div class="head"><div><h1>${t('n_newsl')}</h1><p class="sub">${t('nl_sub')} (${n.length})</p></div><div><button class="btn ghost" data-act="ncopy">${t('nl_copy')}</button> <button class="btn ghost" data-act="ncsv">${t('exp_csv')}</button></div></div>
 <div class="filters"><input type="search" placeholder="${t('nl_search')}" value="${esc(S.nq || '')}" data-q="nq" data-v="newsl"></div><div id="tbl">${newsList()}</div>`;
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 }
 
                 /* ---------- Settings ---------- */
@@ -8112,11 +8042,6 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
 <div class="note" style="margin-top:16px">${t('s_note')}<br>${t('s_store_note')}</div>`;
                 }
 
-<<<<<<< HEAD
-                /* ---------- Router ---------- */
-                const NAV = [['dash', '📊', dash], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
-                const TBLS = { orders: ordersList, products: prodList, cust: custList, govs: govTable, articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users') };
-=======
 
                 /* ---------- Bulk select + pagination for EVERY admin list (tables + card lists) ---------- */
                 const PG = {};
@@ -8284,7 +8209,6 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
                 /* ---------- Router ---------- */
                 const NAV = [['dash', '📊', dash], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
                 const TBLS = { orders: ordersList, products: prodList, cust: custList, cats: catList, msgs: msgList, newsl: newsList, govs: govTable, articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users') };
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                 function render() {
                     const k = location.hash.slice(1), vis = NAV.filter(n => can(n[0])), cur = vis.find(n => n[0] === k) || vis[0];
                     const a = orders().filter(o => ['Pending', 'Processing'].includes(o.s)).length, unread = rd(K.msgs, []).filter(m => !m.read).length, oc = rd(K.comp, []).filter(c => c.status === 'open').length;
@@ -8313,11 +8237,7 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
                     per: d => { S.per = d.p; render(); },
                     ctab: d => { S.ctab = d.k; render(); },
                     alerts: () => { const A = alertsList(); open(`<h3>🔔 ${t('alerts')}</h3>${A.length ? A.map(a => `<a class="alrow" href="#${a[0]}" data-act="close"><span>${a[1]} ${a[2]}</span><b>${a[3]}</b></a>`).join('') : `<p class="empty">${t('no_alerts')}</p>`}<div class="bar"><button class="btn ghost" data-act="close">${t('close')}</button></div>`); },
-<<<<<<< HEAD
-                    logout: () => { sessionStorage.removeItem('boda_admin'); sessionStorage.removeItem('boda_admin_user'); gate(); },
-=======
                     logout: () => { sessionStorage.removeItem('boda_token'); sessionStorage.removeItem('boda_admin'); sessionStorage.removeItem('boda_admin_user'); gate(); },
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                     /* hero */
                     hadd: () => open(hform(-1)), hedit: d => open(hform(+d.i)),
                     hdel: d => { if (!confirm(t('h_confirm_del'))) return; const h = HERO(); h.splice(+d.i, 1); wr(K.hero, h); render(); toast(t('deleted')); },
@@ -8386,16 +8306,6 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
                 });
                 document.addEventListener('input', e => { const x = e.target; if (x.dataset.q) { S[x.dataset.q] = x.value; refresh(x.dataset.v); } });
                 function downscale(file, cb) {
-<<<<<<< HEAD
-                    const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const m = 800, k = Math.min(1, m / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); cb(c.toDataURL('image/jpeg', .82)); }; im.src = r.result; }; r.readAsDataURL(file);
-                }
-                document.addEventListener('change', e => {
-                    const x = e.target, d = x.dataset;
-                    if (x.matches('[data-q]')) { S[d.q] = x.value; refresh(d.v); return; }
-                    if (x.matches('[data-rp]')) { S.rp[d.rp] = x.value; $('#rep').innerHTML = repBody(); return; }
-                    if (x.name === 'cat' && x.form && x.form.id === 'pf') { fillSubs(x.form); return; }
-                    if (d.up && x.files[0]) { const f = x.form; downscale(x.files[0], url => { const el = f.elements[d.up]; if (d.up === 'gallery') el.value = (el.value ? el.value + '\n' : '') + url; else { el.value = url; const pv = f.querySelector('[data-prev="' + d.up + '"]'); if (pv) pv.src = url; } }); x.value = ''; return; }
-=======
                     const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const m = 800, k = Math.min(1, m / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); if (apiOn()) { c.toBlob(b => { const fd = new FormData(); fd.append('file', b, 'img.jpg'); api('/api/admin/upload', { method: 'POST', body: fd }).then(d => cb(d.url)).catch(e => toast('⚠ ' + e.message)); }, 'image/jpeg', .85); } else cb(c.toDataURL('image/jpeg', .82)); }; im.src = r.result; }; r.readAsDataURL(file);
                 }
                 document.addEventListener('change', e => {
@@ -8404,7 +8314,6 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
                     if (x.matches('[data-rp]')) { S.rp[d.rp] = x.value; $('#rep').innerHTML = repBody(); return; }
                     if (x.name === 'cat' && x.form && x.form.id === 'pf') { fillSubs(x.form); return; }
                     if (d.up && x.files[0]) { const f = x.form; downscale(x.files[0], url => { const el = f.elements[d.up]; if (d.up === 'gallery') el.value = (el.value ? el.value + '\n' : '') + url; else { el.value = url; setPrev(f, d.up, url); } }); x.value = ''; return; }
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                     if (d.chg === 'theme') { THEME = x.checked ? 'dark' : 'light'; localStorage.setItem(K.theme, THEME); applyLang(); document.querySelectorAll('[data-chg="theme"]').forEach(i => i.checked = x.checked); return; }
                     if (d.chg === 'ost') {
                         const all = rd(K.orders, []), o = all.find(y => y.id === d.id); if (!o) return;
@@ -8426,11 +8335,7 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
                 });
                 document.addEventListener('submit', e => {
                     const f = e.target; e.preventDefault(); const err = f.querySelector('.err'), v = n => f.elements[n].value.trim();
-<<<<<<< HEAD
-                    if (f.id === 'lf') { if (tryLogin(v('u'), f.elements.p.value)) { sessionStorage.setItem('boda_admin', '1'); sessionStorage.setItem('boda_admin_user', v('u')); log('log_login'); gate(); } else $('#lerr').textContent = t('login_err'); return; }
-=======
                     if (f.id === 'lf') { const lb = f.querySelector('button'); lb.disabled = true; apiLogin(v('u'), f.elements.p.value).catch(e => { sessionStorage.removeItem('boda_token'); $('#lerr').textContent = e.message === 'NETWORK' ? 'مش قادر أوصل للسيرفر: ' + API_BASE : t('login_err'); }).finally(() => { lb.disabled = false; }); return; }
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
                     if (f.id === 'hf') {
                         const i = +f.dataset.i; if (!v('title')) { err.textContent = t('h_err'); return; }
                         const rec = { badge: v('badge'), title: v('title'), text: v('text'), b1: v('b1'), l1: v('l1'), b2: v('b2'), l2: v('l2'), emojis: v('emojis'), img: v('img') };
@@ -8498,10 +8403,7 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
                 });
                 applyLang();
                 gate();
-<<<<<<< HEAD
-=======
                 if (apiOn()) loadFromApi().then(render).catch(() => { });
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)
             })();
         </script>
     </template>
@@ -8533,8 +8435,4 @@ ${n.length ? `<div class="tw"><table><thead><tr><th>#</th><th>${t('nl_email')}</
     </script>
 </body>
 
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> c51581b (Admin: filters panel,bulk select,pagination, image control)

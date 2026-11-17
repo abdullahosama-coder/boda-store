@@ -1,0 +1,34 @@
+# Boda Store API (FastAPI + SQLAlchemy)
+
+## التشغيل محليًا
+```bash
+cd backend
+python -m venv venv && source venv/bin/activate      # ويندوز: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env        # غيّر ADMIN_PASSWORD و SECRET_KEY (مهم!)
+python seed.py products-data.js     # استيراد المنتجات والأقسام (مرة واحدة)
+uvicorn app.main:app --reload --port 8000
+```
+التوثيق التفاعلي لكل الـ APIs: http://127.0.0.1:8000/docs
+
+## الـ APIs
+| الطريقة | المسار | الوصف |
+|---|---|---|
+| GET | /api/products?cat=&sub=&q=&offers=true&page=&limit= | منتجات الموقع (المخفي مش بيظهر) |
+| GET | /api/products/{id} · /api/categories | منتج واحد · الأقسام |
+| POST | /api/orders | إنشاء طلب (الأسعار بتتحسب من الداتابيز) |
+| POST | /api/messages | رسالة تواصل |
+| POST | /api/auth/login | دخول الأدمن ← token |
+| GET/POST/PUT/PATCH/DELETE | /api/admin/products[/{id}] , POST /bulk-delete | إدارة المنتجات (بفلاتر وصفحات) |
+| POST/PUT/DELETE | /api/admin/categories[/{name}] | إدارة الأقسام |
+| GET/PATCH, POST bulk-delete | /api/admin/orders | الطلبات وتغيير الحالة |
+| GET/PATCH, POST bulk-delete | /api/admin/messages | الرسائل |
+| POST | /api/admin/upload | رفع صورة (JPG/PNG/GIF/WEBP حتى 5MB) |
+
+كل مسارات `/api/admin/*` محتاجة هيدر `Authorization: Bearer <token>`.
+
+## النشر
+GitHub Pages مش بيشغّل Python، فالـ API لازم يتنشر على استضافة (Render / Railway / Fly.io / VPS).
+- استخدم PostgreSQL في الإنتاج: `BODA_DATABASE_URL=postgresql+psycopg://...` (وضيف `psycopg[binary]` في requirements).
+- الصور المرفوعة بتتخزن في فولدر `uploads/`؛ على استضافات بتمسح الملفات لازم Volume دائم.
+- ضبط `BODA_CORS_ORIGINS` على دومين موقعك بس.
