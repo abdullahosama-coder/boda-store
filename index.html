@@ -7665,8 +7665,14 @@ f_price || السعر ($) || Price ($) || Prix ($) || Preis ($)
 f_old || السعر قبل الخصم ($) || Price before discount ($) || Prix avant remise ($) || Preis vor Rabatt ($)
 f_qty || الكمية في المخزون || Stock quantity || Quantité en stock || Lagerbestand
 f_brand || الماركة || Brand || Marque || Marke
+f_condition || حالة المنتج || Product condition || État du produit || Produktzustand
+f_cond_new || جديد || New || Neuf || Neu
+f_cond_used || مستعمل || Used || Occasion || Gebraucht
+f_colors || الألوان (افصل بينها بفاصلة) || Colors (comma separated) || Couleurs (séparées par des virgules) || Farben (kommagetrennt)
+f_sizes || المقاسات (افصل بينها بفاصلة) || Sizes (comma separated) || Tailles (séparées par des virgules) || Größen (kommagetrennt)
+f_components || المكونات / المواصفات || Components / specifications || Composants / spécifications || Komponenten / Spezifikationen
 f_warranty || الضمان || Warranty || Garantie || Garantie
-f_options || الألوان / المقاسات (فاصلة بينهم) || Colors / sizes (comma separated) || Couleurs / tailles || Farben / Größen
+f_options || خيارات إضافية (فاصلة بينهم) || Extra options (comma separated) || Options supplémentaires || Zusätzliche Optionen
 f_imgmain || الصورة الرئيسية (رابط) || Main image (URL) || Image principale (URL) || Hauptbild (URL)
 f_gallery || صور إضافية (رابط في كل سطر) || Extra images (one URL per line) || Images supplémentaires || Weitere Bilder
 f_desc || وصف قصير || Short description || Description courte || Kurzbeschreibung
@@ -8073,10 +8079,10 @@ ${p.id ? `<label>${t('f_code')}<input value="${esc(p.id)}" disabled></label>` : 
 <label>${t('f_old')}<input name="old" type="number" min="0" step="any" value="${p.old || ''}"></label>
 <label>${t('f_qty')}<input name="qty" type="number" min="0" step="1" value="${p.qty ?? ''}"></label>
 <label>${t('f_brand')}<input name="brand" value="${esc(p.brand)}"></label>
-<label>حالة المنتج<select name="condition"><option value="new" ${(p.condition || 'new') === 'new' ? 'selected' : ''}>جديد</option><option value="used" ${p.condition === 'used' ? 'selected' : ''}>مستعمل</option></select></label>
-<label>الألوان (افصل بينها بفاصلة)<input name="colors" value="${esc((p.colors || []).join(', '))}"></label>
-<label>المقاسات (افصل بينها بفاصلة)<input name="sizes" value="${esc((p.sizes || []).join(', '))}"></label>
-<label class="wide">المكونات / المواصفات<textarea name="components" rows="3">${esc((p.components || []).join('\n'))}</textarea></label>
+<label>${t('f_condition')}<select name="condition"><option value="new" ${(p.condition || 'new') === 'new' ? 'selected' : ''}>${t('f_cond_new')}</option><option value="used" ${p.condition === 'used' ? 'selected' : ''}>${t('f_cond_used')}</option></select></label>
+<label>${t('f_colors')}<input name="colors" value="${esc((p.colors || []).join(', '))}"></label>
+<label>${t('f_sizes')}<input name="sizes" value="${esc((p.sizes || []).join(', '))}"></label>
+<label class="wide">${t('f_components')}<textarea name="components" rows="3">${esc((p.components || []).join('\n'))}</textarea></label>
 <label>${t('f_warranty')}<input name="warranty" value="${esc(p.warranty)}"></label>
 <label>${t('f_options')}<input name="options" value="${esc((p.options || []).join(', '))}"></label>
 ${imgField('img', p.img || '', t('f_imgmain'))}

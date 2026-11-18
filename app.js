@@ -1056,10 +1056,11 @@ function renderProduct() {
     if (p.sub) rows.push(['Sub-category', '<a href="' + esc(catUrl(p.cat, p.sub)) + '">' + esc(p.sub) + '</a>']);
     rows.push(['Availability', statusText(p)], ['Delivery', 'Free on orders over $500']);
     if (p.brand) rows.push(['Brand', esc(p.brand)]);
-    rows.push(['Condition', p.condition === 'used' ? 'مستعمل' : 'جديد']);
+    rows.push(['Condition', p.condition === 'used' ? 'Used' : 'New']);
     if ((p.colors || []).length) rows.push(['Colors', p.colors.map(esc).join(' · ')]);
     if ((p.sizes || []).length) rows.push(['Sizes', p.sizes.map(esc).join(' · ')]);
     if ((p.components || []).length) rows.push(['Components', p.components.map(esc).join(' · ')]);
+    if ((p.features || []).length) rows.push(['Technical specifications', p.features.map(esc).join(' · ')]);
     if (p.warranty) rows.push(['Warranty', esc(p.warranty)]);
     else if (p.cat === 'Electronics' || p.cat === 'Home & Appliances') rows.push(['Warranty', '1 year']);
     if ((p.options || []).length) rows.push(['Options', p.options.map(esc).join(' \u00B7 ')]);
@@ -1068,7 +1069,7 @@ function renderProduct() {
     box.innerHTML = '<div class="crumbs"><a href="index.html?page=home">Home</a> \u203A <a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a> \u203A <span>' + esc(p.name) + '</span></div>' +
         '<article class="pd" ' + attrsOf(p) + '><div class="pd-media">' + badgeHTML(p) + '<img src="' + esc(p.img || IMG_FALLBACK) + '" alt="' + esc(p.name) + '" referrerpolicy="no-referrer"></div>' +
         '<div class="pd-body"><span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + priceHTML(p) +
-        '<p class="pd-status' + (out ? ' out' : '') + '">\u25CF ' + (out ? 'Out of stock' : lowStock ? 'Only ' + p.qty + ' left in stock' : 'In stock \u2014 ready to ship') + '</p>' +
+        '<p class="pd-status' + (out ? ' out' : '') + '">\u25CF ' + (out ? 'Out of stock' : lowStock ? 'Only ' + p.qty + ' left in stock' : 'In stock — ready to ship') + '</p>' +
         '<p class="pd-desc">' + esc(p.desc || '') + '</p>' + (p.long ? '<p class="pd-long" style="white-space:pre-line">' + esc(p.long) + '</p>' : '') + featuresHTML(p) +
         '<table class="pd-specs"><tbody>' + rows.map(function (r) { return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table>' +
         actionsHTML(p) + '</div></article>' +

@@ -70,6 +70,18 @@
         none: { ar: 'مفيش طلبات لسه.', en: 'You have no orders yet.', fr: 'Aucune commande.', de: 'Noch keine Bestellungen.' },
         open: { ar: 'فتح', en: 'Open', fr: 'Ouvrir', de: 'Öffnen' },
         hLine: { ar: { add: 'أضفت', del: 'حذفت', qty: 'غيّرت كمية', ship: 'عدّلت بيانات الشحن' }, en: { add: 'Added', del: 'Removed', qty: 'Changed quantity of', ship: 'Updated shipping details' }, fr: { add: 'Ajouté', del: 'Retiré', qty: 'Quantité modifiée :', ship: 'Livraison modifiée' }, de: { add: 'Hinzugefügt', del: 'Entfernt', qty: 'Menge geändert:', ship: 'Lieferdaten geändert' } },
+        condNew: { ar: 'جديد', en: 'New', fr: 'Neuf', de: 'Neu' },
+        condUsed: { ar: 'مستعمل', en: 'Used', fr: 'Occasion', de: 'Gebraucht' },
+        brand: { ar: 'الماركة', en: 'Brand', fr: 'Marque', de: 'Marke' },
+        colors: { ar: 'الألوان', en: 'Colors', fr: 'Couleurs', de: 'Farben' },
+        sizes: { ar: 'المقاسات', en: 'Sizes', fr: 'Tailles', de: 'Größen' },
+        components: { ar: 'المكونات', en: 'Components', fr: 'Composants', de: 'Komponenten' },
+        specs: { ar: 'المواصفات الفنية', en: 'Technical specifications', fr: 'Spécifications techniques', de: 'Technische Daten' },
+        available: { ar: 'متوفر', en: 'Available', fr: 'Disponible', de: 'Verfügbar' },
+        unavailable: { ar: 'غير متوفر', en: 'Unavailable', fr: 'Indisponible', de: 'Nicht verfügbar' },
+        orderStatus: { ar: 'حالة الطلب', en: 'Order status', fr: 'Statut de la commande', de: 'Bestellstatus' },
+        paymentMethod: { ar: 'طريقة الدفع', en: 'Payment method', fr: 'Mode de paiement', de: 'Zahlungsart' },
+        shippingDelivery: { ar: 'الشحن والتوصيل', en: 'Shipping & delivery', fr: 'Livraison', de: 'Versand & Lieferung' },
         st: {
             Pending: { ar: 'قيد الانتظار', en: 'Pending', fr: 'En attente', de: 'Ausstehend' },
             Processing: { ar: 'جاري التجهيز', en: 'Processing', fr: 'En préparation', de: 'In Bearbeitung' },
@@ -180,9 +192,20 @@
             '<input type="number" inputmode="numeric" min="1" max="' + mx + '" value="' + i.qty + '" data-n="' + n + '" aria-label="' + E(t('qty')) + '">' +
             '<button type="button" data-oc="plus" data-n="' + n + '" aria-label="+"' + (i.qty >= mx ? ' disabled' : '') + '>+</button></div>'
             : '<div class="oc-sub" style="text-align:start">× ' + i.qty + '</div>';
-        var parts = [].concat(i.extras || [], i.options || [], i.selectedOptions || [], i.components || [], i.features || []).filter(Boolean);
-        var meta = [i.condition === 'used' ? 'مستعمل' : 'جديد', i.brand ? 'الماركة: ' + i.brand : '', (i.colors || []).length ? 'الألوان: ' + i.colors.join('، ') : '', (i.sizes || []).length ? 'المقاسات: ' + i.sizes.join('، ') : ''].filter(Boolean);
-        return '<div class="oc-item">' + thumb + '<div><strong>' + E(i.name) + '</strong><small>' + money(i.price) + ' ' + E(t('each')) + (i.cat ? ' · ' + E(i.cat) : '') + (meta.length ? '<br>' + E(meta.join(' · ')) : '') + (parts.length ? '<br>المكونات / المواصفات: ' + E(parts.join('، ')) : '') + (i.stock === false ? '<br><b style="color:#c0392b">غير متوفر</b>' : '<br><b style="color:#218838">متوفر</b>') + '</small></div>' + qty +
+        var parts = [].concat(i.extras || [], i.options || [], i.selectedOptions || []).filter(Boolean);
+        var sep = lang() === 'ar' ? '، ' : ', ';
+        var meta = [
+            i.condition === 'used' ? t('condUsed') : t('condNew'),
+            i.brand ? t('brand') + ': ' + i.brand : '',
+            (i.colors || []).length ? t('colors') + ': ' + i.colors.join(sep) : '',
+            (i.sizes || []).length ? t('sizes') + ': ' + i.sizes.join(sep) : ''
+        ].filter(Boolean);
+        var comps = (i.components || []).length ? t('components') + ': ' + i.components.join(sep) : '';
+        var specs = (i.features || []).length ? t('specs') + ': ' + i.features.join(sep) : '';
+        var stockLine = i.stock === false
+            ? '<br><b style="color:#c0392b">' + E(t('unavailable')) + '</b>'
+            : '<br><b style="color:#218838">' + E(t('available')) + '</b>';
+        return '<div class="oc-item">' + thumb + '<div><strong>' + E(i.name) + '</strong><small>' + money(i.price) + ' ' + E(t('each')) + (i.cat ? ' · ' + E(i.cat) : '') + (meta.length ? '<br>' + E(meta.join(' · ')) : '') + (comps ? '<br>' + E(comps) : '') + (specs ? '<br>' + E(specs) : '') + (parts.length ? '<br>' + E(parts.join(sep)) : '') + stockLine + '</small></div>' + qty +
             '<div class="oc-sub">' + money(i.price * i.qty) + '</div>' +
             (canEdit ? '<button type="button" class="oc-del" data-oc="del" data-n="' + n + '">' + E(t('remove')) + '</button>' : '<span></span>') + '</div>';
     }
@@ -205,7 +228,7 @@
 
         var side = '<aside class="oc-card oc-side"><h3>' + E(t('summary')) + '</h3>' +
             '<div class="oc-line"><span>' + E(t('items')) + '</span><span>' + tt.pcs + ' ' + E(t('pieces')) + '</span></div>' +
-            '<div class="oc-line"><span>حالة الطلب</span><b>' + E(stL(st)) + '</b></div>' + '<div class="oc-line"><span>طريقة الدفع</span><b>' + E(o.payment || '—') + '</b></div>' + '<div class="oc-line"><span>الشحن والتوصيل</span><b>' + money(o.shippingFee || 0) + '</b></div>' + '<div class="oc-tot"><span>' + E(t('total')) + '</span><strong id="oc-total">' + money(tt.tot + (Number(o.shippingFee) || 0)) + '</strong></div>' +
+            '<div class="oc-line"><span>' + E(t('orderStatus')) + '</span><b>' + E(stL(st)) + '</b></div>' + '<div class="oc-line"><span>' + E(t('paymentMethod')) + '</span><b>' + E(o.payment || '—') + '</b></div>' + '<div class="oc-line"><span>' + E(t('shippingDelivery')) + '</span><b>' + money(o.shippingFee || 0) + '</b></div>' + '<div class="oc-tot"><span>' + E(t('total')) + '</span><strong id="oc-total">' + money(tt.tot + (Number(o.shippingFee) || 0)) + '</strong></div>' +
             '<div class="cart-shipping-note' + (tt.free ? ' free' : '') + '" style="margin-top:12px">' + E(tt.note) + '</div>' +
             (can ? '<div class="oc-warn" id="oc-dirty"' + (D.dirty ? '' : ' hidden') + '>' + E(t('dirty')) + '</div>' +
                 '<button type="button" class="oc-btn" id="oc-save" data-oc="save"' + (D.dirty ? '' : ' disabled') + '>' + E(t('save')) + '</button>' +

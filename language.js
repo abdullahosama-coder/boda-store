@@ -311,6 +311,26 @@ Available || متوفر || Disponible || Verfügbar
 Complete Store Price List || قائمة أسعار المتجر الكاملة || Liste complète des prix || Vollständige Preisliste
 Product || المنتج || Produit || Produkt
 Category || القسم || Catégorie || Kategorie
+Sub-category || القسم الفرعي || Sous-catégorie || Unterkategorie
+Product code || كود المنتج || Code produit || Produktcode
+Availability || التوفر || Disponibilité || Verfügbarkeit
+Delivery || التوصيل || Livraison || Lieferung
+Brand || الماركة || Marque || Marke
+Condition || الحالة || État || Zustand
+New || جديد || Neuf || Neu
+Used || مستعمل || Occasion || Gebraucht
+Colors || الألوان || Couleurs || Farben
+Sizes || المقاسات || Tailles || Größen
+Components || المكونات || Composants || Komponenten
+Technical specifications || المواصفات الفنية || Spécifications techniques || Technische Daten
+Warranty || الضمان || Garantie || Garantie
+Options || الخيارات || Options || Optionen
+Out of Stock || غير متوفر || Rupture de stock || Nicht vorrätig
+Out of stock || غير متوفر || Rupture de stock || Nicht vorrätig
+In stock — ready to ship || متوفر — جاهز للشحن || En stock — prêt à expédier || Auf Lager — versandbereit
+Only || فقط || Seulement || Nur
+left in stock || متبقي في المخزون || restant en stock || noch auf Lager
+Free on orders over $500 || مجاني للطلبات فوق 500$ || Gratuit dès 500 $ d’achat || Kostenlos ab 500 $ Bestellwert
 Price || السعر || Prix || Preis
 Status || الحالة || Statut || Status
 Catalog Summary || ملخص الكتالوج || Résumé du catalogue || Katalogübersicht
