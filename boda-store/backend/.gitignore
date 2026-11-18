@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+boda.db
+boda.db-*
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+uploads/*
+!uploads/.gitkeep

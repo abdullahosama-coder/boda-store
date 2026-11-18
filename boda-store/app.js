@@ -1,0 +1,1170 @@
+// ===== Boda Store - app.js (Unified Store Script) =====
+
+function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+}
+function $id(id) { return document.getElementById(id); }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+function money(n) { return '$' + n; }
+
+var LS = {
+    get: function (k) { try { return JSON.parse(localStorage.getItem(k)) || []; } catch (e) { return []; } },
+    set: function (k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+};
+function getUser() { try { return JSON.parse(localStorage.getItem('boda_user')); } catch (e) { return null; } }
+
+function toast(msg) {
+    document.querySelectorAll('.toast').forEach(function (x) { x.remove(); });
+    var t = el('div', 'toast', T(msg));
+    document.body.appendChild(t);
+    setTimeout(function () { t.remove(); }, 1800);
+}
+
+// ===== Search =====
+function searchProducts() {
+    var inp = document.querySelector('input[name="search"]');
+    var q = inp ? inp.value.trim() : '';
+    if (q) location.href = 'index.html?page=products&q=' + encodeURIComponent(q);
+}
+
+// ===== Dark Mode (Controlled from Settings only) =====
+function initTheme() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+    var toggles = ['settings-theme-toggle'].map($id).filter(Boolean);
+    function syncBtn() {
+        var dark = document.body.classList.contains('dark-mode');
+        toggles.forEach(function (t) { t.setAttribute('aria-checked', dark ? 'true' : 'false'); });
+    }
+    syncBtn();
+    toggles.forEach(function (t) {
+        t.onclick = function () {
+            document.body.classList.toggle('dark-mode');
+            var dark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+            syncBtn();
+            toast(dark ? 'Dark Mode enabled' : 'Light Mode enabled');
+        };
+    });
+}
+
+// ===== Settings Dropdown Menu (Gear Icon) =====
+function openSettingsPanel(boxId) {
+    var btn = $id('settings-menu-btn'), drop = $id('settings-dropdown');
+    if (!btn || !drop) return false;
+    var l = $id('language-dropdown'), n = $id('notif-dropdown');
+    if (l) l.classList.remove('show');
+    if (n) n.classList.remove('show');
+    drop.classList.add('show'); btn.setAttribute('aria-expanded', 'true');
+    var box = $id(boxId), d = box && box.closest('details');
+    if (d) { d.open = true; d.scrollIntoView({ block: 'nearest' }); }
+    return true;
+}
+
+function initSettingsMenu() {
+    var btn = $id('settings-menu-btn'), drop = $id('settings-dropdown');
+    if (!btn || !drop) return;
+    document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[href="#payment"]');
+        if (a) { e.preventDefault(); openSettingsPanel('pay-box'); }
+    });
+    function close() { drop.classList.remove('show'); btn.setAttribute('aria-expanded', 'false'); }
+    btn.onclick = function (e) {
+        e.stopPropagation();
+        var l = $id('language-dropdown'), n = $id('notif-dropdown');
+        if (l) l.classList.remove('show');
+        if (n) n.classList.remove('show');
+        var open = drop.classList.toggle('show');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.settings-menu-wrap')) close();
+    }, true);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+}
+
+// ===== Language (the engine lives in language.js) =====
+function ORIG(n) { return (window.BodaI18n && BodaI18n.text) ? BodaI18n.text(n) : n.textContent; }
+function T(str) { return (window.BodaI18n && BodaI18n.t) ? BodaI18n.t(str) : str; }
+function applyLanguage(lang) { if (window.BodaI18n) BodaI18n.apply(lang); }
+function initLanguage() { if (window.BodaI18n) BodaI18n.init(); }
+
+// ===== Active Nav Link =====
+function initActiveNav() {
+    var page = new URLSearchParams(location.search).get('page') || 'home';
+    document.querySelectorAll('header nav a').forEach(function (a) {
+        var url = new URL(a.href, location.href);
+        var hrefPage = new URLSearchParams(url.search).get('page');
+        a.classList.toggle('active', hrefPage === page);
+    });
+}
+
+// ===== Badges =====
+function updateBadges() {
+    var c = LS.get('boda_cart').reduce(function (n, i) { return n + i.qty; }, 0);
+    var f = LS.get('boda_favs').length;
+    [['.cart', c], ['.favorites', f]].forEach(function (p) {
+        var a = document.querySelector('.header-actions ' + p[0]); if (!a) return;
+        var b = a.querySelector('.badge'); if (!b) { b = el('span', 'badge'); a.appendChild(b); }
+        if (b.textContent !== String(p[1])) { b.textContent = p[1]; b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); }
+        b.style.display = p[1] ? '' : 'none';
+    });
+}
+
+// ===== Categories & Products =====
+// ---- Edit this list ONCE: it feeds the header slider, Home cards, Categories page and Products filters ----
+// name  = category name (must match data-cat on products)   desc = short text (Home card)
+// long  = long text (Categories page)   icon = used by the header slider only   subs = sub-categories
+var SHOW_CATEGORY_ICONS = false; // set to true to show icons on the cards again
+var CATEGORIES = [
+    { name: 'Electronics', icon: '💻', shop: 'Shop Electronics', desc: 'Laptops, PCs, monitors & smart devices.', long: 'Laptops, desktop & gaming PCs, monitors, smartphones, and PC accessories.', subs: ['Laptops', 'Computers', 'Monitors', 'Smart Devices', 'PC Accessories'] },
+    { name: 'Home & Appliances', icon: '🏠', shop: 'Shop Home', desc: 'Kitchen appliances, lighting & smart home.', long: 'Coffee makers, kitchen appliances, smart home gadgets, lighting and decor.', subs: ['Kitchen Appliances', 'Smart Home', 'Lighting & Decor'] },
+    { name: 'Fashion', icon: '👕', shop: 'Shop Fashion', desc: 'Clothing, rings, bracelets & bags.', long: 'Everyday clothing, jewelry, rings, bracelets, bags and footwear.', subs: ['Jewelry & Accessories', 'Clothing', 'Bags & Shoes'] },
+    { name: 'Beauty', icon: '💄', shop: 'Shop Beauty', desc: 'Skincare, perfumes & grooming tools.', long: 'Skincare essentials, signature perfumes, and personal grooming care.', subs: ['Skincare', 'Perfumes', 'Grooming'] },
+    { name: 'Sports', icon: '🏃', shop: 'Shop Sports', desc: 'Fitness gear, sportswear & trackers.', long: 'Home workout weights, sportswear, and GPS fitness trackers.', subs: ['Fitness Gear', 'Sportswear', 'Smart Trackers'] },
+    { name: 'Kids & Toys', icon: '🧸', shop: 'Shop Kids & Toys', desc: 'Educational toys, games & baby care.', long: 'STEM educational building blocks, family games, and baby care essentials.', subs: ['Educational Toys', 'Games', 'Baby Care'] },
+    { name: 'Automotive', icon: '🚗', shop: 'Shop Automotive', desc: 'Car tech, care kits & interior gear.', long: 'Dash cameras, car electronics, detailing care kits, and interior accessories.', subs: ['Car Tech', 'Car Care', 'Interior Gear'] },
+    { name: 'Books', icon: '📚', shop: 'Shop Books', desc: 'Tech, business, novels & notebooks.', long: 'Tech & business guides, bestselling novels, and study notebooks.', subs: ['Tech & Business', 'Novels', 'Notebooks'] }
+];
+// Optional: override the list from the browser console without touching the code:
+//   localStorage.setItem('boda_categories', JSON.stringify([...same shape...]))  then reload
+(function () {
+    try {
+        var o = JSON.parse(localStorage.getItem('boda_categories'));
+        if (Array.isArray(o) && o.length) {
+            CATEGORIES = o.filter(function (k) { return k && typeof k.name === 'string' && k.name; }).map(function (k) {
+                k.subs = Array.isArray(k.subs) ? k.subs : []; k.desc = k.desc || ''; k.long = k.long || k.desc; return k;
+            });
+        }
+    } catch (e) { }
+})();
+// Category names are translated automatically (built-in dictionary, then online translation, cached)
+(function () {
+    if (!window.BodaAuto) return;
+    var list = [];
+    CATEGORIES.forEach(function (k) { list.push(k.name, k.desc, k.long); (k.subs || []).forEach(function (s) { list.push(s); }); });
+    window.BodaAuto.watch(list);
+    var L = 'en'; try { L = localStorage.getItem('boda_language') || 'en'; } catch (e) { }
+    window.BodaAuto.ensure(L);
+})();
+
+function catImg(k, cls) { return k && k.img ? '<span class="' + cls + '"><img src="' + esc(k.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer"></span>' : ''; }
+
+function catUrl(name, sub) { return 'index.html?page=category&cat=' + encodeURIComponent(name) + (sub ? '&sub=' + encodeURIComponent(sub) : ''); }
+
+// Renders the cards on Home (#cat-grid) and on the Categories page (#cat-dir-grid)
+function renderCategoryCards() {
+    var home = $id('cat-grid');
+    if (home) home.innerHTML = CATEGORIES.map(function (k) {
+        return '<li>' + catImg(k, 'cat-img') +
+            '<h3>' + esc(k.name) + '</h3><p>' + esc(k.desc) + '</p>' +
+            '<a href="' + esc(catUrl(k.name)) + '" class="cat-link">' + esc(k.shop || ('Shop ' + k.name)) + ' →</a></li>';
+    }).join('');
+    var dir = $id('cat-dir-grid');
+    if (dir) dir.innerHTML = CATEGORIES.map(function (k) {
+        return '<article class="cat-dir-card"><div class="cat-dir-head">' +
+            catImg(k, 'cat-img') +
+            '<div><h2>' + esc(k.name) + '</h2><small>' + k.subs.length + ' Sub-Categories</small></div></div>' +
+            '<p>' + esc(k.long || k.desc) + '</p><div class="cat-sub-links">' +
+            k.subs.map(function (n) { return '<a href="' + esc(catUrl(k.name, n)) + '">' + esc(n) + '</a>'; }).join('') +
+            '</div><a href="' + esc(catUrl(k.name)) + '" class="cat-dir-btn">Browse ' + esc(k.name) + ' →</a></article>';
+    }).join('');
+}
+
+var RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very good', 'Excellent'];
+function getRatings() { try { return JSON.parse(localStorage.getItem('boda_ratings')) || {}; } catch (e) { return {}; } }
+function getMeta() { try { return JSON.parse(localStorage.getItem('boda_meta')) || {}; } catch (e) { return {}; } }
+function rememberProduct(it) {
+    var m = getMeta(); m[it.id] = { name: it.name, img: it.img, price: it.price, cat: it.cat };
+    localStorage.setItem('boda_meta', JSON.stringify(m));
+}
+
+function itemOf(a) {
+    var im = a.querySelector('img');
+    var p = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (x) { return x.id === a.dataset.id; }) || {};
+    return { id: a.dataset.id, name: ORIG(a.querySelector('h3')), price: +a.dataset.price, cat: a.dataset.cat || '', img: im ? im.src : '', brand: p.brand || '', condition: p.condition || 'new', colors: p.colors || [], sizes: p.sizes || [], components: p.components || [], features: p.features || [], stock: p.stock !== false }; 
+}
+function addToCart(it) {
+    var live = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (p) { return p.id === it.id; });
+    if ((live && live.stock === false) || it.stock === false) { toast('هذا المنتج غير متوفر حاليًا'); return; }
+    var c = LS.get('boda_cart'), f = c.find(function (x) { return x.id === it.id; });
+    if (f) f.qty++; else { it.qty = 1; c.push(it); }
+    LS.set('boda_cart', c); updateBadges(); toast(it.name + ' added to cart');
+}
+function buyNow(it) {
+    var live = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (p) { return p.id === it.id; });
+    if ((live && live.stock === false) || it.stock === false) { toast('هذا المنتج غير متوفر حاليًا'); return; }
+    var c = LS.get('boda_cart');
+    if (!c.some(function (x) { return x.id === it.id; })) { it.qty = 1; c.push(it); LS.set('boda_cart', c); }
+    location.href = 'index.html?page=cart';
+}
+function toggleFav(it) {
+    var f = LS.get('boda_favs'), i = f.findIndex(function (x) { return x.id === it.id; });
+    if (i > -1) { f.splice(i, 1); toast('Removed from favorites'); }
+    else { f.push(it); toast('Added to favorites'); }
+    LS.set('boda_favs', f); updateBadges(); return i === -1;
+}
+
+function initProductCard(a) {
+    if (!a.classList.contains('pd')) linkCard(a);
+    var item = function () { return itemOf(a); };
+    rememberProduct(item());
+    a.querySelector('.buy-btn').onclick = function () { buyNow(item()); };
+    a.querySelector('.add-cart').onclick = function () { addToCart(item()); };
+    var fav = a.querySelector('.fav-action');
+    function paintFav() {
+        var on = LS.get('boda_favs').some(function (x) { return x.id === a.dataset.id; });
+        fav.classList.toggle('on', on); fav.textContent = on ? '♥ In Favorites' : '♡ Add to Favorites';
+    }
+    fav.onclick = function () { toggleFav(item()); paintFav(); };
+    paintFav();
+
+    var stars = a.querySelectorAll('.star'), txt = a.querySelector('.rating-text'), box = a.querySelector('.rating');
+    if (!box) return;
+    var clear = el('button', 'rating-clear', '✕');
+    clear.type = 'button'; clear.title = 'Remove rating'; clear.setAttribute('aria-label', 'Remove rating');
+    box.appendChild(clear);
+
+    function paint(v) { stars.forEach(function (s) { s.classList.toggle('on', +s.dataset.v <= v); }); }
+    function saved() { return getRatings()[a.dataset.id] || 0; }
+    function show() {
+        var v = saved(); paint(v);
+        txt.textContent = v ? 'You rated ' + v + '/5 · ' + RATING_LABELS[v] : 'Rate this product';
+        clear.style.display = v ? '' : 'none';
+    }
+    function save(v) {
+        var r = getRatings(); if (v) r[a.dataset.id] = v; else delete r[a.dataset.id];
+        localStorage.setItem('boda_ratings', JSON.stringify(r)); show();
+    }
+    stars.forEach(function (s) {
+        s.onmouseenter = function () { paint(+s.dataset.v); txt.textContent = RATING_LABELS[+s.dataset.v]; };
+        s.onclick = function () {
+            var v = +s.dataset.v;
+            if (v === saved()) { save(0); toast('Rating removed'); return; }
+            save(v); toast('Rated ' + item().name + ' ' + '★'.repeat(v));
+        };
+    });
+    clear.onclick = function () { save(0); toast('Rating removed'); };
+    box.querySelector('.stars').onmouseleave = show;
+    show();
+}
+
+function initCards(root) {
+    (root || document).querySelectorAll('article[data-id]').forEach(function (a) {
+        if (a.querySelector('.card-actions')) { initProductCard(a); return; }
+        if (a.querySelector('.fav-btn')) return;
+        var on = LS.get('boda_favs').some(function (x) { return x.id === a.dataset.id; });
+        var h = el('button', 'fav-btn' + (on ? ' on' : ''), on ? '♥' : '♡');
+        h.type = 'button'; h.setAttribute('aria-label', 'Toggle favorite');
+        h.onclick = function () {
+            var now = toggleFav(itemOf(a)); h.textContent = now ? '♥' : '♡'; h.classList.toggle('on', now);
+            if ($id('fav-box')) renderFavs();
+        };
+        a.appendChild(h);
+        var b = a.querySelector('button:not(.fav-btn)');
+        if (!b) { b = el('button', 'add-cart', 'Add to Cart'); b.type = 'button'; a.appendChild(b); }
+        b.onclick = function () { addToCart(itemOf(a)); };
+    });
+}
+
+// ===== Products Filters =====
+function initFilters() {
+    var grid = document.querySelector('.product-grid'); if (!grid) return;
+    var secs = [].slice.call(grid.children); secs.forEach(function (s, i) { s.dataset.i = i; });
+    var P = new URLSearchParams(location.search);
+    var S = { cat: P.get('cat') || '', sub: P.get('sub') || '', q: (P.get('q') || '').toLowerCase(), min: '', max: '', stock: false, sale: P.get('sale') === '1', sort: '' };
+    var art = function (s) { return s.querySelector('article'); };
+    var panel = el('div', 'filter-panel');
+    panel.innerHTML =
+        '<div class="fp-top"><input id="f-q" type="search" placeholder="Search in products..." aria-label="Search in products">' +
+        '<label class="fp-sort">Sort by <select id="f-sort"><option value="">Featured</option><option value="asc">Price: low to high</option><option value="desc">Price: high to low</option><option value="name">Name: A to Z</option></select></label></div>' +
+        '<div class="fp-label">Categories</div><div class="chips" id="f-cats"></div><div class="chips subs" id="f-subs"></div>' +
+        '<div class="fp-row"><div class="fp-price"><span>Price ($)</span><input id="f-min" type="number" min="0" placeholder="Min"><span>–</span><input id="f-max" type="number" min="0" placeholder="Max"></div>' +
+        '<label class="chk"><input id="f-stock" type="checkbox"> In stock only</label><label class="chk"><input id="f-sale" type="checkbox"> On sale</label></div>' +
+        '<div class="fp-foot"><span id="f-count"></span><button type="button" id="f-reset">Clear all filters</button></div>';
+    grid.before(panel);
+    var none = el('div', 'no-results'); grid.before(none);
+
+    function count(fn) { return secs.map(art).filter(fn).length; }
+    function chip(label, n, on, fn) {
+        var b = el('button', 'chip' + (on ? ' on' : '')); b.type = 'button';
+        b.innerHTML = esc(label) + ' <span>' + n + '</span>'; b.onclick = fn; return b;
+    }
+    function drawChips() {
+        var c = $id('f-cats'), s = $id('f-subs'); c.innerHTML = ''; s.innerHTML = '';
+        c.appendChild(chip('All', secs.length, !S.cat, function () { S.cat = ''; S.sub = ''; apply(); }));
+        CATEGORIES.forEach(function (k) {
+            c.appendChild(chip(k.name, count(function (a) { return a.dataset.cat === k.name; }), S.cat === k.name, function () { S.cat = k.name; S.sub = ''; apply(); }));
+        });
+        var cur = CATEGORIES.filter(function (k) { return k.name === S.cat; })[0];
+        if (cur) {
+            s.appendChild(chip('All ' + cur.name, count(function (a) { return a.dataset.cat === cur.name; }), !S.sub, function () { S.sub = ''; apply(); }));
+            cur.subs.forEach(function (n) {
+                s.appendChild(chip(n, count(function (a) { return a.dataset.cat === cur.name && a.dataset.sub === n; }), S.sub === n, function () { S.sub = n; apply(); }));
+            });
+        }
+        s.style.display = cur ? '' : 'none';
+    }
+    function match(a) {
+        var p = +a.dataset.price, min = S.min === '' ? null : +S.min, max = S.max === '' ? null : +S.max;
+        return (!S.cat || a.dataset.cat === S.cat) && (!S.sub || a.dataset.sub === S.sub) &&
+            (!S.q || a.textContent.toLowerCase().indexOf(S.q) !== -1 || ORIG(a).toLowerCase().indexOf(S.q) !== -1) && (min === null || p >= min) && (max === null || p <= max) &&
+            (!S.stock || /available/i.test(ORIG(a))) && (!S.sale || !!a.querySelector('.sale-badge:not(.new-badge)'));
+    }
+    function apply() {
+        var shown = 0;
+        secs.forEach(function (s) { var ok = match(art(s)); s.style.display = ok ? '' : 'none'; if (ok) shown++; });
+        secs.slice().sort(function (x, y) {
+            var a = art(x), b = art(y);
+            if (S.sort === 'asc') return a.dataset.price - b.dataset.price;
+            if (S.sort === 'desc') return b.dataset.price - a.dataset.price;
+            if (S.sort === 'name') return a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent);
+            return x.dataset.i - y.dataset.i;
+        }).forEach(function (s) { grid.appendChild(s); });
+        drawChips();
+        $id('f-count').textContent = 'Showing ' + shown + ' of ' + secs.length + ' products';
+        none.className = 'no-results' + (shown ? '' : ' show');
+        none.textContent = 'No products match your filters. Try clearing some of them.';
+        try {
+            var u = new URLSearchParams();
+            if (S.cat) u.set('cat', S.cat); if (S.sub) u.set('sub', S.sub);
+            if (S.q) u.set('q', S.q); if (S.sale) u.set('sale', '1');
+            u.set('page', 'products');
+            history.replaceState(null, '', location.pathname + '?' + u.toString());
+        } catch (e) { }
+    }
+    $id('f-q').value = S.q;
+    $id('f-sale').checked = S.sale;
+    $id('f-q').oninput = function () { S.q = this.value.trim().toLowerCase(); apply(); };
+    $id('f-sort').onchange = function () { S.sort = this.value; apply(); };
+    $id('f-min').oninput = function () { S.min = this.value; apply(); };
+    $id('f-max').oninput = function () { S.max = this.value; apply(); };
+    $id('f-stock').onchange = function () { S.stock = this.checked; apply(); };
+    $id('f-sale').onchange = function () { S.sale = this.checked; apply(); };
+    $id('f-reset').onclick = function () {
+        S.cat = S.sub = S.q = S.min = S.max = S.sort = ''; S.stock = S.sale = false;
+        ['f-q', 'f-min', 'f-max', 'f-sort'].forEach(function (id) { $id(id).value = ''; });
+        $id('f-stock').checked = $id('f-sale').checked = false; apply();
+    };
+    apply();
+}
+
+// ===== Cart & Checkout =====
+function renderCart() {
+    var box = $id('cart-box'), c = LS.get('boda_cart');
+    if (!c.length) {
+        box.innerHTML = '<div class="empty-state"><div class="empty-big">🛒</div><h3>Your cart is empty</h3><p>Add products from any department in Boda Store and they will appear here.</p><a class="favorites-btn" href="index.html?page=products">Browse All Products</a></div>';
+        return;
+    }
+    var total = 0;
+    var rows = c.map(function (i, n) {
+        var s = i.price * i.qty; total += s;
+        var thumb = liveImg(i.id, i.img) ? '<img src="' + esc(liveImg(i.id, i.img)) + '" alt="' + esc(i.name) + '" referrerpolicy="no-referrer">' : '<div class="cart-thumb">' + esc(i.name.charAt(0)) + '</div>';
+        return '<tr><td><div class="cart-item-cell">' + thumb + '<div><strong>' + esc(i.name) + '</strong>' + (i.cat ? '<small>' + esc(i.cat) + '</small>' : '') + '</div></div></td><td>$' + i.price + '</td><td><button class="qty" data-n="' + n + '" data-d="-1">−</button> ' + i.qty + ' <button class="qty" data-n="' + n + '" data-d="1">+</button></td><td>$' + s + '</td><td><button class="rm" data-n="' + n + '">Remove</button></td></tr>';
+    }).join('');
+    var free = total >= 500;
+    var note = '<div class="cart-shipping-note' + (free ? ' free' : '') + '">' + (free ? '✅ You qualify for Free Delivery on this order!' : '🚚 Add $' + (500 - total) + ' more for Free Delivery.') + '</div>';
+    box.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead><tbody>' + rows +
+        '</tbody><tfoot><tr><td colspan="3">Total</td><td colspan="2">$' + total + '</td></tr></tfoot></table></div>' + note +
+        '<div class="cart-actions"><button id="checkout" type="button">Proceed to Checkout</button><a href="index.html?page=products" class="cart-continue">Continue Shopping</a><button id="clear" type="button" class="secondary">Clear cart</button></div>';
+}
+
+function initCart() {
+    var box = $id('cart-box'); renderCart();
+    box.onclick = function (e) {
+        var t = e.target, c = LS.get('boda_cart');
+        if (t.classList.contains('qty')) { var it = c[+t.dataset.n]; it.qty += +t.dataset.d; if (it.qty < 1) c.splice(+t.dataset.n, 1); }
+        else if (t.classList.contains('rm')) c.splice(+t.dataset.n, 1);
+        else if (t.id === 'clear') c = [];
+        else if (t.id === 'checkout') return startCheckout();
+        else return;
+        LS.set('boda_cart', c); updateBadges(); renderCart();
+    };
+}
+
+// ===== Favorites & Reviews =====
+function renderFavs() {
+    var box = $id('fav-box'), f = LS.get('boda_favs');
+    if (!f.length) {
+        box.innerHTML = '<div class="empty-favorites"><div class="empty-big">❤️</div><h3>No Favorite Products Yet!</h3><p>Start adding products to your favorites.</p><a href="index.html?page=products" class="favorites-btn">Explore Products</a></div>';
+        return;
+    }
+    box.innerHTML = '<div class="product-grid">' + f.map(function (i) {
+        return '<section><article data-id="' + esc(i.id) + '" data-cat="' + esc(i.cat) + '" data-price="' + i.price + '">' +
+            (liveImg(i.id, i.img) ? '<img src="' + esc(liveImg(i.id, i.img)) + '" alt="' + esc(i.name) + '" referrerpolicy="no-referrer">' : '<div class="thumb">' + esc(i.name.charAt(0)) + '</div>') +
+            '<h3>' + esc(i.name) + '</h3><p>' + esc(i.cat) + '</p><p class="price">$' + i.price + '</p></article></section>';
+    }).join('') + '</div>';
+    initCards(box);
+}
+
+function renderReviews() {
+    var box = $id('reviews-box'), r = getRatings(), ids = Object.keys(r), meta = getMeta();
+    if (!ids.length) {
+        box.innerHTML = '<div class="empty-state"><div class="empty-big">☆</div><h3>No reviews yet</h3><p>Rate a product with the stars and it will show up here.</p><a class="favorites-btn" href="index.html?page=products">Browse products</a></div>';
+        return;
+    }
+    var avg = (ids.reduce(function (s, id) { return s + r[id]; }, 0) / ids.length).toFixed(1);
+    box.innerHTML = '<div class="rv-summary"><span><strong>' + ids.length + '</strong> rated product(s) · average <strong>' + avg + ' ★</strong></span><button type="button" id="rv-clear">Clear all ratings</button></div>' +
+        '<div class="rv-grid">' + ids.map(function (id) {
+            var m = meta[id] || { name: id }, v = r[id], st = '';
+            for (var i = 1; i <= 5; i++) st += '<button type="button" class="rv-star' + (i <= v ? ' on' : '') + '" data-id="' + esc(id) + '" data-v="' + i + '">★</button>';
+            return '<div class="rv-card">' + (liveImg(id, m.img) ? '<img src="' + esc(liveImg(id, m.img)) + '" alt="" referrerpolicy="no-referrer">' : '<div class="rv-thumb">' + esc(m.name.charAt(0)) + '</div>') +
+                '<div><h3>' + esc(m.name) + '</h3><small>' + esc(m.cat || '') + '</small><div>' + st + '</div><p>' + RATING_LABELS[v] + ' (' + v + '/5)</p>' +
+                '<div class="rv-actions"><a href="index.html?page=product&id=' + encodeURIComponent(id) + '">View product</a><button type="button" class="rv-remove" data-id="' + esc(id) + '">Remove</button></div></div></div>';
+        }).join('') + '</div>';
+    box.onclick = function (e) {
+        var t = e.target, rr = getRatings();
+        if (t.classList.contains('rv-star')) { var v = +t.dataset.v; if (rr[t.dataset.id] === v) delete rr[t.dataset.id]; else rr[t.dataset.id] = v; }
+        else if (t.classList.contains('rv-remove')) delete rr[t.dataset.id];
+        else if (t.id === 'rv-clear') { if (!confirm(T('Remove all ratings?'))) return; rr = {}; }
+        else return;
+        localStorage.setItem('boda_ratings', JSON.stringify(rr)); renderReviews();
+    };
+}
+
+// ===== Electronic Payment Gateways & Cards =====
+var GATEWAYS = [
+    { id: 'vodafone', name: 'Vodafone Cash', icon: 'fa-solid fa-mobile-screen-button', desc: 'Pay via Vodafone Cash e-wallet', field: 'Wallet Phone (010...)', placeholder: '01012345678' },
+    { id: 'instapay', name: 'InstaPay', icon: 'fa-solid fa-building-columns', desc: 'Instant bank transfer via IPA', field: 'InstaPay Address (IPA)', placeholder: 'username@instapay' },
+    { id: 'paypal', name: 'PayPal', icon: 'fa-brands fa-paypal', desc: 'Fast international online checkout', field: 'PayPal Email', placeholder: 'you@example.com' },
+    { id: 'fawry', name: 'Fawry Pay', icon: 'fa-solid fa-receipt', desc: 'Pay via Fawry code or kiosks', field: '', placeholder: '' },
+    { id: 'apple_google', name: 'Apple Pay / Google Pay', icon: 'fa-brands fa-google-pay', desc: 'One-tap express digital wallet', field: '', placeholder: '' }
+];
+
+function getGateways() { try { return JSON.parse(localStorage.getItem('boda_gateways')) || {}; } catch (e) { return {}; } }
+function saveGateways(g) { localStorage.setItem('boda_gateways', JSON.stringify(g)); }
+
+function getPays() { return LS.get('boda_pays'); }
+function luhn(n) { var s = 0, d = false; for (var i = n.length - 1; i >= 0; i--) { var x = +n[i]; if (d) { x *= 2; if (x > 9) x -= 9; } s += x; d = !d; } return s % 10 === 0; }
+function brandOf(n) { return /^4/.test(n) ? 'Visa' : /^(5[1-5]|2[2-7])/.test(n) ? 'Mastercard' : 'Card'; }
+function cardFields(p) {
+    return '<div class="card-grid"><label>Name on card<input id="' + p + '-name" autocomplete="cc-name"></label>' +
+        '<label>Card number<input id="' + p + '-num" inputmode="numeric" placeholder="1234 5678 9012 3456"></label>' +
+        '<label>Expiry (MM/YY)<input id="' + p + '-exp" placeholder="MM/YY" maxlength="5"></label>' +
+        '<label>CVV<input id="' + p + '-cvv" inputmode="numeric" maxlength="4" placeholder="123"></label></div>';
+}
+function bindCard(p) {
+    $id(p + '-num').oninput = function () { this.value = this.value.replace(/\D/g, '').slice(0, 19).replace(/(.{4})/g, '$1 ').trim(); };
+    $id(p + '-exp').oninput = function () { var v = this.value.replace(/\D/g, '').slice(0, 4); this.value = v.length > 2 ? v.slice(0, 2) + '/' + v.slice(2) : v; };
+    $id(p + '-cvv').oninput = function () { this.value = this.value.replace(/\D/g, ''); };
+}
+function readCard(p) {
+    var g = function (s) { return $id(p + '-' + s).value.trim(); };
+    var num = g('num').replace(/\s/g, ''), m = /^(\d{2})\/(\d{2})$/.exec(g('exp')), now = new Date();
+    if (!g('name')) return { err: 'Enter the name on the card.' };
+    if (!/^\d{13,19}$/.test(num) || !luhn(num)) return { err: 'Card number is not valid.' };
+    if (!m || +m[1] < 1 || +m[1] > 12) return { err: 'Expiry must be MM/YY.' };
+    if (2000 + +m[2] < now.getFullYear() || (2000 + +m[2] === now.getFullYear() && +m[1] < now.getMonth() + 1)) return { err: 'This card has expired.' };
+    if (!/^\d{3,4}$/.test(g('cvv'))) return { err: 'CVV must be 3 or 4 digits.' };
+    return { card: { id: 'c' + Date.now(), brand: brandOf(num), last4: num.slice(-4), holder: g('name'), exp: g('exp') } };
+}
+function addCard(card) {
+    var pays = getPays(); card.def = !pays.length; pays.push(card); LS.set('boda_pays', pays);
+    notify(card.brand + ' ending ' + card.last4 + ' was added.', '#payment');
+}
+
+var gwEdit = '';
+function renderPays() {
+    var box = $id('pay-box'), pays = getPays(), gws = getGateways();
+    var cardsHtml = '<h4>Credit &amp; Debit Cards</h4>' +
+        (pays.length ? pays.map(function (p) {
+            return '<div class="pay-card"><div>💳</div><div class="pay-info"><strong>' + esc(p.brand) + ' •••• ' + esc(p.last4) + '</strong><small>' + esc(p.holder) + ' · exp ' + esc(p.exp) + '</small></div>' +
+                (p.def ? '<span class="acc-badge">Default</span>' : '<button type="button" class="pay-def" data-id="' + p.id + '">Make default</button>') +
+                '<button type="button" class="pay-del" data-id="' + p.id + '">Remove</button></div>';
+        }).join('') : '<p class="gw-sub">No saved cards yet. Add a card or connect an e-payment gateway below.</p>') +
+        '<button type="button" id="pay-add" class="pay-add">+ Add a new card</button>' +
+        '<form id="pay-form" hidden>' + cardFields('pm') + '<p class="form-error"></p><div class="btn-row"><button type="submit">Save card</button><button type="button" id="pay-cancel" class="secondary">Cancel</button></div></form>';
+
+    var gwHtml = '<h4 class="gw-heading">Electronic Payment Gateways</h4><div class="gw-list">' + GATEWAYS.map(function (g) {
+        var saved = gws[g.id];
+        var isEd = gwEdit === g.id;
+        return '<div class="gw-card' + (saved ? ' active' : '') + '">' +
+            '<div class="gw-icon"><i class="' + g.icon + '"></i></div>' +
+            '<div class="pay-info"><strong>' + esc(g.name) + '</strong><small>' + (saved && saved.account ? 'Connected: ' + esc(saved.account) : esc(g.desc)) + '</small></div>' +
+            (saved ? '<span class="acc-badge">Enabled</span>' : '') +
+            (isEd ? '<form class="gw-form" data-gw="' + g.id + '"><input type="text" required placeholder="' + esc(g.placeholder) + '" value="' + esc(saved && saved.account ? saved.account : '') + '"><button type="submit">Save</button><button type="button" class="gw-cancel">Cancel</button></form>' :
+                (saved ? '<button type="button" class="gw-toggle" data-gw="' + g.id + '">Disable</button>' : '<button type="button" class="gw-connect" data-gw="' + g.id + '">' + (g.field ? 'Connect' : 'Enable') + '</button>')) +
+            '</div>';
+    }).join('') + '</div>';
+
+    box.innerHTML = cardsHtml + gwHtml;
+    bindCard('pm');
+    $id('pay-add').onclick = function () { $id('pay-form').hidden = false; this.hidden = true; };
+    $id('pay-cancel').onclick = renderPays;
+    $id('pay-form').onsubmit = function (e) {
+        e.preventDefault(); var r = readCard('pm');
+        if (r.err) { this.querySelector('.form-error').textContent = r.err; return; }
+        addCard(r.card); toast('Card saved'); renderPays();
+    };
+    box.onclick = function (e) {
+        var t = e.target, ps = getPays(), allGw = getGateways();
+        if (t.classList.contains('pay-del')) { ps = ps.filter(function (p) { return p.id !== t.dataset.id; }); if (ps.length && !ps.some(function (p) { return p.def; })) ps[0].def = true; LS.set('boda_pays', ps); renderPays(); }
+        else if (t.classList.contains('pay-def')) { ps.forEach(function (p) { p.def = p.id === t.dataset.id; }); LS.set('boda_pays', ps); renderPays(); }
+        else if (t.classList.contains('gw-connect')) {
+            var meta = GATEWAYS.filter(function (x) { return x.id === t.dataset.gw; })[0];
+            if (meta.field) { gwEdit = meta.id; renderPays(); }
+            else { allGw[meta.id] = { enabled: true, account: '' }; saveGateways(allGw); notify(meta.name + ' enabled for checkout.', '#payment'); toast(meta.name + ' enabled'); renderPays(); }
+        }
+        else if (t.classList.contains('gw-toggle')) {
+            delete allGw[t.dataset.gw]; saveGateways(allGw); toast('Payment gateway disabled'); renderPays();
+        }
+        else if (t.classList.contains('gw-cancel')) { gwEdit = ''; renderPays(); }
+    };
+    var gf = box.querySelector('.gw-form');
+    if (gf) gf.onsubmit = function (e) {
+        e.preventDefault();
+        var id = gf.dataset.gw, val = gf.querySelector('input').value.trim();
+        var meta = GATEWAYS.filter(function (x) { return x.id === id; })[0];
+        if (!val) return;
+        var allGw = getGateways();
+        allGw[id] = { enabled: true, account: val };
+        saveGateways(allGw); gwEdit = '';
+        notify(meta.name + ' (' + val + ') connected.', '#payment');
+        toast(meta.name + ' connected');
+        renderPays();
+    };
+}
+
+// ===== Orders & Checkout =====
+function getOrders() { return LS.get('boda_orders'); }
+var ORDER_STEPS = ['Pending', 'Processing', 'Shipped', 'Delivered'], STEP_MIN = [0, 1, 3, 6], ordersTab = 'all';
+function statusOf(o) {
+    if (o.cancelled) return 'Cancelled';
+    if (o.manual) return o.status; // status set by the admin panel
+    var m = (Date.now() - o.created) / 60000, s = 0; STEP_MIN.forEach(function (t, i) { if (m >= t) s = i; }); return ORDER_STEPS[s];
+}
+function syncOrders() {
+    var all = getOrders(), ch = false;
+    all.forEach(function (o) {
+        var s = statusOf(o);
+        if (o.status !== s) { o.status = s; ch = true; if (s !== 'Pending' && s !== 'Cancelled') notify('Order ' + o.id + ' is now ' + s, 'index.html?page=orders'); }
+    });
+    if (ch) { LS.set('boda_orders', all); if ($id('orders-box')) renderOrders(); }
+}
+function renderOrders() {
+    var box = $id('orders-box'), u = getUser();
+    var all = u ? getOrders().filter(function (o) { return o.user === u.email || o.user === 'guest'; }) : getOrders();
+    var tabs = [['all', 'All'], ['active', 'Active'], ['delivered', 'Delivered'], ['cancelled', 'Cancelled']];
+    var inTab = function (o, t) { return t === 'all' || (t === 'active' && !o.cancelled && o.status !== 'Delivered') || (t === 'delivered' && o.status === 'Delivered') || (t === 'cancelled' && o.cancelled); };
+    var list = all.filter(function (o) { return inTab(o, ordersTab); });
+    var html = '<div class="chips order-tabs">' + tabs.map(function (t) {
+        return '<button type="button" class="chip' + (ordersTab === t[0] ? ' on' : '') + '" data-tab="' + t[0] + '">' + t[1] + ' <span>' + all.filter(function (o) { return inTab(o, t[0]); }).length + '</span></button>';
+    }).join('') + '</div>';
+    if (!list.length) html += '<div class="empty-state"><div class="empty-big">📦</div><h3>No orders here yet</h3><p>Orders you place at checkout will appear here.</p><a class="favorites-btn" href="index.html?page=products">Start shopping</a></div>';
+    html += list.map(function (o) {
+        var st = o.status, step = ORDER_STEPS.indexOf(st);
+        var track = o.cancelled ? '<p class="form-error">This order was cancelled.</p>' : '<ol class="track">' + ORDER_STEPS.map(function (s, i) { return '<li class="' + (i < step ? 'done' : i === step ? 'current' : '') + '">' + s + '</li>'; }).join('') + '</ol>';
+        var acts = '<button type="button" data-act="view" data-id="' + o.id + '">' + (!o.cancelled && (st === 'Pending' || st === 'Processing') ? 'View / Edit' : 'View details') + '</button>' +
+            (!o.cancelled && (st === 'Pending' || st === 'Processing') ? '<button type="button" data-act="cancel" data-id="' + o.id + '">Cancel order</button>' : '') +
+            '<button type="button" data-act="reorder" data-id="' + o.id + '">Order again</button>' +
+            (o.cancelled || st === 'Delivered' ? '<button type="button" data-act="remove" data-id="' + o.id + '">Remove</button>' : '');
+        return '<div class="order-card"><div class="order-head"><div><strong>Order ' + esc(o.id) + '</strong><small>Placed ' + new Date(o.created).toLocaleString() + '</small></div><span class="status s-' + st.toLowerCase() + '">' + st + '</span></div>' + track +
+            '<ul class="order-items">' + o.items.map(function (i) { return '<li><span>' + esc(i.name) + ' × ' + i.qty + '</span><span>' + money(i.price * i.qty) + '</span></li>'; }).join('') + '</ul>' +
+            '<div class="order-meta"><span>Payment: <strong>' + esc(o.payment) + '</strong></span><span>Ship to: <strong>' + esc(o.ship.name) + ', ' + esc(o.ship.address) + ', ' + esc(o.ship.city) + '</strong></span><span class="order-total">Total: ' + money(o.total) + '</span></div>' +
+            '<div class="order-actions">' + acts + '</div></div>';
+    }).join('');
+    box.innerHTML = html;
+    box.onclick = function (e) {
+        var t = e.target, os = getOrders();
+        if (t.dataset.tab) { ordersTab = t.dataset.tab; return renderOrders(); }
+        var o = os.filter(function (x) { return x.id === t.dataset.id; })[0]; if (!o) return;
+        if (t.dataset.act === 'view') { location.href = 'index.html?page=order-confirm&id=' + encodeURIComponent(o.id); return; }
+        if (t.dataset.act === 'cancel') { if (!confirm(T('Cancel order ' + o.id + '?'))) return; o.cancelled = true; o.status = 'Cancelled'; LS.set('boda_orders', os); toast('Order cancelled'); }
+        else if (t.dataset.act === 'remove') { LS.set('boda_orders', os.filter(function (x) { return x.id !== o.id; })); toast('Order removed'); }
+        else if (t.dataset.act === 'reorder') { var c = LS.get('boda_cart'); o.items.forEach(function (i) { var f = c.filter(function (x) { return x.id === i.id; })[0]; if (f) f.qty += i.qty; else c.push(JSON.parse(JSON.stringify(i))); }); LS.set('boda_cart', c); location.href = 'index.html?page=cart'; return; }
+        else return;
+        renderOrders();
+    };
+}
+
+function startCheckout() {
+    var box = $id('cart-box'), cart = LS.get('boda_cart'), u = getUser(), pays = getPays(), gws = getGateways(), total = 0;
+    var ship = {}; try { ship = JSON.parse(localStorage.getItem('boda_ship')) || {}; } catch (e) { }
+    var shipCfg = {}; try { shipCfg = JSON.parse(localStorage.getItem('boda_shipping_settings')) || {}; } catch (e) { }
+    var deliveryFee = shipCfg.enabled === false ? 0 : Math.max(0, Number(shipCfg.defaultFee ?? 5)); var freeFrom = Math.max(0, Number(shipCfg.freeFrom ?? 500));
+    var def = pays.filter(function (p) { return p.def; })[0] || pays[0];
+    var lines = cart.map(function (i) { total += i.price * i.qty; var parts = [].concat(i.extras || [], i.options || [], i.selectedOptions || []).filter(Boolean); return '<div class="co-line"><span>' + esc(i.name) + (parts.length ? '<small style="display:block">' + esc(parts.join('، ')) + '</small>' : '') + '</span><span>' + money(i.price * i.qty) + '</span></div>'; }).join('');
+    var subtotal = total; if (shipCfg.enabled !== false && !(freeFrom > 0 && subtotal >= freeFrom)) total += deliveryFee;
+    var opt = function (val, title, sub, on) { return '<label class="pay-opt"><input type="radio" name="pay" value="' + val + '"' + (on ? ' checked' : '') + '><span><strong>' + title + '</strong><small>' + sub + '</small></span></label>'; };
+
+    var gwOpts = GATEWAYS.filter(function (g) { return gws[g.id] && gws[g.id].enabled; }).map(function (g) {
+        var acc = gws[g.id].account;
+        return opt('gw:' + g.id, esc(g.name), acc ? esc(acc) : esc(g.desc), false);
+    }).join('');
+
+    var payHtml = opt('cod', 'Cash on Delivery', 'Pay when your order arrives', !def) +
+        pays.map(function (p) { return opt(p.id, esc(p.brand) + ' •••• ' + esc(p.last4), esc(p.holder) + ' · exp ' + esc(p.exp), def && def.id === p.id); }).join('') +
+        gwOpts +
+        opt('new', 'Pay with a new card', 'Visa or Mastercard', false);
+
+    box.innerHTML = '<form id="checkout-form" class="checkout"><div><fieldset><legend>Shipping details</legend><div class="card-grid">' +
+        '<label>Full name<input id="sh-name" required value="' + esc(ship.name || (u ? u.name : '')) + '"></label><label>Phone<input id="sh-phone" type="tel" required value="' + esc(ship.phone || '') + '"></label>' +
+        '<label>Address<input id="sh-addr" required value="' + esc(ship.address || '') + '"></label><label>City / Area<input id="sh-city" required value="' + esc(ship.city || '') + '"></label></div><p class="gw-tip">' + (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (freeFrom > 0 && subtotal >= freeFrom ? 'Free delivery applied.' : 'Delivery fee: ' + money(deliveryFee)) ) + (shipCfg.eta ? ' · Estimated: ' + esc(shipCfg.eta) : '') + '</p></fieldset>' +
+        '<fieldset><legend>Payment method</legend>' + payHtml + '<div id="new-card" hidden>' + cardFields('nc') + '<label class="chk"><input type="checkbox" id="nc-save"> Save this card</label></div>' +
+        '<p class="gw-tip"><a href="#payment">Manage payment methods &amp; gateways →</a></p></fieldset><p class="form-error"></p></div>' +
+        '<aside class="co-sum"><h3>Order summary</h3>' + lines + '<div class="co-total"><span>Total</span><strong>' + money(total) + '</strong></div>' +
+        '<button type="submit" class="co-place">Place order</button><button type="button" id="co-back" class="secondary">← Back to cart</button></aside></form>';
+    bindCard('nc');
+    var f = $id('checkout-form');
+    f.addEventListener('change', function () { $id('new-card').hidden = f.pay.value !== 'new'; });
+    $id('co-back').onclick = function () { renderCart(); };
+    f.onsubmit = function (e) {
+        e.preventDefault();
+        var err = f.querySelector('.form-error'), val = f.pay.value, label = 'Cash on Delivery';
+        if (shipCfg.enabled === false) { err.textContent = 'Delivery is currently unavailable. Please contact the store.'; return; }
+        if (val === 'new') {
+            var r = readCard('nc'); if (r.err) { err.textContent = r.err; return; }
+            label = r.card.brand + ' •••• ' + r.card.last4; if ($id('nc-save').checked) addCard(r.card);
+        } else if (val.indexOf('gw:') === 0) {
+            var gid = val.slice(3), gm = GATEWAYS.filter(function (x) { return x.id === gid; })[0], gs = gws[gid];
+            label = gm.name + (gs && gs.account ? ' (' + gs.account + ')' : '');
+        } else if (val !== 'cod') {
+            var p = getPays().filter(function (x) { return x.id === val; })[0];
+            label = p.brand + ' •••• ' + p.last4;
+        }
+        var s = { name: $id('sh-name').value.trim(), phone: $id('sh-phone').value.trim(), address: $id('sh-addr').value.trim(), city: $id('sh-city').value.trim() };
+        localStorage.setItem('boda_ship', JSON.stringify(s));
+        var o = { id: 'BD-' + String(Date.now()).slice(-6), user: u ? u.email : 'guest', created: Date.now(), status: 'Pending', cancelled: false, items: cart, subtotal: subtotal, shippingFee: total - subtotal, deliveryStatus: 'Pending', deliveryEta: shipCfg.eta || '', total: total, payment: label, ship: s };
+        var os = getOrders(); os.unshift(o); LS.set('boda_orders', os); LS.set('boda_cart', []); updateBadges();
+        notify('Order ' + o.id + ' placed (' + money(total) + ').', 'index.html?page=orders');
+        // Go to the dedicated confirmation page (edit quantities / delete items / change shipping there, not in the cart)
+        location.href = 'index.html?page=order-confirm&id=' + encodeURIComponent(o.id) + '&placed=1';
+    };
+}
+
+// ===== Notifications =====
+function getNotifs() { return LS.get('boda_notifs'); }
+function notify(text, href) {
+    var n = getNotifs(); n.unshift({ text: text, href: href || '', time: Date.now(), read: false });
+    LS.set('boda_notifs', n.slice(0, 30)); drawNotifs();
+}
+function drawNotifs() {
+    var list = $id('notif-list'), cnt = document.querySelector('.notif-count'); if (!list) return;
+    var n = getNotifs(), unread = n.filter(function (x) { return !x.read; }).length;
+    cnt.textContent = unread > 9 ? '9+' : unread; cnt.style.display = unread ? '' : 'none';
+    list.innerHTML = n.length ? n.map(function (x, i) {
+        return '<a class="notif-item' + (x.read ? '' : ' unread') + '" data-i="' + i + '" href="' + esc(x.href || '#') + '"><span>' + esc(x.text) + '</span><small>' + new Date(x.time).toLocaleTimeString() + '</small></a>';
+    }).join('') : '<p class="notif-empty">No notifications yet.</p>';
+}
+function initNotifs() {
+    var wrap = document.querySelector('.header-tools .language-menu-wrap');
+    if (!wrap || !wrap.querySelector('.settings-btn') || $id('notif-btn')) return;
+    var box = el('div', 'notif-wrap');
+    box.innerHTML = '<button type="button" class="language-btn notif-btn" id="notif-btn" title="Notifications"><i class="fa-solid fa-bell"></i><span class="notif-count"></span></button>' +
+        '<div class="notif-dropdown" id="notif-dropdown"><div class="notif-head"><strong>Notifications</strong><button type="button" id="notif-read">Mark read</button></div>' +
+        '<div class="notif-list" id="notif-list"></div><div class="notif-foot"><button type="button" id="notif-clear">Clear</button></div></div>';
+    wrap.insertBefore(box, wrap.firstChild);
+    if (localStorage.getItem('boda_notifs') === null) notify('Welcome to Boda Store! Explore all 8 departments.', 'index.html?page=products');
+    drawNotifs();
+    $id('notif-btn').onclick = function (e) {
+        e.stopPropagation();
+        var langDrop = $id('language-dropdown');
+        if (langDrop) langDrop.classList.remove('show');
+        $id('notif-dropdown').classList.toggle('show');
+    };
+    $id('notif-read').onclick = function () { LS.set('boda_notifs', getNotifs().map(function (x) { x.read = true; return x; })); drawNotifs(); };
+    $id('notif-clear').onclick = function () { LS.set('boda_notifs', []); drawNotifs(); };
+    $id('notif-list').onclick = function (e) {
+        var a = e.target.closest('.notif-item'); if (!a) return;
+        var n = getNotifs(); n[+a.dataset.i].read = true; LS.set('boda_notifs', n);
+    };
+    document.addEventListener('click', function (e) { if (!e.target.closest('.notif-wrap')) $id('notif-dropdown').classList.remove('show'); });
+}
+
+// ===== Accounts & Settings (Remember Me, Forgot Password & Validation) =====
+function getAccounts() { try { return JSON.parse(localStorage.getItem('boda_accounts')) || {}; } catch (e) { return {}; } }
+function hashPw(p) {
+    if (window.crypto && crypto.subtle && window.TextEncoder) {
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode('boda:' + p)).then(function (b) {
+            return Array.from(new Uint8Array(b)).map(function (x) { return x.toString(16).padStart(2, '0'); }).join('');
+        });
+    }
+    var h = 5381; for (var i = 0; i < p.length; i++) h = ((h << 5) + h + p.charCodeAt(i)) | 0;
+    return Promise.resolve('x' + h);
+}
+function initAuth() {
+    var box = $id('auth-box'); if (!box) return;
+    var u = getUser();
+    if (u && !sessionStorage.getItem('boda_add')) {
+        box.innerHTML = '<div class="empty-state"><h2>Hi, ' + esc(u.name) + ' 👋</h2><p>Signed in as ' + esc(u.email) + '.</p>' +
+            '<div class="btn-row" style="justify-content:center"><a class="auth-link-btn" href="index.html?page=home">Go to Store</a><a class="auth-link-btn" href="index.html?page=orders">My Orders</a><button type="button" id="signout" class="secondary">Sign out</button></div></div>';
+        $id('signout').onclick = function () { localStorage.removeItem('boda_user'); location.reload(); };
+        return;
+    }
+    box.querySelectorAll('input[type="password"]').forEach(function (inp) {
+        var w = el('div', 'password-wrapper'); inp.before(w); w.appendChild(inp);
+        var t = el('button', 'toggle-password'); t.type = 'button'; t.setAttribute('aria-label', 'Show password');
+        t.innerHTML = '<i class="fa-regular fa-eye"></i>';
+        t.onclick = function () {
+            var show = inp.type === 'password'; inp.type = show ? 'text' : 'password';
+            t.innerHTML = show ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
+        };
+        w.appendChild(t);
+    });
+
+    var si = $id('auth-form'), su = $id('signup-form'), ff = $id('forgot-form');
+    if (si) {
+        var rem = localStorage.getItem('boda_remember_login');
+        if (rem) { si.login.value = rem; if ($id('a-remember')) $id('a-remember').checked = true; }
+
+        if ($id('forgot-toggle') && ff) {
+            $id('forgot-toggle').onclick = function () { si.hidden = true; ff.hidden = false; $id('f-login').value = si.login.value; };
+            $id('forgot-cancel').onclick = function () { ff.hidden = true; si.hidden = false; };
+            ff.onsubmit = function (e) {
+                e.preventDefault();
+                var id = ff.login.value.trim().toLowerCase(), accs = getAccounts(), err = ff.querySelector('.form-error');
+                if (!accs[id]) { err.textContent = 'No account found with this email or phone.'; return; }
+                hashPw(ff.password.value).then(function (h) {
+                    accs[id].hash = h;
+                    localStorage.setItem('boda_accounts', JSON.stringify(accs));
+                    ff.reset(); ff.hidden = true; si.hidden = false; si.login.value = id;
+                    toast('Password updated! You can login now.');
+                });
+            };
+        }
+
+        si.onsubmit = function (e) {
+            e.preventDefault();
+            var id = si.login.value.trim().toLowerCase(), acc = getAccounts()[id];
+            hashPw(si.password.value).then(function (h) {
+                if (!acc || acc.hash !== h) { si.querySelector('.form-error').textContent = 'Wrong email/phone or password.'; return; }
+                if ($id('a-remember') && $id('a-remember').checked) localStorage.setItem('boda_remember_login', id);
+                else localStorage.removeItem('boda_remember_login');
+                localStorage.setItem('boda_user', JSON.stringify({ name: acc.name, email: acc.login }));
+                sessionStorage.removeItem('boda_add');
+                toast('Welcome, ' + acc.name + '!');
+                setTimeout(function () { location.href = 'index.html?page=home'; }, 700);
+            });
+        };
+    }
+
+    if (su) {
+        var pw = su.password, pw2 = su.password2, bar = su.querySelector('.pw-meter span'), hint = su.querySelector('.pw-hint'), matchEl = $id('pw-match');
+        function checkMatch() {
+            if (!matchEl) return;
+            if (!pw2.value) { matchEl.textContent = ''; matchEl.className = 'pw-match'; return; }
+            var ok = pw.value === pw2.value;
+            matchEl.textContent = ok ? '✓ Passwords match' : '✕ Passwords do not match';
+            matchEl.className = 'pw-match ' + (ok ? 'ok' : 'bad');
+        }
+        pw.addEventListener('input', function () {
+            var v = pw.value, s = (v.length >= 6) + (v.length >= 10) + /[A-Z]/.test(v) + /\d/.test(v) + /[^A-Za-z0-9]/.test(v);
+            bar.style.width = (s * 20) + '%'; bar.dataset.s = s < 3 ? 'weak' : s < 5 ? 'ok' : 'strong';
+            hint.textContent = v ? (s < 3 ? 'Weak password' : s < 5 ? 'Good password' : 'Strong password') : 'Use 8+ characters with numbers and symbols.';
+            checkMatch();
+        });
+        pw2.addEventListener('input', checkMatch);
+
+        su.onsubmit = function (e) {
+            e.preventDefault();
+            var id = su.login.value.trim().toLowerCase(), err = su.querySelector('.form-error');
+            var validLogin = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id) || /^\+?[\d\s-]{8,15}$/.test(id);
+            if (!validLogin) { err.textContent = 'Enter a valid email address or phone number.'; return; }
+            if (pw.value !== pw2.value) { err.textContent = 'Passwords do not match.'; return; }
+            var accs = getAccounts(); if (accs[id]) { err.textContent = 'Account already exists.'; return; }
+            hashPw(pw.value).then(function (h) {
+                accs[id] = { name: su.name.value.trim(), login: id, hash: h };
+                localStorage.setItem('boda_accounts', JSON.stringify(accs));
+                localStorage.setItem('boda_user', JSON.stringify({ name: accs[id].name, email: id }));
+                sessionStorage.removeItem('boda_add');
+                toast('Account created!');
+                setTimeout(function () { location.href = 'index.html?page=home'; }, 700);
+            });
+        };
+    }
+}
+
+var switchTarget = '';
+function renderSwitch() {
+    var box = $id('switch-box'), accs = getAccounts(), u = getUser(), ids = Object.keys(accs);
+    box.innerHTML = (ids.length ? ids.map(function (id) {
+        var a = accs[id], cur = u && u.email === id;
+        return '<div class="acc-row"><div class="acc-avatar">' + esc(a.name.charAt(0).toUpperCase()) + '</div><div class="acc-info"><strong>' + esc(a.name) + '</strong><small>' + esc(id) + '</small></div>' +
+            (cur ? '<span class="acc-badge">Current</span>' : switchTarget === id ?
+                '<form class="acc-form" data-id="' + esc(id) + '"><input type="password" placeholder="Password" required><button type="submit">OK</button><button type="button" class="acc-cancel">Cancel</button></form>' :
+                '<button type="button" class="acc-switch" data-id="' + esc(id) + '">Switch</button>') + '</div>';
+    }).join('') : '<p>No saved accounts yet.</p>') +
+        '<div class="btn-row"><a class="auth-link-btn" href="index.html?page=signin" id="acc-add">+ Add account</a>' + (u ? '<button type="button" id="acc-out" class="secondary">Sign out</button>' : '') + '</div>';
+    $id('acc-add').onclick = function () { sessionStorage.setItem('boda_add', '1'); };
+    if ($id('acc-out')) $id('acc-out').onclick = function () { localStorage.removeItem('boda_user'); renderSwitch(); toast('Signed out'); };
+    box.onclick = function (e) {
+        if (e.target.classList.contains('acc-switch')) { switchTarget = e.target.dataset.id; renderSwitch(); }
+        else if (e.target.classList.contains('acc-cancel')) { switchTarget = ''; renderSwitch(); }
+    };
+    var f = box.querySelector('.acc-form');
+    if (f) f.onsubmit = function (e) {
+        e.preventDefault(); var id = f.dataset.id, acc = getAccounts()[id];
+        hashPw(f.querySelector('input').value).then(function (h) {
+            if (!acc || acc.hash !== h) { toast('Wrong password'); return; }
+            localStorage.setItem('boda_user', JSON.stringify({ name: acc.name, email: acc.login }));
+            switchTarget = ''; toast('Switched to ' + acc.name); renderSwitch();
+        });
+    };
+}
+
+function initSettings() {
+    var items = [].slice.call(document.querySelectorAll('.sl-item'));
+    items.forEach(function (d) { d.addEventListener('toggle', function () { if (d.open) items.forEach(function (o) { if (o !== d) o.open = false; }); }); });
+    var hid = location.hash.slice(1), target = hid && $id(hid);
+    if (target && target.classList.contains('sl-item')) target.open = true;
+    if ($id('switch-box')) renderSwitch();
+    if ($id('pay-box')) renderPays();
+}
+
+// ===== Departments Slider (Directly Under <header>) — endless, seamless loop =====
+function initHeaderSlider() {
+    var header = document.querySelector('header');
+    if (!header || !header.querySelector('nav') || document.querySelector('.header-dept-slider')) return;
+
+    var items = [{ label: 'All Products', href: 'index.html?page=products', cat: '' }, { label: 'Offers', href: 'index.html?page=offers', sale: true }]
+        .concat(CATEGORIES.map(function (k) { return { img: k.img || '', label: k.name, href: catUrl(k.name), cat: k.name, subs: k.subs }; }));
+
+    var P = new URLSearchParams(location.search), curCat = P.get('cat') || '', curSale = P.get('sale') === '1';
+    var isProd = document.body.classList.contains('products') || document.body.classList.contains('category-page');
+    var isOffers = new URLSearchParams(location.search).get('page') === 'offers';
+
+    var bar = el('div', 'header-dept-slider');
+    bar.setAttribute('aria-label', 'Departments Slider');
+    var prev = el('button', 'dept-nav prev'); prev.type = 'button'; prev.setAttribute('aria-label', 'Scroll left'); prev.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+    var next = el('button', 'dept-nav next'); next.type = 'button'; next.setAttribute('aria-label', 'Scroll right'); next.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+    var view = el('div', 'dept-viewport'), track = el('div', 'dept-track'); view.appendChild(track);
+    var subbar = el('div', 'dept-subbar'); subbar.hidden = true;
+
+    function mk(it, clone) {
+        var a = el('a'); a.href = it.href;
+        a.innerHTML = (it.img ? '<span class="dept-img"><img src="' + esc(it.img) + '" alt="" referrerpolicy="no-referrer"></span>' : '') + '<span>' + esc(it.label) + '</span>' + (it.subs ? '<span class="dept-caret"> ▾</span>' : '');
+        if (it.sale && (isOffers || (isProd && curSale))) a.classList.add('active');
+        else if (isProd && !curSale && !it.sale && it.cat === curCat) a.classList.add('active');
+        if (clone) { a.setAttribute('aria-hidden', 'true'); a.tabIndex = -1; }
+        a.addEventListener('mouseenter', function () {
+            if (!it.subs) { subbar.hidden = true; return; }
+            subbar.innerHTML = '<strong>' + esc(it.cat) + ':</strong><a href="' + esc(it.href) + '">All ' + esc(it.cat) + '</a>' +
+                it.subs.map(function (s) { return '<a href="' + esc(catUrl(it.cat, s)) + '">' + esc(s) + '</a>'; }).join('');
+            subbar.hidden = false;
+        });
+        return a;
+    }
+
+    bar.append(prev, view, next, subbar);
+    header.insertAdjacentElement('afterend', bar);
+
+    var setW = 0, pos = 0, paused = false, last = 0, anim = null;
+    var SPEED = 38; // px per second
+    var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function build() {
+        track.innerHTML = '';
+        items.forEach(function (it) { track.appendChild(mk(it, false)); });
+        setW = track.getBoundingClientRect().width + 8;           // one full set + the gap that follows it
+        var copies = Math.ceil(view.clientWidth / Math.max(setW, 1)) + 1;
+        for (var c = 0; c < copies; c++) items.forEach(function (it) { track.appendChild(mk(it, true)); });
+        draw();
+    }
+    function draw() {
+        if (setW > 0) pos = ((pos % setW) + setW) % setW;
+        track.style.transform = 'translate3d(' + (-pos) + 'px,0,0)';
+    }
+    function tick(ts) {
+        var dt = last ? Math.min((ts - last) / 1000, .1) : 0; last = ts;
+        if (anim) {
+            var p = Math.min(1, (ts - anim.t0) / 380), e = 1 - Math.pow(1 - p, 3);
+            pos = anim.from + (anim.to - anim.from) * e; if (p >= 1) anim = null;
+        } else if (!paused && !calm) pos += SPEED * dt;
+        draw(); requestAnimationFrame(tick);
+    }
+    function nudge(d) { anim = { from: pos, to: pos + d, t0: performance.now() }; }
+    prev.onclick = function () { nudge(-260); };
+    next.onclick = function () { nudge(260); };
+
+    view.addEventListener('mouseenter', function () { paused = true; });
+    view.addEventListener('mouseleave', function () { paused = false; });
+    bar.addEventListener('focusin', function () { paused = true; });
+    bar.addEventListener('focusout', function () { paused = false; });
+    bar.addEventListener('mouseleave', function () { subbar.hidden = true; });
+    view.addEventListener('touchstart', function () { paused = true; }, { passive: true });
+    view.addEventListener('touchend', function () { setTimeout(function () { paused = false; }, 1500); }, { passive: true });
+
+    var rt; function rebuild() { clearTimeout(rt); rt = setTimeout(build, 120); }
+    window.addEventListener('resize', rebuild);
+    document.addEventListener('boda:lang', function () { setTimeout(build, 30); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+    build();
+    requestAnimationFrame(tick);
+}
+
+// ===== Hero Slider =====
+function initHeroSlider() {
+    var wrap = document.querySelector('.hero-slider'); if (!wrap) return;
+    var track = wrap.querySelector('.hero-slides'), slides = wrap.querySelectorAll('.hero-slide');
+    var dots = wrap.querySelector('.hero-dots'), prev = wrap.querySelector('.hero-arrow.prev'), next = wrap.querySelector('.hero-arrow.next');
+    if (!track || slides.length < 2) return;
+    var idx = 0, timer;
+    slides.forEach(function (_, i) {
+        var d = document.createElement('button'); d.type = 'button';
+        d.onclick = function () { go(i); reset(); }; dots.appendChild(d);
+    });
+    function go(i) {
+        idx = (i + slides.length) % slides.length;
+        track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+        dots.querySelectorAll('button').forEach(function (b, j) { b.classList.toggle('active', j === idx); });
+    }
+    function reset() { clearInterval(timer); timer = setInterval(function () { go(idx + 1); }, 5000); }
+    if (prev) prev.onclick = function () { go(idx - 1); reset(); };
+    if (next) next.onclick = function () { go(idx + 1); reset(); };
+    wrap.addEventListener('mouseenter', function () { clearInterval(timer); });
+    wrap.addEventListener('mouseleave', reset);
+    go(0); reset();
+}
+
+// ===== Newsletter =====
+function initNewsletter() {
+    var form = $id('newsletter-form'); if (!form) return;
+    form.onsubmit = function (e) {
+        e.preventDefault();
+        var email = form.querySelector('input[type="email"]').value.trim().toLowerCase();
+        var list = LS.get('boda_newsletter');
+        if (list.indexOf(email) === -1) { list.push(email); LS.set('boda_newsletter', list); }
+        var msg = document.querySelector('.nl-msg');
+        if (msg) { msg.textContent = 'Subscribed! Offers will be sent to ' + email; msg.classList.add('show'); }
+        toast('Subscribed to Boda Store offers!'); form.reset();
+    };
+}
+
+// ===== Standard Footer Fallback =====
+function initStandardFooter() {
+    if (document.body.classList.contains('sign-page')) return;
+    var footer = document.querySelector('footer'), grid = footer && footer.querySelector('.footer-grid');
+    if (!grid) return;
+    grid.innerHTML =
+        '<div><h3>Boda Store</h3><p>Your trusted place for everything you need — all in one store.</p>' +
+        '<div class="footer-social"><a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a><a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a><a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a></div></div>' +
+        '<div><h3>Quick Links</h3><ul><li><a href="index.html?page=home">Home</a></li><li><a href="index.html?page=categories">Categories</a></li><li><a href="index.html?page=products">Products</a></li><li><a href="index.html?page=offers">Offers</a></li><li><a href="index.html?page=about">About Us</a></li><li><a href="index.html?page=contact">Contact</a></li></ul></div>' +
+        '<div><h3>Categories</h3><ul><li><a href="index.html?page=category&cat=Electronics">Electronics</a></li><li><a href="index.html?page=category&cat=Home%20%26%20Appliances">Home &amp; Appliances</a></li><li><a href="index.html?page=category&cat=Fashion">Fashion</a></li><li><a href="index.html?page=category&cat=Beauty">Beauty</a></li><li><a href="index.html?page=category&cat=Sports">Sports</a></li><li><a href="index.html?page=category&cat=Books">Books</a></li></ul></div>' +
+        '<div><h3>Customer Service</h3><ul><li><a href="index.html?page=orders">My Orders</a></li><li><a href="index.html?page=cart">Cart</a></li><li><a href="index.html?page=favorites">Favorites</a></li><li><a href="index.html?page=reviews">My Reviews</a></li></ul></div>' +
+        '<div><h3>Contact</h3><ul><li>📧 info@bodastore.com</li><li>📞 +20 100 000 0000</li><li>📍 Alexandria, Egypt</li><li>🕒 Daily: 10 AM – 9 PM</li></ul></div>';
+    var bottom = footer.querySelector('.footer-bottom');
+    if (bottom) {
+        bottom.innerHTML = '<span>&copy; 2026 Boda Store. All Rights Reserved.</span>' +
+            '<div class="footer-payments"><span><i class="fa-brands fa-cc-visa"></i> Visa</span><span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span><span><i class="fa-solid fa-truck"></i> Cash on Delivery</span></div>';
+    }
+}
+
+function initBackToTop() {
+    var btt = document.querySelector('.back-to-top');
+    if (!btt) return;
+    window.addEventListener('scroll', function () { btt.classList.toggle('show', window.scrollY > 350); }, { passive: true });
+    btt.onclick = function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+}
+
+// ===== Admin data layer, Product page & Category page =====
+// Catalog = BODA_PRODUCTS (products-data.js) + changes made in admin.html (localStorage: boda_admin_products)
+function getPA() {
+    var d = {}; try { d = JSON.parse(localStorage.getItem('boda_admin_products')) || {}; } catch (e) { }
+    return { edits: d.edits || {}, added: d.added || [], deleted: d.deleted || [] };
+}
+function allProductsRaw() {
+    var a = getPA();
+    return (window.BODA_PRODUCTS || []).map(function (p) { return Object.assign({}, p, a.edits[p.id] || {}); })
+        .concat(a.added).filter(function (p) { return a.deleted.indexOf(p.id) < 0; });
+}
+function allProducts() { return allProductsRaw().filter(function (p) { return !p.hidden; }); }
+var IMG_FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="220" viewBox="0 0 300 220"><rect width="300" height="220" fill="#f3f5f9"/><g fill="none" stroke="#9aa6b8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><rect x="105" y="65" width="90" height="75" rx="8"/><circle cx="130" cy="92" r="9"/><path d="M105 130l28-26 20 18 14-12 28 20"/></g><text x="150" y="178" font-family="Arial" font-size="15" fill="#9aa6b8" text-anchor="middle">Image unavailable</text></svg>');
+// The catalog (products-data.js + admin edits) is the ONLY source of product images.
+function liveImg(id, fallback) {
+    var p = allProductsRaw().filter(function (x) { return x.id === id; })[0];
+    return p && p.img ? p.img : (fallback || '');
+}
+function productUrl(id) { return 'index.html?page=product&id=' + encodeURIComponent(id); }
+function statusText(p) { return p.stock === false ? 'Out of Stock' : 'Available'; }
+function priceHTML(p) {
+    return p.old > p.price ? '<p class="price-row"><del class="old-price">$' + p.old + '</del><strong class="new-price">$' + p.price + '</strong></p>' : '<p class="price">$' + p.price + '</p>';
+}
+function badgeHTML(p) {
+    var b = '', pct = p.old > p.price ? Math.round((1 - p.price / p.old) * 100) : 0;
+    if (pct) b = (p.badge && p.badge !== 'NEW') ? p.badge : '\uD83D\uDD25 ' + pct + '% OFF';
+    else if (p.badge === 'NEW') b = 'NEW';
+    return (b ? '<span class="sale-badge' + (b === 'NEW' ? ' new-badge' : '') + '">' + esc(b) + '</span>' : '') +
+        '<span class="stock-badge' + (p.stock === false ? ' out' : '') + '">' + (p.stock === false ? 'Out of Stock' : 'In Stock') + '</span>';
+}
+function ratingHTML() {
+    return '<div class="rating"><span class="stars">' + [1, 2, 3, 4, 5].map(function (i) { return '<button type="button" class="star" data-v="' + i + '">\u2605</button>'; }).join('') + '</span><span class="rating-text">Rate this product</span></div>';
+}
+function actionsHTML(p) {
+    var d = p.stock === false ? ' disabled' : '';
+    return '<div class="card-actions"><div class="card-row"><button type="button" class="add-cart"' + d + '>Add to Cart</button><button type="button" class="buy-btn"' + d + '>Buy Now</button></div><button type="button" class="fav-action">\u2661 Add to Favorites</button></div>';
+}
+function attrsOf(p) { return 'id="' + esc(p.id) + '" data-id="' + esc(p.id) + '" data-cat="' + esc(p.cat) + '" data-sub="' + esc(p.sub || '') + '" data-price="' + p.price + '"'; }
+function featuresHTML(p, max) { var f = max ? (p.features || []).slice(0, max) : (p.features || []); return f.length ? '<h4>Features</h4><ul>' + f.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>' : ''; }
+function labelOf(p) { return esc(p.cat + (p.sub ? ' \u203A ' + p.sub : '')); }
+function cardHTML(p) {
+    return '<section><article ' + attrsOf(p) + '>' + badgeHTML(p) + '<img src="' + esc(p.img || IMG_FALLBACK) + '" alt="' + esc(p.name) + '" width="300" height="220" loading="lazy" referrerpolicy="no-referrer">' +
+        '<span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + '<p>' + esc(p.desc || '') + '</p>' + priceHTML(p) +
+        '<p>Status: ' + statusText(p) + '</p>' + featuresHTML(p, 3) + actionsHTML(p) + '</article></section>';
+}
+function emptyBox(icon, title, text, href, label) {
+    return '<div class="empty-state"><div class="empty-big">' + icon + '</div><h3>' + title + '</h3><p>' + text + '</p><a class="favorites-btn" href="' + href + '">' + label + '</a></div>';
+}
+
+// Click image / title / "View Details" -> product page
+function linkCard(a) {
+    var url = productUrl(a.dataset.id), go = function () { location.href = url; };
+    ['img', 'h3'].forEach(function (s) { var n = a.querySelector(s); if (n) { n.style.cursor = 'pointer'; n.onclick = go; } });
+    var v = [].slice.call(a.querySelectorAll('a')).filter(function (x) { return /View Details/.test(x.textContent); })[0];
+    var acts = a.querySelector('.card-actions');
+    if (!v && acts) { v = el('a', 'view-details', 'View Details \u2192'); acts.before(v); }
+    if (v) v.href = url;
+}
+
+// Apply admin changes to the hard-coded cards (price, name, stock, hidden/deleted, new products)
+function applyAdminDom() {
+    var a = getPA(), map = {};
+    allProductsRaw().forEach(function (p) { map[p.id] = p; });
+    var grid = document.body.classList.contains('products') && document.querySelector('.product-grid');
+    document.querySelectorAll('article[data-id]').forEach(function (art) {
+        var id = art.dataset.id, p = map[id], e = a.edits[id];
+        var wrap = art.parentNode.tagName === 'SECTION' ? art.parentNode : art;
+        if (a.deleted.indexOf(id) > -1 || (p && p.hidden)) { wrap.remove(); return; }
+        if (p && !e) { var im0 = art.querySelector('img'); if (im0 && p.img) { im0.setAttribute('referrerpolicy', 'no-referrer'); if (im0.getAttribute('src') !== p.img) im0.src = p.img; } }
+        if (!e || !p) return;
+        // Rebuild the card from the catalog so EVERY admin edit (image, description, features, badge, category, price, stock) shows up.
+        // This runs before initCards(), so no event handlers are lost.
+        var tmp = document.createElement('div'); tmp.innerHTML = cardHTML(p);
+        var fresh = tmp.querySelector('article');
+        if (fresh) { if (art.className) fresh.className = art.className; art.replaceWith(fresh); }
+    });
+    // Offers page: built ONLY from the catalog (admin controls images, prices and which products appear)
+    if (document.body.classList.contains('offers-page')) {
+        var og = document.querySelector('.product-grid');
+        if (og) og.innerHTML = allProducts().filter(function (p) { return p.old > p.price; }).map(cardHTML).join('');
+        return;
+    }
+    if (grid) a.added.forEach(function (p) { if (!p.hidden && a.deleted.indexOf(p.id) < 0) grid.insertAdjacentHTML('beforeend', cardHTML(p)); });
+}
+
+// ---- Product page: index.html?page=product&id=LAP001 ----
+function renderProduct() {
+    var box = $id('product-box'), id = new URLSearchParams(location.search).get('id');
+    var p = allProducts().filter(function (x) { return x.id === id; })[0];
+    if (!p) { box.innerHTML = emptyBox('\uD83D\uDD0D', 'Product not found', 'This product does not exist or is no longer available.', 'index.html?page=products', 'Browse all products'); return; }
+    document.title = p.name + ' | Boda Store';
+    var out = p.stock === false;
+    var rows = [['Product code', esc(p.id)], ['Category', '<a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a>']];
+    if (p.sub) rows.push(['Sub-category', '<a href="' + esc(catUrl(p.cat, p.sub)) + '">' + esc(p.sub) + '</a>']);
+    rows.push(['Availability', statusText(p)], ['Delivery', 'Free on orders over $500']);
+    if (p.brand) rows.push(['Brand', esc(p.brand)]);
+    rows.push(['Condition', p.condition === 'used' ? 'مستعمل' : 'جديد']);
+    if ((p.colors || []).length) rows.push(['Colors', p.colors.map(esc).join(' · ')]);
+    if ((p.sizes || []).length) rows.push(['Sizes', p.sizes.map(esc).join(' · ')]);
+    if ((p.components || []).length) rows.push(['Components', p.components.map(esc).join(' · ')]);
+    if (p.warranty) rows.push(['Warranty', esc(p.warranty)]);
+    else if (p.cat === 'Electronics' || p.cat === 'Home & Appliances') rows.push(['Warranty', '1 year']);
+    if ((p.options || []).length) rows.push(['Options', p.options.map(esc).join(' \u00B7 ')]);
+    var lowStock = !out && typeof p.qty === 'number' && p.qty > 0 && p.qty <= 5;
+    var related = allProducts().filter(function (x) { return x.cat === p.cat && x.id !== p.id; }).slice(0, 4);
+    box.innerHTML = '<div class="crumbs"><a href="index.html?page=home">Home</a> \u203A <a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a> \u203A <span>' + esc(p.name) + '</span></div>' +
+        '<article class="pd" ' + attrsOf(p) + '><div class="pd-media">' + badgeHTML(p) + '<img src="' + esc(p.img || IMG_FALLBACK) + '" alt="' + esc(p.name) + '" referrerpolicy="no-referrer"></div>' +
+        '<div class="pd-body"><span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + priceHTML(p) +
+        '<p class="pd-status' + (out ? ' out' : '') + '">\u25CF ' + (out ? 'Out of stock' : lowStock ? 'Only ' + p.qty + ' left in stock' : 'In stock \u2014 ready to ship') + '</p>' +
+        '<p class="pd-desc">' + esc(p.desc || '') + '</p>' + (p.long ? '<p class="pd-long" style="white-space:pre-line">' + esc(p.long) + '</p>' : '') + featuresHTML(p) +
+        '<table class="pd-specs"><tbody>' + rows.map(function (r) { return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table>' +
+        actionsHTML(p) + '</div></article>' +
+        (related.length ? '<h2 class="pd-more">More in ' + esc(p.cat) + '</h2><div class="product-grid">' + related.map(function (x) { return cardHTML(x); }).join('') + '</div>' : '');
+}
+
+// (thumbnail click handler is attached by initGallery below)
+function initGallery() {
+    var main = $id('pd-main-img'); if (!main) return;
+    document.querySelectorAll('.pd-thumbs img').forEach(function (t) { t.onclick = function () { main.src = t.dataset.full; }; });
+}
+
+// ---- Category page: index.html?page=category&cat=Electronics[&sub=Laptops] ----
+function renderCategory() {
+    var box = $id('category-box'), P = new URLSearchParams(location.search), cat = P.get('cat') || '', sub = P.get('sub') || '';
+    var k = CATEGORIES.filter(function (x) { return x.name === cat; })[0];
+    var list = allProducts().filter(function (p) { return p.cat === cat; });
+    if (!k && !list.length) { box.innerHTML = emptyBox('\uD83D\uDCC2', 'Category not found', 'We could not find this category.', 'index.html?page=categories', 'All categories'); return; }
+    var shown = sub ? list.filter(function (p) { return p.sub === sub; }) : list, subs = k ? k.subs : [];
+    document.title = (sub || cat) + ' | Boda Store';
+    box.innerHTML = '<div class="crumbs"><a href="index.html?page=home">Home</a> \u203A <a href="index.html?page=categories">Categories</a> \u203A ' +
+        (sub ? '<a href="' + esc(catUrl(cat)) + '">' + esc(cat) + '</a> \u203A <span>' + esc(sub) + '</span>' : '<span>' + esc(cat) + '</span>') + '</div>' +
+        '<h1 class="page-title">' + esc(sub || cat) + '</h1><p class="page-intro">' + esc(k ? (k.long || k.desc) : '') + '</p>' +
+        (subs.length ? '<div class="cp-subs"><a href="' + esc(catUrl(cat)) + '" class="' + (sub ? '' : 'on') + '">All <span>' + list.length + '</span></a>' +
+            subs.map(function (n) { return '<a href="' + esc(catUrl(cat, n)) + '" class="' + (n === sub ? 'on' : '') + '">' + esc(n) + ' <span>' + list.filter(function (p) { return p.sub === n; }).length + '</span></a>'; }).join('') + '</div>' : '') +
+        (shown.length ? '<div class="product-grid">' + shown.map(function (x) { return cardHTML(x); }).join('') + '</div>' : emptyBox('\uD83D\uDCE6', 'No products here yet', 'New items are added regularly.', catUrl(cat), 'Back to ' + esc(cat)));
+}
+
+// Broken product image -> neutral placeholder (no broken-icon / alt text in cards)
+document.addEventListener('error', function (e) {
+    var t = e.target;
+    if (t && t.tagName === 'IMG' && t.closest && t.closest('article[data-id], .pd-media, .cart-item-cell, .rv-card') && t.src !== IMG_FALLBACK && !t.dataset.failed) {
+        t.dataset.failed = '1'; t.src = IMG_FALLBACK;
+    }
+}, true);
+
+// ===== Backend Products Connection =====
+async function loadBackendCatalog() {
+    var API_BASE = (localStorage.getItem('boda_api') || 'http://127.0.0.1:8000').replace(/\/$/, '');
+    try {
+        var response = await fetch(API_BASE + '/api/products?page=1&limit=50', {
+            cache: 'no-store'
+        });
+        if (!response.ok) throw new Error('API status: ' + response.status);
+        var data = await response.json();
+        if (Array.isArray(data.items) && data.items.length) {
+            window.BODA_PRODUCTS = data.items;
+            console.log('Boda Store: Products loaded from backend:', data.items.length);
+        }
+    } catch (error) {
+        console.warn('Backend unavailable. Using local products.', error);
+    }
+}
+
+// ===== Boot =====
+document.addEventListener('DOMContentLoaded', async function () {
+    await loadBackendCatalog();
+    var inp = document.querySelector('input[name="search"]');
+    if (inp) {
+        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') searchProducts(); });
+        var q = new URLSearchParams(location.search).get('q'); if (q) inp.value = q;
+    }
+    var cf = $id('contact-form');
+    if (cf) cf.onsubmit = function (e) {
+        e.preventDefault();
+        var m = LS.get('boda_messages'), f = cf.elements;
+        m.unshift({ id: 'm' + Date.now(), name: f.full_name.value, email: f.email.value, phone: f.phone.value, subject: f.subject.value, message: f.message.value, time: Date.now(), read: false });
+        LS.set('boda_messages', m);
+        document.querySelector('.form-msg').classList.add('show'); cf.reset();
+    };
+
+    // Admin saved something in another tab -> refresh the storefront automatically
+    window.addEventListener('storage', function (ev) {
+        if (ev.key === 'boda_admin_products' || ev.key === 'boda_categories') location.reload();
+    });
+    initTheme();
+    initSettingsMenu();
+    initActiveNav();
+    renderCategoryCards();
+    applyAdminDom();
+    if ($id('product-box')) { renderProduct(); initGallery(); }
+    if ($id('category-box')) renderCategory();
+    initHeaderSlider();
+    initHeroSlider();
+    initNewsletter();
+    initStandardFooter();
+    initLanguage();
+    updateBadges();
+    if (document.body.classList.contains('products')) initFilters();
+    initCards();
+    if ($id('cart-box')) initCart();
+    if ($id('fav-box')) renderFavs();
+    if ($id('orders-box')) renderOrders();
+    if ($id('reviews-box')) renderReviews();
+    initAuth();
+    initNotifs(); syncOrders(); setInterval(syncOrders, 20000);
+    initSettings();
+    initBackToTop();
+});
