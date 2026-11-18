@@ -32,6 +32,16 @@
         ret: { ar: 'رجوع', en: 'Return', fr: 'Retour', de: 'Zurück' },
         confirm: { ar: 'تأكيد الطلب', en: 'Confirm order', fr: 'Confirmer la commande', de: 'Bestellung bestätigen' },
         close: { ar: 'إغلاق', en: 'Close', fr: 'Fermer', de: 'Schließen' },
+        condNew: { ar: 'جديد', en: 'New', fr: 'Neuf', de: 'Neu' },
+        condUsed: { ar: 'مستعمل', en: 'Used', fr: 'Occasion', de: 'Gebraucht' },
+        brand: { ar: 'الماركة', en: 'Brand', fr: 'Marque', de: 'Marke' },
+        colors: { ar: 'الألوان', en: 'Colors', fr: 'Couleurs', de: 'Farben' },
+        sizes: { ar: 'المقاسات', en: 'Sizes', fr: 'Tailles', de: 'Größen' },
+        available: { ar: 'متوفر', en: 'Available', fr: 'Disponible', de: 'Verfügbar' },
+        unavailable: { ar: 'غير متوفر', en: 'Out of stock', fr: 'Indisponible', de: 'Nicht vorrätig' },
+        condition: { ar: 'الحالة', en: 'Condition', fr: 'État', de: 'Zustand' },
+        category: { ar: 'القسم', en: 'Category', fr: 'Catégorie', de: 'Kategorie' },
+        unitPrice: { ar: 'سعر القطعة', en: 'Unit price', fr: 'Prix unitaire', de: 'Stückpreis' },
         /* forgot password */
         fpTitle: { ar: 'نسيت كلمة المرور؟', en: 'Forgot password?', fr: 'Mot de passe oublié ?', de: 'Passwort vergessen?' },
         fpEmailHint: { ar: 'اكتب بريدك الإلكتروني وهنبعتلك كود تفعيل لإعادة تعيين كلمة المرور.', en: 'Enter your email. You will receive an activation code to reset your password.', fr: 'Saisissez votre e-mail. Vous recevrez un code d’activation.', de: 'E-Mail eingeben. Sie erhalten einen Aktivierungscode.' },
@@ -74,10 +84,34 @@
         setTimeout(function () { el.classList.remove('show'); setTimeout(function () { el.remove(); }, 300); }, 3200);
     }
     function money(n) { return '$' + (Math.round(n * 100) / 100).toLocaleString('en-US'); }
+    function catalog() {
+        try {
+            if (typeof window.allProductsRaw === 'function') return window.allProductsRaw() || [];
+            if (typeof window.allProducts === 'function') return window.allProducts() || [];
+            return window.BODA_PRODUCTS || [];
+        } catch (e) { return []; }
+    }
     function itemFromButton(btn) {
         var a = btn.closest('article[data-id]'); if (!a) return null;
         var im = a.querySelector('img'), h = a.querySelector('h3, h1, h2');
-        return { id: a.dataset.id, name: h ? h.textContent.trim() : a.dataset.id, price: +a.dataset.price || 0, cat: a.dataset.cat || '', img: im ? im.currentSrc || im.src : '' };
+        var id = a.dataset.id;
+        var p = catalog().filter(function (x) { return x.id === id; })[0] || {};
+        return {
+            id: id,
+            name: h ? h.textContent.trim() : (p.name || id),
+            price: +a.dataset.price || +p.price || 0,
+            cat: a.dataset.cat || p.cat || '',
+            sub: p.sub || '',
+            img: im ? (im.currentSrc || im.src) : (p.img || ''),
+            brand: p.brand || '',
+            condition: p.condition === 'used' ? 'used' : 'new',
+            colors: p.colors || [],
+            sizes: p.sizes || [],
+            components: p.components || [],
+            features: p.features || [],
+            stock: p.stock !== false,
+            warranty: p.warranty || ''
+        };
     }
 
     /* ---------- styles ---------- */
@@ -100,21 +134,38 @@
             '.of-primary:hover{background:var(--brand-dark,#b01c30)}',
             '.of-ghost{padding:11px 22px;border:1.5px solid var(--brand,#d7263d);border-radius:8px;background:transparent;color:var(--brand,#d7263d);font:inherit;font-weight:600;cursor:pointer}',
             /* side panel */
-            '.of-panel{position:fixed;inset-block:0;inset-inline-end:0;width:min(440px,100vw);background:var(--surface,#fff);color:var(--ink,#0f1b2d);z-index:9999;display:flex;flex-direction:column;box-shadow:-10px 0 40px rgba(0,0,0,.3);transform:translateX(100%);transition:transform .25s}',
-            '[dir="rtl"] .of-panel{transform:translateX(-100%);box-shadow:10px 0 40px rgba(0,0,0,.3)}',
+            '.of-panel{position:fixed;inset-block:0;inset-inline-end:0;width:min(420px,100vw);background:var(--surface,#fff);color:var(--ink,#0f1b2d);z-index:9999;display:flex;flex-direction:column;box-shadow:-12px 0 48px rgba(0,0,0,.28);transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}',
+            '[dir="rtl"] .of-panel{transform:translateX(-100%);box-shadow:12px 0 48px rgba(0,0,0,.28)}',
             '.of-panel.show,[dir="rtl"] .of-panel.show{transform:none}',
-            '.of-ph{padding:18px 22px;border-bottom:1px solid var(--line,#dde3ec);display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--ink-soft,#4a5568)}',
-            '.of-ph b{color:var(--brand,#d7263d)}.of-ph .of-x{position:static;margin-inline-end:auto}',
-            '.of-pb{padding:22px;flex:1;overflow:auto}',
-            '.of-total{font-size:1.1rem;font-weight:700;margin:0 0 18px}.of-total span{color:var(--brand,#d7263d)}',
-            '.of-prod{display:flex;align-items:center;gap:14px;background:var(--paper,#f4f6fa);border-radius:10px;padding:14px;margin-bottom:22px}',
-            '.of-prod img{width:76px;height:76px;object-fit:contain;background:#fff;border-radius:8px}.of-prod strong{font-size:.98rem}',
-            '.of-qtyl{font-size:.8rem;color:var(--ink-soft,#4a5568);margin-bottom:6px;display:block}',
-            '.of-qty{display:inline-flex;border:1px solid var(--line,#dde3ec);border-radius:8px;overflow:hidden}',
-            '.of-qty button{width:40px;border:0;background:var(--paper,#f4f6fa);font-size:1.2rem;cursor:pointer;color:var(--ink,#0f1b2d)}',
-            '.of-qty input{width:84px;text-align:center;border:0;font:inherit;font-size:1.05rem;background:var(--surface,#fff);color:var(--ink,#0f1b2d);padding:8px 0}',
-            '.of-pf{padding:16px 22px;border-top:1px solid var(--line,#dde3ec);display:flex;gap:12px;justify-content:flex-end}',
-            '.of-pf .of-primary{width:auto;padding:11px 26px}',
+            '.of-ph{padding:16px 20px;border-bottom:1px solid var(--line,#dde3ec);display:flex;align-items:center;gap:8px;font-size:.86rem;color:var(--ink-soft,#4a5568);background:var(--paper,#f8fafc)}',
+            '.of-ph b{color:var(--brand,#d7263d);font-weight:700}.of-ph .of-sep{opacity:.5}.of-ph .of-x{position:static;margin-inline-end:auto;font-size:1.5rem;line-height:1;padding:2px 6px;border-radius:8px}',
+            '.of-ph .of-x:hover{background:rgba(0,0,0,.06)}',
+            '.of-pb{padding:20px;flex:1;overflow:auto}',
+            '.of-prod-card{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--paper,#f4f6fa),#fff);border:1px solid var(--line,#e8edf3);border-radius:14px;padding:14px;margin-bottom:18px}',
+            '.of-prod-img{width:88px;height:88px;object-fit:contain;background:#fff;border-radius:10px;border:1px solid var(--line,#eef1f5);flex-shrink:0}',
+            '.of-prod-ph{width:88px;height:88px;border-radius:10px;background:var(--brand,#d7263d);color:#fff;display:grid;place-items:center;font-size:1.8rem;font-weight:700;flex-shrink:0}',
+            '.of-prod-info{min-width:0;flex:1}',
+            '.of-prod-name{display:block;font-size:1rem;line-height:1.35;margin:0 0 6px}',
+            '.of-prod-price{font-size:1.15rem;font-weight:800;color:var(--brand,#d7263d)}.of-prod-price small{font-size:.75rem;font-weight:500;color:var(--ink-soft,#6b7280);margin-inline-start:4px}',
+            '.of-meta{background:var(--paper,#f8fafc);border:1px solid var(--line,#e8edf3);border-radius:12px;padding:10px 14px;margin-bottom:18px}',
+            '.of-meta-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;font-size:.86rem;border-bottom:1px dashed var(--line,#e5e9ef)}',
+            '.of-meta-row:last-child{border-bottom:0}',
+            '.of-meta-row span{color:var(--ink-soft,#6b7280)}.of-meta-row b{font-weight:600;text-align:end}',
+            '.of-ok{color:#15803d!important}.of-bad{color:#b91c1c!important}',
+            '.of-qty-wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:4px}',
+            '.of-qtyl{font-size:.88rem;color:var(--ink-soft,#4a5568);margin:0;font-weight:600}',
+            '.of-qty{display:inline-flex;border:1.5px solid var(--line,#dde3ec);border-radius:10px;overflow:hidden}',
+            '.of-qty button{width:42px;height:40px;border:0;background:var(--paper,#f4f6fa);font-size:1.25rem;cursor:pointer;color:var(--ink,#0f1b2d);transition:background .15s}',
+            '.of-qty button:hover{background:#e8edf5}',
+            '.of-qty input{width:64px;text-align:center;border:0;font:inherit;font-size:1.05rem;font-weight:700;background:var(--surface,#fff);color:var(--ink,#0f1b2d);padding:8px 0}',
+            '.of-pf{padding:14px 20px 18px;border-top:1px solid var(--line,#dde3ec);background:var(--surface,#fff);display:flex;flex-direction:column;gap:12px}',
+            '.of-total-line{display:flex;justify-content:space-between;align-items:center;font-size:1rem}',
+            '.of-total-line strong{font-size:1.35rem;font-weight:800;color:var(--brand,#d7263d)}',
+            '.of-pf-actions{display:flex;gap:10px}',
+            '.of-pf-actions .of-ghost{flex:0 0 auto}',
+            '.of-pf-actions .of-primary{flex:1;padding:13px 18px;border-radius:10px;font-size:.95rem}',
+            '.of-ghost{padding:11px 18px;border:1.5px solid var(--line,#cfd6e0);border-radius:10px;background:transparent;color:var(--ink,#0f1b2d);font:inherit;font-weight:600;cursor:pointer}',
+            '.of-ghost:hover{border-color:var(--brand,#d7263d);color:var(--brand,#d7263d)}',
             /* forgot password */
             '.of-fp{background:var(--surface,#fff);border:1px solid var(--line,#dde3ec);border-radius:14px;padding:30px;max-width:760px;margin:30px auto;display:flex;gap:30px;align-items:center;position:relative;color:var(--ink,#0f1b2d)}',
             '.of-fp .of-fpmain{flex:1;min-width:0}.of-fp h2{margin:0 0 8px;font-size:1.5rem}',
@@ -167,15 +218,42 @@
         if (!cur) return;
         if (backdrop) { backdrop.remove(); backdrop = null; }
         var qty = 1;
+        var sep = lang() === 'ar' ? '، ' : ', ';
+        var metaRows = [];
+        if (cur.cat) metaRows.push('<div class="of-meta-row"><span>' + esc(t('category')) + '</span><b>' + esc(cur.cat) + (cur.sub ? ' · ' + esc(cur.sub) : '') + '</b></div>');
+        metaRows.push('<div class="of-meta-row"><span>' + esc(t('condition')) + '</span><b>' + esc(cur.condition === 'used' ? t('condUsed') : t('condNew')) + '</b></div>');
+        metaRows.push('<div class="of-meta-row"><span>' + esc(t('available')) + '</span><b class="' + (cur.stock ? 'of-ok' : 'of-bad') + '">' + esc(cur.stock ? t('available') : t('unavailable')) + '</b></div>');
+        if (cur.brand) metaRows.push('<div class="of-meta-row"><span>' + esc(t('brand')) + '</span><b>' + esc(cur.brand) + '</b></div>');
+        if ((cur.colors || []).length) metaRows.push('<div class="of-meta-row"><span>' + esc(t('colors')) + '</span><b>' + esc(cur.colors.join(sep)) + '</b></div>');
+        if ((cur.sizes || []).length) metaRows.push('<div class="of-meta-row"><span>' + esc(t('sizes')) + '</span><b>' + esc(cur.sizes.join(sep)) + '</b></div>');
+
         panel = document.createElement('aside'); panel.className = 'of-panel'; panel.setAttribute('role', 'dialog');
-        panel.innerHTML = '<div class="of-ph"><button type="button" class="of-x" data-of="close" aria-label="' + t('close') + '">×</button>' +
-            '<span>' + t('home') + '</span><span>›</span><b>' + t('enter') + '</b></div>' +
-            '<div class="of-pb"><p class="of-total">' + t('details') + ': <span id="of-tot">' + money(cur.price) + '</span></p>' +
-            '<div class="of-prod">' + (cur.img ? '<img src="' + esc(cur.img) + '" alt="" referrerpolicy="no-referrer">' : '') + '<strong>' + esc(cur.name) + '</strong></div>' +
-            '<label class="of-qtyl">' + t('pieces') + '</label>' +
-            '<div class="of-qty"><button type="button" data-of="minus">−</button><input id="of-qty" type="number" min="1" max="99" value="1"><button type="button" data-of="plus">+</button></div></div>' +
-            '<div class="of-pf"><button type="button" class="of-ghost" data-of="return">' + (isRTL() ? '›' : '‹') + ' ' + t('ret') + '</button>' +
-            '<button type="button" class="of-primary" data-of="confirm">' + t('confirm') + '</button></div>';
+        panel.innerHTML =
+            '<div class="of-ph">' +
+                '<button type="button" class="of-x" data-of="close" aria-label="' + t('close') + '">×</button>' +
+                '<span>' + t('home') + '</span><span class="of-sep">›</span><b>' + t('enter') + '</b>' +
+            '</div>' +
+            '<div class="of-pb">' +
+                '<div class="of-prod-card">' +
+                    (cur.img ? '<img class="of-prod-img" src="' + esc(cur.img) + '" alt="" referrerpolicy="no-referrer">' : '<div class="of-prod-ph">' + esc((cur.name || '?').charAt(0)) + '</div>') +
+                    '<div class="of-prod-info">' +
+                        '<strong class="of-prod-name">' + esc(cur.name) + '</strong>' +
+                        '<div class="of-prod-price">' + money(cur.price) + ' <small>' + esc(t('unitPrice')) + '</small></div>' +
+                    '</div>' +
+                '</div>' +
+                (metaRows.length ? '<div class="of-meta">' + metaRows.join('') + '</div>' : '') +
+                '<div class="of-qty-wrap">' +
+                    '<label class="of-qtyl">' + t('pieces') + '</label>' +
+                    '<div class="of-qty"><button type="button" data-of="minus" aria-label="-">−</button><input id="of-qty" type="number" min="1" max="99" value="1"><button type="button" data-of="plus" aria-label="+">+</button></div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="of-pf">' +
+                '<div class="of-total-line"><span>' + t('total') + '</span><strong id="of-tot">' + money(cur.price) + '</strong></div>' +
+                '<div class="of-pf-actions">' +
+                    '<button type="button" class="of-ghost" data-of="return">' + (isRTL() ? '›' : '‹') + ' ' + t('ret') + '</button>' +
+                    '<button type="button" class="of-primary" data-of="confirm">' + t('confirm') + '</button>' +
+                '</div>' +
+            '</div>';
         document.body.appendChild(panel);
         setTimeout(function () { panel && panel.classList.add('show'); }, 10);
         function upd() {
@@ -188,10 +266,18 @@
 
     function confirmOrder() {
         var qty = Math.min(99, Math.max(1, parseInt(panel.querySelector('#of-qty').value, 10) || 1));
-        var cart = lsGet('boda_cart', []), f = cart.filter(function (x) { return x.id === cur.id; })[0];
-        if (f) f.qty = qty; else { cart.push({ id: cur.id, name: cur.name, price: cur.price, cat: cur.cat, img: cur.img, qty: qty }); }
-        lsSet('boda_cart', cart);
+        /* Buy Now = single-item checkout (don't mix with existing cart items) */
+        var payload = {
+            id: cur.id, name: cur.name, price: cur.price, cat: cur.cat, img: cur.img, qty: qty,
+            brand: cur.brand || '', condition: cur.condition || 'new',
+            colors: cur.colors || [], sizes: cur.sizes || [],
+            components: cur.components || [], features: cur.features || [],
+            stock: cur.stock !== false
+        };
+        lsSet('boda_cart', [payload]);
         var m = lsGet('boda_meta', {}); m[cur.id] = { name: cur.name, img: cur.img, price: cur.price, cat: cur.cat }; lsSet('boda_meta', m);
+        try { sessionStorage.setItem('boda_buy_now', '1'); } catch (e) { }
+        /* → checkout form immediately, then Place order → order-confirm page */
         location.href = 'index.html?page=cart&checkout=1';
     }
 
@@ -223,14 +309,30 @@
     }, true);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
 
-    /* cart page: jump straight into checkout after "Confirm order" */
+    /* cart page: jump straight into checkout after Buy Now "Confirm order" */
     function autoCheckout() {
         var q = new URLSearchParams(location.search);
         if (q.get('page') !== 'cart' || q.get('checkout') !== '1') return;
+        var buyNow = false;
+        try { buyNow = sessionStorage.getItem('boda_buy_now') === '1'; sessionStorage.removeItem('boda_buy_now'); } catch (e) { }
         var tries = 0, h = setInterval(function () {
             var b = document.getElementById('checkout'); tries++;
-            if (b) { clearInterval(h); try { history.replaceState(null, '', 'index.html?page=cart'); } catch (e) { } b.click(); }
-            else if (tries > 40) clearInterval(h);
+            if (b) {
+                clearInterval(h);
+                try { history.replaceState(null, '', 'index.html?page=cart'); } catch (e) { }
+                b.click();
+                /* make the checkout screen feel like "complete order", not cart */
+                setTimeout(function () {
+                    var title = document.querySelector('h1.page-title, .page-title, main h1, #cart-box') || document.querySelector('h1');
+                    var crumbs = document.querySelector('.crumbs, .breadcrumb');
+                    if (buyNow) {
+                        document.title = (lang() === 'ar' ? 'إتمام الطلب' : 'Checkout') + ' | Boda Store';
+                        if (crumbs) crumbs.innerHTML = '<a href="index.html?page=home">' + t('home') + '</a> <span>›</span> <b>' + (lang() === 'ar' ? 'إتمام الطلب' : 'Checkout') + '</b>';
+                        var back = document.getElementById('co-back');
+                        if (back) back.style.display = 'none';
+                    }
+                }, 50);
+            } else if (tries > 40) clearInterval(h);
         }, 100);
     }
     /* contact page: prefill message when coming from "Chat" */
