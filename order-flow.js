@@ -230,29 +230,29 @@
         panel = document.createElement('aside'); panel.className = 'of-panel'; panel.setAttribute('role', 'dialog');
         panel.innerHTML =
             '<div class="of-ph">' +
-                '<button type="button" class="of-x" data-of="close" aria-label="' + t('close') + '">×</button>' +
-                '<span>' + t('home') + '</span><span class="of-sep">›</span><b>' + t('enter') + '</b>' +
+            '<button type="button" class="of-x" data-of="close" aria-label="' + t('close') + '">×</button>' +
+            '<span>' + t('home') + '</span><span class="of-sep">›</span><b>' + t('enter') + '</b>' +
             '</div>' +
             '<div class="of-pb">' +
-                '<div class="of-prod-card">' +
-                    (cur.img ? '<img class="of-prod-img" src="' + esc(cur.img) + '" alt="" referrerpolicy="no-referrer">' : '<div class="of-prod-ph">' + esc((cur.name || '?').charAt(0)) + '</div>') +
-                    '<div class="of-prod-info">' +
-                        '<strong class="of-prod-name">' + esc(cur.name) + '</strong>' +
-                        '<div class="of-prod-price">' + money(cur.price) + ' <small>' + esc(t('unitPrice')) + '</small></div>' +
-                    '</div>' +
-                '</div>' +
-                (metaRows.length ? '<div class="of-meta">' + metaRows.join('') + '</div>' : '') +
-                '<div class="of-qty-wrap">' +
-                    '<label class="of-qtyl">' + t('pieces') + '</label>' +
-                    '<div class="of-qty"><button type="button" data-of="minus" aria-label="-">−</button><input id="of-qty" type="number" min="1" max="99" value="1"><button type="button" data-of="plus" aria-label="+">+</button></div>' +
-                '</div>' +
+            '<div class="of-prod-card">' +
+            (cur.img ? '<img class="of-prod-img" src="' + esc(cur.img) + '" alt="" referrerpolicy="no-referrer">' : '<div class="of-prod-ph">' + esc((cur.name || '?').charAt(0)) + '</div>') +
+            '<div class="of-prod-info">' +
+            '<strong class="of-prod-name">' + esc(cur.name) + '</strong>' +
+            '<div class="of-prod-price">' + money(cur.price) + ' <small>' + esc(t('unitPrice')) + '</small></div>' +
+            '</div>' +
+            '</div>' +
+            (metaRows.length ? '<div class="of-meta">' + metaRows.join('') + '</div>' : '') +
+            '<div class="of-qty-wrap">' +
+            '<label class="of-qtyl">' + t('pieces') + '</label>' +
+            '<div class="of-qty"><button type="button" data-of="minus" aria-label="-">−</button><input id="of-qty" type="number" min="1" max="99" value="1"><button type="button" data-of="plus" aria-label="+">+</button></div>' +
+            '</div>' +
             '</div>' +
             '<div class="of-pf">' +
-                '<div class="of-total-line"><span>' + t('total') + '</span><strong id="of-tot">' + money(cur.price) + '</strong></div>' +
-                '<div class="of-pf-actions">' +
-                    '<button type="button" class="of-ghost" data-of="return">' + (isRTL() ? '›' : '‹') + ' ' + t('ret') + '</button>' +
-                    '<button type="button" class="of-primary" data-of="confirm">' + t('confirm') + '</button>' +
-                '</div>' +
+            '<div class="of-total-line"><span>' + t('total') + '</span><strong id="of-tot">' + money(cur.price) + '</strong></div>' +
+            '<div class="of-pf-actions">' +
+            '<button type="button" class="of-ghost" data-of="return">' + (isRTL() ? '›' : '‹') + ' ' + t('ret') + '</button>' +
+            '<button type="button" class="of-primary" data-of="confirm">' + t('confirm') + '</button>' +
+            '</div>' +
             '</div>';
         document.body.appendChild(panel);
         setTimeout(function () { panel && panel.classList.add('show'); }, 10);
@@ -274,11 +274,10 @@
             components: cur.components || [], features: cur.features || [],
             stock: cur.stock !== false
         };
-        lsSet('boda_cart', [payload]);
         var m = lsGet('boda_meta', {}); m[cur.id] = { name: cur.name, img: cur.img, price: cur.price, cat: cur.cat }; lsSet('boda_meta', m);
-        try { sessionStorage.setItem('boda_buy_now', '1'); } catch (e) { }
-        /* → checkout form immediately, then Place order → order-confirm page */
-        location.href = 'index.html?page=cart&checkout=1';
+        /* → separate checkout page (shipping + payment). The cart is NOT touched. */
+        try { sessionStorage.setItem('boda_buynow', JSON.stringify([payload])); } catch (e) { }
+        location.href = 'index.html?page=checkout&mode=buynow';
     }
 
     document.addEventListener('click', function (e) {
@@ -451,7 +450,7 @@
     }
 
     /* ---------- boot ---------- */
-    function boot() { addStyles(); autoCheckout(); prefillChat(); autoForgot(); }
+    function boot() { addStyles(); prefillChat(); autoForgot(); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
     window.addEventListener('load', function () { addStyles(); });
 })();

@@ -185,11 +185,11 @@
         if (document.getElementById('sc-style')) return;
         var s = document.createElement('style'); s.id = 'sc-style';
         s.textContent = [
-            '#sc-root{position:fixed;bottom:22px;inset-inline-start:22px;z-index:9990;font-family:inherit}',
+            '#sc-root{position:fixed;bottom:22px;right:22px;left:auto;z-index:9990;font-family:inherit}',
             '.sc-fab{width:58px;height:58px;border-radius:50%;border:0;background:var(--brand,#d7263d);color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3);display:grid;place-items:center;position:relative;transition:transform .15s}',
             '.sc-fab:hover{transform:scale(1.07)}.sc-fab[aria-expanded="true"]{background:var(--ink,#0f1b2d)}',
             '.sc-dot{position:absolute;top:2px;inset-inline-end:2px;width:14px;height:14px;border-radius:50%;background:#2ecc71;border:2px solid #fff}',
-            '.sc-panel{position:absolute;bottom:72px;inset-inline-start:0;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100vh - 120px));background:var(--surface,#fff);color:var(--ink,#0f1b2d);border:1px solid var(--line,#dde3ec);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.35);display:none;flex-direction:column;overflow:hidden}',
+            '.sc-panel{position:absolute;bottom:72px;right:0;left:auto;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100vh - 120px));background:var(--surface,#fff);color:var(--ink,#0f1b2d);border:1px solid var(--line,#dde3ec);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.35);display:none;flex-direction:column;overflow:hidden}',
             '.sc-panel.open{display:flex;animation:scIn .18s ease-out}@keyframes scIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}',
             '.sc-head{background:var(--brand,#d7263d);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}',
             '.sc-av{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:1.2rem}',
@@ -253,6 +253,15 @@
     function resetChat() { log = []; save(); list.innerHTML = ''; st = { awaitContact: false, unknown: 0, pending: '' }; showChips(ALL_CHIPS); addMsg('bot', tr(TXT.hello), true); }
 
     /* Public hook used by other pages (e.g. order confirmation): BodaSupport.open('Need help with order BD-123456') */
+    /* Language switch: rebuild the widget so the title, placeholder, chips and greeting follow the new language */
+    document.addEventListener('boda:lang', function () {
+        var r = document.getElementById('sc-root'); if (!r || !panel) return;
+        var wasOpen = panel.classList.contains('open');
+        if (!log.some(function (m) { return m.f === 'me'; })) { log = []; save(); }   /* only the greeting so far -> regenerate it */
+        r.remove(); build();
+        if (wasOpen) toggle(true);
+    });
+
     window.BodaSupport = {
         open: function (text) {
             ensure(); if (!panel) return;

@@ -17,7 +17,7 @@
         (function () {
             var admin = /[?&]page=admin(&|$)/.test(location.search);
             window.BODA_ADMIN = admin;
-            (admin ? ['auto-translate.js', 'products-data.js'] : ['auto-translate.js', 'language.js', 'products-data.js', 'app.js', 'order-flow.js', 'order-confirm.js', 'product-extras.js', 'support-chat.js']).forEach(function (f) {
+            (admin ? ['auto-translate.js', 'products-data.js'] : ['auto-translate.js', 'language.js', 'products-data.js', 'app.js', 'search-suggest.js', 'order-flow.js', 'order-confirm.js', 'product-extras.js', 'support-chat.js']).forEach(function (f) {
                 document.write('<script src="' + f + '" defer><\/script>');
             });
             if (admin) document.write('<style>link[href="style.css"]{display:none}</style>');
@@ -89,9 +89,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -399,9 +398,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -899,9 +897,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -1182,9 +1179,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -1467,9 +1463,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -1752,9 +1747,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -2704,9 +2698,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -3155,9 +3148,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -3375,6 +3367,289 @@
         <a href="#top" class="back-to-top" title="Back to Top">↑</a>
 
     </template>
+
+    <template data-page="checkout" data-title="Checkout | Boda Store" data-class="cart-page checkout-page">
+
+        <div class="announcement-bar">
+            <p>Everything You Need, All in One Place — Free Delivery on Orders Over $500! <a
+                    href="index.html?page=offers">View Special
+                    Offers</a></p>
+        </div>
+
+        <header>
+            <div class="brand-wrap">
+                <a href="index.html?page=home" class="brand-link">
+                    <h1>Boda Store</h1>
+                </a>
+                <span class="brand-tag">All-in-One Store</span>
+            </div>
+            <div class="search-box">
+                <input name="search" type="search" placeholder="Search electronics, home, fashion, books..."
+                    aria-label="Search">
+                <button type="button" onclick="searchProducts()" aria-label="Search"><i
+                        class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="header-actions">
+                <a href="index.html?page=favorites" class="favorites"><span>Favorites</span></a>
+                <a href="index.html?page=cart" class="cart"><span>Cart</span></a>
+            </div>
+            <div class="header-tools">
+                <div class="language-menu-wrap">
+                    <button type="button" class="language-btn" id="language-btn" title="Language"><i
+                            class="fa-solid fa-globe"></i></button>
+                    <div class="language-dropdown" id="language-dropdown">
+                        <button type="button" data-lang="en">🇬🇧 English</button>
+                        <button type="button" data-lang="ar">🇪🇬 العربية</button>
+                    </div>
+                    <div class="settings-menu-wrap">
+                        <button type="button" class="settings-btn" id="settings-menu-btn" title="Settings"
+                            aria-haspopup="true" aria-expanded="false" aria-controls="settings-dropdown">
+                            <i class="fa-solid fa-gear"></i>
+                        </button>
+                        <div class="settings-dropdown" id="settings-dropdown">
+                            <h3 class="sl-group">Preferences</h3>
+                            <div class="sl-list">
+                                <details class="sl-item" open>
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-palette"></i></span>
+                                        <span class="sl-text"><strong>Appearance</strong><small>Dark mode and
+                                                theme</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Dark Mode</h4>
+                                                <p>Switch between light and dark appearance.</p>
+                                            </div>
+                                            <button type="button" id="settings-theme-toggle" class="switch-toggle"
+                                                role="switch" aria-checked="false" aria-label="Dark Mode"><span
+                                                    class="switch-knob"></span></button>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Display Language</h4>
+                                                <p>Select your preferred language.</p>
+                                            </div>
+                                            <select id="language-select"></select>
+                                        </div>
+                                        <p id="language-message"></p>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <h3 class="sl-group">Account &amp; Payments</h3>
+                            <div class="sl-list">
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-user"></i></span>
+                                        <span class="sl-text"><strong>Account</strong><small>Login and
+                                                registration</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Login</h4>
+                                                <p>Access your Boda Store account.</p>
+                                            </div>
+                                            <a href="index.html?page=signin" class="settings-action">Login →</a>
+                                        </div>
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Create Account</h4>
+                                                <p>Register a new Boda Store account.</p>
+                                            </div>
+                                            <a href="index.html?page=signup" class="settings-action">Sign Up →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item" id="orders-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-box"></i></span>
+                                        <span class="sl-text"><strong>My Orders</strong><small>Track, cancel or re-order
+                                                purchases.</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Order History</h4>
+                                                <p>See the status of all your orders.</p>
+                                            </div>
+                                            <a href="index.html?page=orders" class="settings-action">View →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item" id="reviews-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-star"></i></span>
+                                        <span class="sl-text"><strong>My Reviews</strong><small>Edit or remove product
+                                                ratings.</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Product Ratings</h4>
+                                                <p>Manage the products you rated.</p>
+                                            </div>
+                                            <a href="index.html?page=reviews" class="settings-action">View →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-users"></i></span>
+                                        <span class="sl-text"><strong>Switch Account</strong><small>Switch accounts on
+                                                this
+                                                device</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div id="switch-box"></div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-credit-card"></i></span>
+                                        <span class="sl-text"><strong>Payment Methods &amp;
+                                                Gateways</strong><small>Cards,
+                                                Vodafone Cash, InstaPay, PayPal, Fawry</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div id="pay-box"></div>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <h3 class="sl-group">Store</h3>
+                            <div class="sl-list">
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-store"></i></span>
+                                        <span class="sl-text"><strong>Store Information</strong><small>About Boda Store
+                                                and
+                                                support</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>About Us</h4>
+                                                <p>Learn more about our all-in-one store.</p>
+                                            </div>
+                                            <a href="index.html?page=about" class="settings-action">View →</a>
+                                        </div>
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Contact Us</h4>
+                                                <p>Questions about an order? Write to us.</p>
+                                            </div>
+                                            <a href="index.html?page=contact" class="settings-action">Open →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html?page=home">Home</a></li>
+                    <li><a href="index.html?page=categories">Categories</a></li>
+                    <li><a href="index.html?page=products">Products</a></li>
+                    <li><a href="index.html?page=offers">Offers</a></li>
+                    <li><a href="index.html?page=about">About Us</a></li>
+                    <li><a href="index.html?page=contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <h1 class="page-title">Checkout</h1>
+            <p class="page-intro">Enter your shipping details and choose how to pay to complete your order.</p>
+            <div id="checkout-box"></div>
+        </main>
+
+        <footer>
+            <div class="footer-grid">
+                <div>
+                    <h3>Boda Store</h3>
+                    <p>Your trusted place for everything you need — all in one store.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html?page=home">Home</a></li>
+                        <li><a href="index.html?page=categories">Categories</a></li>
+                        <li><a href="index.html?page=products">Products</a></li>
+                        <li><a href="index.html?page=offers">Offers</a></li>
+                        <li><a href="index.html?page=about">About Us</a></li>
+                        <li><a href="index.html?page=contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><a href="index.html?page=category&cat=Electronics">Electronics</a></li>
+                        <li><a href="index.html?page=category&cat=Home%20%26%20Appliances">Home &amp; Appliances</a>
+                        </li>
+                        <li><a href="index.html?page=category&cat=Fashion">Fashion</a></li>
+                        <li><a href="index.html?page=category&cat=Beauty">Beauty</a></li>
+                        <li><a href="index.html?page=category&cat=Sports">Sports</a></li>
+                        <li><a href="index.html?page=category&cat=Books">Books</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="index.html?page=orders">My Orders</a></li>
+                        <li><a href="index.html?page=cart">Cart</a></li>
+                        <li><a href="index.html?page=favorites">Favorites</a></li>
+                        <li><a href="index.html?page=reviews">My Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Contact</h3>
+                    <ul>
+                        <li class="fc"><span class="ci ci-mail"></span><span>info@bodastore.com</span></li>
+                        <li class="fc"><span class="ci ci-phone"></span><span dir="ltr">+20 100 000 0000</span></li>
+                        <li class="fc"><span class="ci ci-pin"></span><span>Alexandria, Egypt</span></li>
+                        <li class="fc"><span class="ci ci-clock"></span><span>Daily: 10 AM – 9 PM</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Boda Store. All Rights Reserved.</span>
+                <div class="footer-payments">
+                    <span><i class="fa-brands fa-cc-visa"></i> Visa</span>
+                    <span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+                    <span><i class="fa-solid fa-truck"></i> Cash on Delivery</span>
+                </div>
+            </div>
+        </footer>
+        <a href="#top" class="back-to-top" title="Back to Top">↑</a>
+
+    </template>
     <template data-page="product" data-title="Product | Boda Store" data-class="product-page">
 
         <div class="announcement-bar">
@@ -3438,9 +3713,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -3719,9 +3993,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -4000,9 +4273,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -4314,9 +4586,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -5142,9 +5413,8 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, العربية,
-                                                Français,
-                                                Deutsch</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
+                                                German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -6996,7 +7266,62 @@
             }
 
             dialog {
-                overflow: auto
+                overflow: auto;
+                margin: auto;
+                width: min(780px, 94vw);
+                max-height: 90vh;
+                padding: 30px 34px;
+                border-radius: 16px;
+                font-size: 1.08rem;
+                line-height: 1.65
+            }
+
+            dialog h3 {
+                font-size: 1.4rem;
+                margin-bottom: 20px
+            }
+
+            dialog label,
+            dialog th,
+            dialog td,
+            dialog p {
+                font-size: 1.04rem
+            }
+
+            dialog input,
+            dialog select,
+            dialog textarea {
+                font-size: 1.04rem;
+                padding: 11px 13px
+            }
+
+            dialog .btn,
+            dialog .mini {
+                font-size: 1.02rem
+            }
+
+            dialog::backdrop {
+                background: rgba(10, 18, 32, .62);
+                backdrop-filter: blur(2px)
+            }
+
+            .iobar {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin: -6px 0 14px
+            }
+
+            .iobar .btn {
+                padding: 8px 14px;
+                font-size: .92rem
+            }
+
+            @media (max-width: 560px) {
+                dialog {
+                    padding: 18px;
+                    width: 96vw
+                }
             }
 
             @media (min-width: 821px) {
@@ -7497,7 +7822,7 @@
                 const ADMIN = { user: 'admin', pass: '' };
                 const K = {
                     orders: 'boda_orders', acc: 'boda_accounts', msgs: 'boda_messages', news: 'boda_newsletter', cats: 'boda_categories', pa: 'boda_admin_products', notifs: 'boda_notifs', hero: 'boda_hero', site: 'boda_site',
-                    articles: 'boda_news', offers: 'boda_offers', ads: 'boda_ads', comp: 'boda_complaints', warn: 'boda_warnings', govs: 'boda_govs', users: 'boda_admin_users', ustat: 'boda_cust_status', nlog: 'boda_notif_log', log: 'boda_admin_log', apw: 'boda_admin_pw', lang: 'boda_admin_lang', theme: 'boda_admin_theme'
+                    articles: 'boda_news', offers: 'boda_offers', ads: 'boda_ads', comp: 'boda_complaints', warn: 'boda_warnings', govs: 'boda_govs', docs: 'boda_docs', users: 'boda_admin_users', ustat: 'boda_cust_status', nlog: 'boda_notif_log', log: 'boda_admin_log', apw: 'boda_admin_pw', lang: 'boda_admin_lang', theme: 'boda_admin_theme'
                 };
                 const $ = (s, r = document) => r.querySelector(s);
                 const rd = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
@@ -7507,6 +7832,8 @@
 
                 /* ---------- i18n ---------- */
                 const LANGS = { ar: { loc: 'ar-EG', dir: 'rtl', name: 'العربية' }, en: { loc: 'en-US', dir: 'ltr', name: 'English' }, fr: { loc: 'fr-FR', dir: 'ltr', name: 'Français' }, de: { loc: 'de-DE', dir: 'ltr', name: 'Deutsch' } };
+                const LNAMES = { ar: { ar: 'العربية', en: 'الإنجليزية', fr: 'الفرنسية', de: 'الألمانية' }, en: { ar: 'Arabic', en: 'English', fr: 'French', de: 'German' }, fr: { ar: 'Arabe', en: 'Anglais', fr: 'Français', de: 'Allemand' }, de: { ar: 'Arabisch', en: 'Englisch', fr: 'Französisch', de: 'Deutsch' } };
+                const lname = k => (LNAMES[LG] || LNAMES.en)[k];
                 const LK = ['ar', 'en', 'fr', 'de'];
                 let LG = localStorage.getItem(K.lang); if (!LANGS[LG]) LG = 'ar';
                 let THEME = localStorage.getItem(K.theme) === 'dark' ? 'dark' : 'light';
@@ -7553,7 +7880,76 @@ del || حذف || Delete || Supprimer || Löschen
 close || إغلاق || Close || Fermer || Schließen
 search || بحث... || Search... || Rechercher... || Suchen...
 all || الكل || All || Tout || Alle
-none || مفيش بيانات مطابقة. || Nothing to show. || Rien à afficher. || Nichts anzuzeigen.
+none || لا توجد بيانات مطابقة. || Nothing to show. || Rien à afficher. || Nichts anzuzeigen.
+fl_arch || حالة الأرشفة || Archive status || Statut d'archivage || Archivstatus
+fl_subs || الأقسام الفرعية || Sub-departments || Sous-rayons || Unterkategorien
+fl_prods || المنتجات || Products || Produits || Produkte
+fl_img || صورة القسم || Department image || Image du rayon || Abteilungsbild
+fl_sort || الترتيب || Sort || Tri || Sortierung
+c_with_s || لديه أقسام فرعية || Has sub-departments || Avec sous-rayons || Mit Unterkategorien
+c_wo_s || بدون أقسام فرعية || No sub-departments || Sans sous-rayons || Ohne Unterkategorien
+c_with_p || يحتوي على منتجات || Has products || Avec produits || Mit Produkten
+c_wo_p || فارغ (بدون منتجات) || Empty (no products) || Vide (sans produits) || Leer (keine Produkte)
+c_with_i || لديه صورة || Has image || Avec image || Mit Bild
+c_wo_i || بدون صورة || No image || Sans image || Ohne Bild
+c_sort_def || الترتيب الافتراضي || Default order || Ordre par défaut || Standardreihenfolge
+c_sort_az || الاسم (أ – ي) || Name (A–Z) || Nom (A–Z) || Name (A–Z)
+c_sort_most || الأكثر منتجات || Most products || Plus de produits || Meiste Produkte
+c_sort_subs || الأكثر أقسامًا فرعية || Most sub-departments || Plus de sous-rayons || Meiste Unterkategorien
+fl_date || التاريخ || Date || Date || Datum
+fl_from || من تاريخ || From || Du || Von
+fl_to || إلى تاريخ || To || Au || Bis
+od_all || كل التواريخ || All dates || Toutes les dates || Alle Daten
+od_today || اليوم || Today || Aujourd'hui || Heute
+od_yesterday || أمس || Yesterday || Hier || Gestern
+od_week || هذا الأسبوع || This week || Cette semaine || Diese Woche
+od_lastweek || الأسبوع الماضي || Last week || Semaine dernière || Letzte Woche
+od_month || هذا الشهر || This month || Ce mois-ci || Dieser Monat
+od_lastmonth || الشهر الماضي || Last month || Mois dernier || Letzter Monat
+io_exp || تصدير CSV || Export CSV || Exporter CSV || CSV exportieren
+io_imp || استيراد CSV || Import CSV || Importer CSV || CSV importieren
+io_tpl || ملف نموذجي (إرشادات) || Template (cheat sheet) || Modèle (aide-mémoire) || Vorlage (Hilfeblatt)
+io_done || تم الاستيراد بنجاح — عدد السجلات: || Imported successfully — records: || Importé — enregistrements : || Importiert — Datensätze:
+io_bad || الملف غير صالح أو لا يحتوي على بيانات. || Invalid file or no data found. || Fichier invalide ou vide. || Ungültige oder leere Datei.
+n_docs || إدارة التوثيق || Documentation || Documentation || Dokumentation
+m_docs || توثيق المنتجات || Product documentation || Documentation produit || Produktdokumentation
+docs_sub || أدلة الاستخدام والضمان والمواصفات والشهادات الخاصة بكل منتج. || Manuals, warranties, specifications and certificates for each product. || Manuels, garanties, spécifications et certificats par produit. || Anleitungen, Garantien, Spezifikationen und Zertifikate je Produkt.
+docs_new || مستند جديد || New document || Nouveau document || Neues Dokument
+f_prodref || المنتج || Product || Produit || Produkt
+f_doctype || نوع المستند || Document type || Type de document || Dokumenttyp
+f_version || الإصدار || Version || Version || Version
+f_dlink || رابط الملف || File link || Lien du fichier || Dateilink
+none_sel || — بدون — || — none — || — aucun — || — keins —
+dt_manual || دليل الاستخدام || User manual || Mode d'emploi || Bedienungsanleitung
+dt_warranty || الضمان || Warranty || Garantie || Garantie
+dt_spec || المواصفات الفنية || Specifications || Spécifications || Spezifikationen
+dt_safety || السلامة || Safety || Sécurité || Sicherheit
+dt_cert || شهادة || Certificate || Certificat || Zertifikat
+dt_other || أخرى || Other || Autre || Sonstiges
+ad_live || ساري الآن || Live now || En cours || Aktiv
+ad_soon || ينتهي خلال 7 أيام || Ending within 7 days || Se termine sous 7 jours || Endet in 7 Tagen
+ad_sched || مجدول || Scheduled || Programmée || Geplant
+ad_exp || منتهي || Expired || Expirée || Abgelaufen
+ad_off || موقوف || Disabled || Désactivée || Deaktiviert
+d_size || المقاس || Size || Taille || Größe
+d_color || اللون || Color || Couleur || Farbe
+d_brand || الماركة || Brand || Marque || Marke
+d_sku || الكود || SKU || Code || Artikelnr.
+d_qty || الكمية || Qty || Qté || Menge
+o_delivery || حالة التوصيل || Delivery status || Statut de livraison || Lieferstatus
+o_shipfee || رسوم الشحن || Shipping fee || Frais de livraison || Versandkosten
+pr_title || طباعة || Print || Imprimer || Drucken
+pr_type || نوع الطباعة || Print type || Type d'impression || Druckart
+pr_invoice || فاتورة (A4) || Invoice (A4) || Facture (A4) || Rechnung (A4)
+pr_label || ملصق شحن (10×15 سم) || Shipping label (10×15 cm) || Étiquette d'expédition (10×15 cm) || Versandetikett (10×15 cm)
+pr_thermal || إيصال حراري (80 مم) || Thermal receipt (80 mm) || Reçu thermique (80 mm) || Thermobon (80 mm)
+pr_place || مكان / جهة الطباعة (نسخة لـ) || Print place / copy for || Destinataire de la copie || Kopie für
+pr_customer || المستلم (العميل) || Recipient (customer) || Destinataire (client) || Empfänger (Kunde)
+pr_courier || مندوب الشحن || Courier || Livreur || Zusteller
+pr_warehouse || المخزن || Warehouse || Entrepôt || Lager
+pr_accounts || الحسابات || Accounts || Comptabilité || Buchhaltung
+pr_copies || عدد النسخ || Copies || Copies || Kopien
+pr_go || طباعة الآن || Print now || Imprimer || Jetzt drucken
 saved || تم الحفظ || Saved || Enregistré || Gespeichert
 deleted || تم الحذف || Deleted || Supprimé || Gelöscht
 confirm_del || متأكد من الحذف؟ || Delete this item? || Supprimer cet élément ? || Wirklich löschen?
@@ -7564,20 +7960,20 @@ upload || رفع صورة || Upload image || Téléverser une image || Bild hoch
 fl_title || الفلاتر الأساسية || Basic filters || Filtres de base || Basisfilter
 fl_cat || القسم || Category || Catégorie || Kategorie
 fl_stock || التوفر || Availability || Disponibilité || Verfügbarkeit
-fl_vis || الظهور في المتجر || Visibility || Visibilité || Sichtbarkeit
+fl_vis || حالة الأرشفة || Visibility || Visibilité || Sichtbarkeit
 fl_status || الحالة || Status || Statut || Status
 fl_clear || مسح كل الفلاتر || Clear all filters || Effacer les filtres || Alle Filter löschen
 img_loading || جاري تحميل الصورة... || Loading image... || Chargement de l'image... || Bild wird geladen...
 img_ok || تم تحميل الصورة ✓ || Image loaded ✓ || Image chargée ✓ || Bild geladen ✓
 img_bad || تعذّر تحميل الصورة — تأكد من الرابط أو ارفع الصورة. || Could not load the image — check the link or upload it. || Image introuvable — vérifiez le lien ou téléversez-la. || Bild nicht ladbar — Link prüfen oder hochladen.
-img_empty || مفيش صورة. || No image. || Aucune image. || Kein Bild.
+img_empty || لا توجد صورة. || No image. || Aucune image. || Kein Bild.
 p_allstock || كل حالات التوفر || All availability || Toute disponibilité || Alle Verfügbarkeit
 p_instock || متوفر || In stock || En stock || Auf Lager
 p_outstock || غير متوفر || Out of stock || Rupture || Nicht vorrätig
 p_lowstock || مخزون منخفض || Low stock || Stock faible || Niedriger Bestand
 p_allvis || كل المنتجات (ظاهر/مخفي) || All (shown/hidden) || Tous (visibles/masqués) || Alle (sichtbar/versteckt)
-p_shown || ظاهر في المتجر || Shown in store || Visible || Sichtbar
-p_hidden || مخفي || Hidden || Masqué || Versteckt
+p_shown || غير مؤرشف (ظاهر في المتجر) || Shown in store || Visible || Sichtbar
+p_hidden || مؤرشف (مخفي) || Hidden || Masqué || Versteckt
 cu_allst || كل العملاء || All customers || Tous les clients || Alle Kunden
 cu_st_act || نشط || Active || Actif || Aktiv
 cu_st_blk || محظور || Blocked || Bloqué || Gesperrt
@@ -7588,7 +7984,7 @@ c_search || ابحث عن قسم أو قسم فرعي || Search a category or su
 nl_search || ابحث عن بريد إلكتروني || Search an email || Rechercher un e-mail || E-Mail suchen
 multi_hint || اضغط Ctrl للاختيار المتعدد. || Hold Ctrl to select several. || Ctrl pour en choisir plusieurs. || Strg für Mehrfachauswahl.
 alerts || التنبيهات || Alerts || Alertes || Hinweise
-no_alerts || مفيش تنبيهات دلوقتي ✅ || No alerts right now ✅ || Aucune alerte ✅ || Keine Hinweise ✅
+no_alerts || لا توجد تنبيهات حاليًا ✅ || No alerts right now ✅ || Aucune alerte ✅ || Keine Hinweise ✅
 al_pend || طلبات قيد الانتظار || Pending orders || Commandes en attente || Offene Bestellungen
 al_msgs || رسائل غير مقروءة || Unread messages || Messages non lus || Ungelesene Nachrichten
 al_comp || شكاوى مفتوحة || Open complaints || Plaintes ouvertes || Offene Beschwerden
@@ -7616,9 +8012,9 @@ c_top || الأكثر مبيعًا || Top products || Meilleures ventes || Bests
 c_topcat || المبيعات حسب القسم || Sales by category || Ventes par catégorie || Umsatz nach Kategorie
 c_last || آخر الطلبات || Latest orders || Dernières commandes || Letzte Bestellungen
 c_act || آخر النشاطات || Recent activity || Activité récente || Letzte Aktivitäten
-no_sales || لسه مفيش مبيعات في الفترة دي. || No sales in this period yet. || Pas de ventes sur cette période. || Noch keine Verkäufe.
-no_orders_hint || الطلبات اللي العملاء يعملوها من المتجر هتظهر هنا. || Orders placed in the store will appear here. || Les commandes apparaîtront ici. || Bestellungen erscheinen hier.
-no_act || لسه مفيش نشاط. || No activity yet. || Aucune activité. || Noch keine Aktivität.
+no_sales || لا توجد مبيعات في هذه الفترة حتى الآن. || No sales in this period yet. || Pas de ventes sur cette période. || Noch keine Verkäufe.
+no_orders_hint || ستظهر هنا الطلبات التي ينشئها العملاء من المتجر. || Orders placed in the store will appear here. || Les commandes apparaîtront ici. || Bestellungen erscheinen hier.
+no_act || لا يوجد نشاط حتى الآن. || No activity yet. || Aucune activité. || Noch keine Aktivität.
 pcs || قطعة || pcs || pcs || Stk.
 log_login || تسجيل دخول || Signed in || Connexion || Angemeldet
 log_save || حفظ في || Saved in || Enregistré dans || Gespeichert in
@@ -7687,12 +8083,12 @@ f_badgetext || نص الشارة المخصص || Custom badge text || Texte du b
 f_instock || متوفر || In stock || En stock || Auf Lager
 f_visible || ظاهر في المتجر || Visible in store || Visible en boutique || Im Shop sichtbar
 p_dup || نسخ || Duplicate || Dupliquer || Duplizieren
-p_confirm_del || حذف المنتج من المتجر؟ (تقدر تسترجعه بعدين) || Delete product from store? (can be restored) || Supprimer le produit ? || Produkt löschen? (wiederherstellbar)
+p_confirm_del || حذف المنتج من المتجر؟ (يمكنك استرجاعه لاحقًا) || Delete product from store? (can be restored) || Supprimer le produit ? || Produkt löschen? (wiederherstellbar)
 p_err || اكتب اسم المنتج وسعر صحيح. || Enter a name and a valid price. || Nom et prix valides requis. || Name und gültigen Preis eingeben.
-p_dupcode || الكود ده مستخدم قبل كده. || This code is already used. || Code déjà utilisé. || Code bereits vergeben.
+p_dupcode || هذا الكود مستخدم من قبل. || This code is already used. || Code déjà utilisé. || Code bereits vergeben.
 low || قليل || Low || Faible || Niedrig
 m_cats || الأقسام || Categories || Catégories || Kategorien
-c_sub || القسم الرئيسي واسمه ثابت بعد الإنشاء، والأقسام الفرعية بتتعدل بحرية. || The main category name is fixed after creation; sub-categories are editable. || Le nom principal est fixe ; les sous-catégories sont modifiables. || Hauptname bleibt fix; Unterkategorien frei editierbar.
+c_sub || القسم الرئيسي واسمه ثابت بعد الإنشاء، ويمكن تعديل الأقسام الفرعية بحرية. || The main category name is fixed after creation; sub-categories are editable. || Le nom principal est fixe ; les sous-catégories sont modifiables. || Hauptname bleibt fix; Unterkategorien frei editierbar.
 c_new || قسم رئيسي جديد || New main category || Nouvelle catégorie || Neue Hauptkategorie
 c_edit || تعديل قسم || Edit category || Modifier la catégorie || Kategorie bearbeiten
 th_subs || الأقسام الفرعية || Sub-categories || Sous-catégories || Unterkategorien
@@ -7703,11 +8099,11 @@ c_shop || نص زر القسم || Button text || Texte du bouton || Button-Text
 c_desc || وصف قصير (الصفحة الرئيسية) || Short description (home) || Description courte || Kurzbeschreibung
 c_long || وصف طويل (صفحة الأقسام) || Long description || Description longue || Langbeschreibung
 c_subs || الأقسام الفرعية (واحد في كل سطر أو بفاصلة) || Sub-categories (one per line or comma separated) || Sous-catégories || Unterkategorien
-c_exists || القسم ده موجود بالفعل. || This category already exists. || Catégorie existante. || Kategorie existiert bereits.
+c_exists || هذا القسم موجود بالفعل. || This category already exists. || Catégorie existante. || Kategorie existiert bereits.
 c_last || لازم يفضل قسم واحد على الأقل في المتجر. || At least one category must remain. || Au moins une catégorie doit rester. || Mindestens eine Kategorie muss bleiben.
-c_hasprod || القسم ده فيه منتجات. انقل المنتجات أو احذفها الأول. || This category has products. Move or delete them first. || Cette catégorie contient des produits. || Kategorie enthält Produkte.
-c_note || لو غيّرت اسم قسم فرعي، المنتجات القديمة هتفضل على الاسم القديم لحد ما تعدلها. || If you rename a sub-category, existing products keep the old name until edited. || Renommer une sous-catégorie ne modifie pas les produits existants. || Beim Umbenennen behalten Produkte den alten Namen.
-n_cust_sub || الحسابات اللي اتسجلت من المتجر. || Accounts registered from the store. || Comptes créés depuis la boutique. || Im Shop registrierte Konten.
+c_hasprod || يحتوي هذا القسم على منتجات. انقل المنتجات أو احذفها أولًا. || This category has products. Move or delete them first. || Cette catégorie contient des produits. || Kategorie enthält Produkte.
+c_note || عند تغيير اسم قسم فرعي، ستبقى المنتجات القديمة على الاسم القديم إلى أن تقوم بتعديلها. || If you rename a sub-category, existing products keep the old name until edited. || Renommer une sous-catégorie ne modifie pas les produits existants. || Beim Umbenennen behalten Produkte den alten Namen.
+n_cust_sub || الحسابات المسجلة من المتجر. || Accounts registered from the store. || Comptes créés depuis la boutique. || Im Shop registrierte Konten.
 th_name || الاسم || Name || Nom || Name
 th_contact || الإيميل / التليفون || Email / phone || E-mail / téléphone || E-Mail / Telefon
 th_spent || إجمالي الشراء || Total spent || Total dépensé || Gesamtausgaben
@@ -7715,20 +8111,20 @@ th_orders || الطلبات || Orders || Commandes || Bestellungen
 cu_active || نشط || Active || Actif || Aktiv
 cu_note || ملاحظات داخلية || Internal notes || Notes internes || Interne Notizen
 cu_hint || حالة الحظر والملاحظات محفوظة في اللوحة، وتطبيقها على تسجيل الدخول في المتجر محتاج ربط في app.js. || Block status & notes are stored here; enforcing them at store login needs a hook in app.js. || Le blocage doit être appliqué dans app.js. || Sperre muss in app.js umgesetzt werden.
-cu_none || مفيش حسابات لسه. || No accounts yet. || Aucun compte. || Noch keine Konten.
-cu_delconf || حذف الحساب ده؟ || Delete this account? || Supprimer ce compte ? || Konto löschen?
+cu_none || لا توجد حسابات حتى الآن. || No accounts yet. || Aucun compte. || Noch keine Konten.
+cu_delconf || هل تريد حذف هذا الحساب؟ || Delete this account? || Supprimer ce compte ? || Konto löschen?
 subscribers || مشتركو النشرة || Newsletter subscribers || Abonnés newsletter || Newsletter-Abonnenten
-no_subs || مفيش مشتركين. || No subscribers. || Aucun abonné. || Keine Abonnenten.
+no_subs || لا يوجد مشتركون. || No subscribers. || Aucun abonné. || Keine Abonnenten.
 m_users || المستخدمين || Admin users || Utilisateurs || Benutzer
-u_sub || فريق الإدارة اللي يقدر يدخل اللوحة وصلاحية كل واحد. || Team members who can sign in and their permissions. || Membres de l’équipe et permissions. || Teammitglieder und Berechtigungen.
+u_sub || فريق الإدارة المصرّح له بدخول اللوحة، وصلاحيات كل عضو. || Team members who can sign in and their permissions. || Membres de l’équipe et permissions. || Teammitglieder und Berechtigungen.
 u_new || مستخدم جديد || New user || Nouvel utilisateur || Neuer Benutzer
 u_name || الاسم الكامل || Full name || Nom complet || Vollständiger Name
 u_user || اسم المستخدم || Username || Identifiant || Benutzername
-u_pass || كلمة المرور (سيبها فاضية لو مش هتغيرها) || Password (leave blank to keep) || Mot de passe (vide = inchangé) || Passwort (leer = unverändert)
+u_pass || كلمة المرور (اتركها فارغة إذا لم ترغب في تغييرها) || Password (leave blank to keep) || Mot de passe (vide = inchangé) || Passwort (leer = unverändert)
 u_role || الصلاحية || Role || Rôle || Rolle
 u_builtin || الحساب الأساسي || Built-in account || Compte principal || Hauptkonto
 u_err_pass || كلمة المرور لازم تكون 6 حروف على الأقل. || Password must be at least 6 characters. || 6 caractères minimum. || Mindestens 6 Zeichen.
-u_err_dup || اسم المستخدم مستخدم قبل كده. || Username already taken. || Identifiant déjà pris. || Benutzername vergeben.
+u_err_dup || اسم المستخدم مستخدم من قبل. || Username already taken. || Identifiant déjà pris. || Benutzername vergeben.
 m_govs || المحافظات والمناطق || Governorates & areas || Gouvernorats et zones || Gouvernorate & Gebiete
 g_sub || كل محافظة وفيها مناطقها ومصاريف الشحن. || Each governorate with its areas and shipping fees. || Chaque gouvernorat avec ses zones et frais. || Gouvernorate mit Gebieten und Versandkosten.
 g_new || محافظة جديدة || New governorate || Nouveau gouvernorat || Neues Gouvernorat
@@ -7741,7 +8137,7 @@ g_manage || المناطق || Areas || Zones || Gebiete
 g_addarea || إضافة منطقة || Add area || Ajouter une zone || Gebiet hinzufügen
 g_areaname || اسم المنطقة || Area name || Nom de la zone || Gebietsname
 g_areafee || شحن خاص (اختياري) || Own fee (optional) || Frais propres (facultatif) || Eigene Kosten (optional)
-g_noareas || مفيش مناطق لسه. || No areas yet. || Aucune zone. || Noch keine Gebiete.
+g_noareas || لا توجد مناطق حتى الآن. || No areas yet. || Aucune zone. || Noch keine Gebiete.
 g_reset || استرجاع الافتراضي || Reset to default || Réinitialiser || Zurücksetzen
 g_confirm_reset || الرجوع لقائمة المحافظات الافتراضية؟ || Reset to the default list? || Réinitialiser la liste ? || Standardliste wiederherstellen?
 m_news || الأخبار || News || Actualités || Nachrichten
@@ -7755,7 +8151,7 @@ f_date || التاريخ || Date || Date || Datum
 f_img || الصورة (رابط أو رفع) || Image (URL or upload) || Image || Bild
 published || منشور || Published || Publié || Veröffentlicht
 m_offers || العروض || Offers || Offres || Angebote
-off_sub || أنشئ عروض وخصومات على منتجات محددة بتاريخ بداية ونهاية. || Create timed discounts on selected products. || Offres avec dates de début et fin. || Zeitlich begrenzte Rabatte.
+off_sub || أنشئ عروضًا وخصومات على منتجات محددة بتاريخ بداية ونهاية. || Create timed discounts on selected products. || Offres avec dates de début et fin. || Zeitlich begrenzte Rabatte.
 off_new || عرض جديد || New offer || Nouvelle offre || Neues Angebot
 f_discount || نسبة الخصم % || Discount % || Remise % || Rabatt %
 f_code2 || كود الكوبون || Coupon code || Code promo || Gutscheincode
@@ -7831,27 +8227,27 @@ r_phone || التليفون || Phone || Téléphone || Telefon
 r_avail || متوفر || In stock || En stock || Verfügbar
 r_unavail || غير متوفر || Out of stock || Rupture || Nicht verfügbar
 m_notifs || الإشعارات || Notifications || Notifications || Benachrichtigungen
-nt_sub || ابعت إشعار يظهر في جرس المتجر، وراجع الإشعارات اللي اتبعتت. || Send a notification to the store bell and review sent ones. || Envoyez une notification à la boutique. || Benachrichtigung an den Shop senden.
+nt_sub || أرسل إشعارًا يظهر في جرس المتجر، وراجع الإشعارات المرسلة. || Send a notification to the store bell and review sent ones. || Envoyez une notification à la boutique. || Benachrichtigung an den Shop senden.
 nt_text || نص الإشعار || Notification text || Texte || Text
 nt_link || الرابط عند الضغط || Link on click || Lien || Link
 nt_send || إرسال الإشعار || Send notification || Envoyer || Senden
 nt_sent || تم إرسال الإشعار || Notification sent || Notification envoyée || Benachrichtigung gesendet
 nt_history || الإشعارات المرسلة || Sent notifications || Historique || Gesendet
-nt_none || لسه مفيش إشعارات مرسلة. || No notifications sent yet. || Aucune notification. || Noch keine.
+nt_none || لا توجد إشعارات مرسلة حتى الآن. || No notifications sent yet. || Aucune notification. || Noch keine.
 nt_clear || مسح إشعارات المتجر || Clear store notifications || Vider les notifications || Shop-Benachrichtigungen löschen
 nt_note || الإشعار بيوصل لنفس متصفح المتجر (نفس localStorage). || Delivered to the store running in this browser (same localStorage). || Livrée dans ce navigateur. || Wird in diesem Browser zugestellt.
 m_msgs || الرسائل || Messages || Messages || Nachrichten
-msg_sub || الرسائل اللي جت من صفحة "اتصل بنا". || Messages from the Contact page. || Messages du formulaire de contact. || Nachrichten aus dem Kontaktformular.
-msg_none || مفيش رسائل. || No messages. || Aucun message. || Keine Nachrichten.
+msg_sub || الرسائل الواردة من صفحة «اتصل بنا». || Messages from the Contact page. || Messages du formulaire de contact. || Nachrichten aus dem Kontaktformular.
+msg_none || لا توجد رسائل. || No messages. || Aucun message. || Keine Nachrichten.
 msg_reply || رد بالإيميل || Reply by email || Répondre || Antworten
 msg_read || تمت القراءة || Mark read || Marquer lu || Gelesen
 msg_unread || اعتبرها غير مقروءة || Mark unread || Marquer non lu || Ungelesen
 h_title_page || الهيرو (البانر الرئيسي) || Hero banner || Bannière principale || Hero-Banner
-h_sub || السلايدر اللي بيظهر أول حاجة في الصفحة الرئيسية. التغيير بيظهر في المتجر فورًا. || The first slider on the home page. || Le slider de la page d’accueil. || Der erste Slider der Startseite.
+h_sub || السلايدر الذي يظهر أولًا في الصفحة الرئيسية. تظهر التغييرات في المتجر فورًا. || The first slider on the home page. || Le slider de la page d’accueil. || Der erste Slider der Startseite.
 h_add || سلايد جديد || New slide || Nouveau slide || Neuer Slide
 h_edit || تعديل سلايد || Edit slide || Modifier le slide || Slide bearbeiten
 h_reset || استرجاع الافتراضي || Reset to default || Par défaut || Zurücksetzen
-h_custom || الهيرو معدّل من هنا. || Hero customised here. || Hero personnalisé. || Hero angepasst.
+h_custom || تم تعديل الهيرو من هنا. || Hero customised here. || Hero personnalisé. || Hero angepasst.
 h_default || الهيرو الحالي هو الافتراضي. أي تعديل هيحوّله لنسخة معدّلة. || Currently the default hero. || Hero par défaut. || Standard-Hero.
 h_badge || الشارة الصغيرة || Small badge || Badge || Badge
 h_title || العنوان الرئيسي || Main title || Titre || Titel
@@ -7863,14 +8259,14 @@ h_l2 || رابط الزر التاني || Button 2 link || Lien bouton 2 || Butt
 h_img || صورة (رابط أو رفع) — اختياري || Image (URL or upload) — optional || Image — facultatif || Bild — optional
 h_emoji || أو إيموجي (مسافة بينهم، لحد 6) || Or emojis (space separated, up to 6) || Ou emojis || Oder Emojis
 h_err || اكتب العنوان الرئيسي. || Enter the main title. || Titre requis. || Titel erforderlich.
-h_confirm_del || حذف السلايد ده؟ || Delete this slide? || Supprimer ce slide ? || Slide löschen?
+h_confirm_del || هل تريد حذف هذه الشريحة؟ || Delete this slide? || Supprimer ce slide ? || Slide löschen?
 h_confirm_reset || الرجوع للهيرو الافتراضي؟ || Reset to default hero? || Revenir au hero par défaut ? || Auf Standard zurücksetzen?
-nl_sub || الإيميلات اللي اشتركت من الصفحة الرئيسية. || Emails subscribed from the home page. || E-mails abonnés. || Abonnierte E-Mails.
+nl_sub || البريد الإلكتروني للمشتركين من الصفحة الرئيسية. || Emails subscribed from the home page. || E-mails abonnés. || Abonnierte E-Mails.
 nl_copy || نسخ الكل || Copy all || Tout copier || Alle kopieren
 nl_copied || تم النسخ || Copied || Copié || Kopiert
 nl_email || الإيميل || Email || E-mail || E-Mail
 nl_write || مراسلة || Email || Écrire || Schreiben
-nl_none || مفيش مشتركين لسه. || No subscribers yet. || Aucun abonné. || Noch keine Abonnenten.
+nl_none || لا يوجد مشتركون حتى الآن. || No subscribers yet. || Aucun abonné. || Noch keine Abonnenten.
 s_sub || إعدادات حسابك والمتجر والواجهة. || Your account, store and interface settings. || Compte, boutique et interface. || Konto, Shop und Oberfläche.
 s_ui || الواجهة والحساب || Interface & account || Interface et compte || Oberfläche & Konto
 s_lang || لغة اللوحة || Panel language || Langue || Sprache
@@ -7907,10 +8303,10 @@ s_reset || استرجاع الافتراضي || Reset to default || Par défaut 
 s_confirm_reset || الرجوع للإعدادات الافتراضية؟ || Reset to default settings? || Réinitialiser ? || Zurücksetzen?
 s_saved || تم حفظ الإعدادات || Settings saved || Paramètres enregistrés || Gespeichert
 s_note || ملحوظة: كل بيانات اللوحة محفوظة في متصفح الأدمن بس. استخدم "نسخة احتياطية" بشكل دوري. || Note: all panel data lives in this browser only. Back up regularly. || Les données sont locales à ce navigateur. || Daten liegen nur in diesem Browser.
-s_store_note || الأقسام الجديدة (أخبار، عروض، إعلانات، محافظات...) بتتخزن في localStorage وجاهزة للربط بالمتجر. || New sections are stored in localStorage, ready to be wired into the store. || Données prêtes à être reliées à la boutique. || Daten sind bereit für die Shop-Anbindung.
-restore_conf || هيتم استبدال بيانات المتجر الحالية بالنسخة دي. متأكد؟ || This will replace the current data. Continue? || Remplacer les données actuelles ? || Aktuelle Daten ersetzen?
+s_store_note || تُحفَظ الأقسام الجديدة (أخبار، عروض، إعلانات، محافظات...) في localStorage وهي جاهزة للربط بالمتجر. || New sections are stored in localStorage, ready to be wired into the store. || Données prêtes à être reliées à la boutique. || Daten sind bereit für die Shop-Anbindung.
+restore_conf || سيتم استبدال بيانات المتجر الحالية بهذه النسخة. هل أنت متأكد؟ || This will replace the current data. Continue? || Remplacer les données actuelles ? || Aktuelle Daten ersetzen?
 restore_ok || تم الاسترجاع || Restored || Restauré || Wiederhergestellt
-restore_bad || الملف مش صالح. || Invalid file. || Fichier invalide. || Ungültige Datei.
+restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide. || Ungültige Datei.
 `.trim().split('\n').forEach(l => { const p = l.split('||').map(s => s.trim()); T[p[0]] = p.slice(1); });
                 const t = k => { if (!k) return ''; const a = T[k]; if (!a) return k; return a[LK.indexOf(LG)] || a[1] || a[0] || k; };
                 const loc = () => LANGS[LG].loc;
@@ -7925,10 +8321,10 @@ restore_bad || الملف مش صالح. || Invalid file. || Fichier invalide. |
                 };
                 const fl = k => `<span class="flag">${FLAG[k]}</span>`;
                 const sw = (type, at, on) => `<span class="sw"><input type="checkbox" data-chg="${type}" ${Object.keys(at || {}).map(a => `data-${a}="${esc(at[a])}"`).join(' ')} ${on ? 'checked' : ''}><i></i></span>`;
-                const tools = () => `<div class="tools"><div class="lang"><button type="button" class="lbtn" data-act="lmenu" aria-label="Language">${fl(LG)}<span>${LG.toUpperCase()}</span><em>▾</em></button><div class="lmenu" hidden>${LK.map(k => `<button type="button" data-act="lang" data-l="${k}" class="${k === LG ? 'on' : ''}">${fl(k)} ${LANGS[k].name}</button>`).join('')}</div></div><label class="tsw" title="${esc(t('dark'))}"><span>☀️</span><span class="sw"><input type="checkbox" data-chg="theme" ${THEME === 'dark' ? 'checked' : ''}><i></i></span><span>🌙</span></label></div>`;
+                const tools = () => `<div class="tools"><div class="lang"><button type="button" class="lbtn" data-act="lmenu" aria-label="Language">${fl(LG)}<span>${LG.toUpperCase()}</span><em>▾</em></button><div class="lmenu" hidden>${LK.map(k => `<button type="button" data-act="lang" data-l="${k}" class="${k === LG ? 'on' : ''}">${fl(k)} ${lname(k)}</button>`).join('')}</div></div><label class="tsw" title="${esc(t('dark'))}"><span>☀️</span><span class="sw"><input type="checkbox" data-chg="theme" ${THEME === 'dark' ? 'checked' : ''}><i></i></span><span>🌙</span></label></div>`;
 
                 /* ---------- State & data helpers ---------- */
-                const S = { per: localStorage.getItem('boda_dash_period') || 'week', ctab: 'comp', rp: null };
+                const S = { per: 'day', ctab: 'comp', rp: null };
                 const ST = { Pending: 'warn', Processing: 'info', Shipped: 'info', Delivered: 'ok', Cancelled: 'bad' };
                 const STEPS = ['Pending', 'Processing', 'Shipped', 'Delivered'], STEP_MIN = [0, 1, 3, 6];
                 function stOf(o) {
@@ -7950,7 +8346,7 @@ restore_bad || الملف مش صالح. || Invalid file. || Fichier invalide. |
                     };
                 };
                 const USERS = () => rd(K.users, []);
-                const ROLES = { super: '*', manager: ['dash', 'shipping', 'orders', 'products', 'cats', 'cust', 'govs', 'news', 'offers', 'ads', 'comp', 'reports', 'notifs', 'msgs', 'hero', 'newsl'], support: ['dash', 'orders', 'cust', 'comp', 'msgs', 'notifs', 'reports'] };
+                const ROLES = { super: '*', manager: ['dash', 'shipping', 'orders', 'products', 'cats', 'docs', 'cust', 'govs', 'news', 'offers', 'ads', 'comp', 'reports', 'notifs', 'msgs', 'hero', 'newsl'], support: ['dash', 'orders', 'cust', 'comp', 'msgs', 'notifs', 'reports'] };
                 const me = () => sessionStorage.getItem('boda_admin_user') || ADMIN.user;
                 const myRole = () => { if (me() === ADMIN.user) return 'super'; const u = USERS().find(x => x.u === me()); return u ? u.role : 'support'; };
                 const can = k => { const r = ROLES[myRole()]; return r === '*' || r.includes(k) || k === 'settings'; };
@@ -7961,7 +8357,7 @@ restore_bad || الملف مش صالح. || Invalid file. || Fichier invalide. |
                 }
                 const log = (k, a, n) => { const l = rd(K.log, []); l.unshift({ t: Date.now(), u: me(), k, a: a || '', n: n || '' }); wr(K.log, l.slice(0, 60)); };
                 function toast(x) { document.querySelectorAll('.toast').forEach(e => e.remove()); const d = document.createElement('div'); d.className = 'toast'; d.textContent = x; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
-                const thumb = (s, id) => s ? `<img class="th" src="${esc(s)}" alt="" referrerpolicy="no-referrer" ${id ? `data-act="pedit" data-id="${esc(id)}" title="${t('edit')}"` : ''} onerror="this.classList.add('bad');this.alt='⚠';this.title='الصورة مش شغالة — اضغط لتعديل اللينك'">` : '';
+                const thumb = (s, id) => s ? `<img class="th" src="${esc(s)}" alt="" referrerpolicy="no-referrer" ${id ? `data-act="pedit" data-id="${esc(id)}" title="${t('edit')}"` : ''} onerror="this.classList.add('bad');this.alt='⚠';this.title='الصورة لا تعمل — اضغط لتعديل الرابط'">` : '';
                 const open = html => { const d = $('#dlg'); d.innerHTML = html; if (!d.open) d.showModal(); };
                 const refresh = k => { const e = $('#tbl'); if (e && TBLS[k]) e.innerHTML = TBLS[k](); };
 
@@ -8024,13 +8420,26 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
                 }
 
                 /* ---------- Orders ---------- */
+                const dayStart = ts => { const d = new Date(ts); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); };
+                function ordPresets() {
+                    const D = 864e5, now = new Date(), d0 = dayStart(now), w0 = d0 - ((new Date(d0).getDay() + 1) % 7) * D;     // week starts on Saturday
+                    const m0 = new Date(now.getFullYear(), now.getMonth(), 1).getTime(), m1 = new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime(), pm0 = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime();
+                    return { today: [d0, d0 + D], yesterday: [d0 - D, d0], week: [w0, w0 + 7 * D], lastweek: [w0 - 7 * D, w0], month: [m0, m1], lastmonth: [pm0, m0] };
+                }
+                const rngTxt = r => { const a = dfmt(r[0]), b = dfmt(r[1] - 1); return a === b ? a : a + ' – ' + b; };
+                function ordDateCtl() {
+                    const P = ordPresets();
+                    return `<label class="fl"><span>${t('fl_date')}</span><select data-q="od" data-v="orders"><option value="">${t('od_all')}</option>${Object.keys(P).map(k => `<option value="${k}" ${S.od === k ? 'selected' : ''}>${t('od_' + k)} · ${rngTxt(P[k])}</option>`).join('')}</select></label><label class="fl"><span>${t('fl_from')}</span><input type="date" data-q="odf" data-v="orders" value="${esc(S.odf || '')}"></label><label class="fl"><span>${t('fl_to')}</span><input type="date" data-q="odt" data-v="orders" value="${esc(S.odt || '')}"></label>`;
+                }
                 function ordersList() {
-                    const q = (S.oq || '').toLowerCase();
-                    const l = orders().filter(o => (!S.ost || o.s === S.ost) && (!q || (o.id + ' ' + (o.ship?.name || '') + ' ' + (o.ship?.phone || '')).toLowerCase().includes(q)));
-                    return l.length ? ordersTbl(l) : `<div class="empty tw">${t('none')}</div>`;
+                    const q = (S.oq || '').toLowerCase(), R = S.od ? ordPresets()[S.od] : null;
+                    const df = S.odf ? new Date(S.odf + 'T00:00:00').getTime() : null, dt = S.odt ? new Date(S.odt + 'T00:00:00').getTime() + 864e5 : (df !== null ? df + 864e5 : null);
+                    const l = orders().filter(o => (!S.ost || o.s === S.ost) && (!R || (o.created >= R[0] && o.created < R[1])) && (df === null || (o.created >= df && o.created < dt)) && (!q || (o.id + ' ' + (o.ship?.name || '') + ' ' + (o.ship?.phone || '')).toLowerCase().includes(q)));
+                    const sum = l.filter(o => o.s !== 'Cancelled').reduce((a, o) => a + (+o.total || 0), 0);
+                    return l.length ? `<p class="sub" style="margin:0 0 10px"><b>${l.length}</b> ${t('th_order')} · <b>${money(Math.round(sum * 100) / 100)}</b>${R ? ' · ' + rngTxt(R) : ''}</p>` + ordersTbl(l) : `<div class="empty tw">${t('none')}</div>`;
                 }
                 const ordersView = () => `<div class="head"><div><h1>${t('n_orders')}</h1><p class="sub">${t('o_sub')}</p></div><button class="btn ghost" data-act="csv">${t('exp_csv')}</button></div>
-<div class="filters"><input type="search" placeholder="${t('o_search')}" value="${esc(S.oq || '')}" data-q="oq" data-v="orders"><select data-q="ost" data-v="orders"><option value="">${t('o_all')}</option>${Object.keys(ST).map(k => `<option value="${k}" ${S.ost === k ? 'selected' : ''}>${t('st_' + k)}</option>`).join('')}</select></div><div id="tbl">${ordersList()}</div>`;
+<div class="filters"><input type="search" placeholder="${t('o_search')}" value="${esc(S.oq || '')}" data-q="oq" data-v="orders"><select data-q="ost" data-v="orders"><option value="">${t('o_all')}</option>${Object.keys(ST).map(k => `<option value="${k}" ${S.ost === k ? 'selected' : ''}>${t('st_' + k)}</option>`).join('')}</select>${ordDateCtl()}</div><div id="tbl">${ordersList()}</div>`;
 
                 /* ---------- Products ---------- */
                 function patchProduct(id, f) { const a = PA(), i = a.added.findIndex(p => p.id === id); if (i > -1) a.added[i] = { ...a.added[i], ...f }; else a.edits[id] = { ...(a.edits[id] || {}), ...f }; wr(K.pa, a); }
@@ -8105,14 +8514,16 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                 /* ---------- Categories ---------- */
                 function catList() {
                     const cs = CATS(), cat = catalog(), q = (S.ccq || '').toLowerCase();
-                    const l = cs.filter(c => !q || (c.name + ' ' + c.subs.join(' ')).toLowerCase().includes(q));
+                    const np = c => cat.filter(p => p.cat === c.name).length;
+                    const l = cs.filter(c => (!q || (c.name + ' ' + c.subs.join(' ')).toLowerCase().includes(q)) && (!S.cf_subs || (S.cf_subs === 'with' ? c.subs.length > 0 : !c.subs.length)) && (!S.cf_prod || (S.cf_prod === 'with' ? np(c) > 0 : np(c) === 0)) && (!S.cf_img || (S.cf_img === 'with' ? !!c.img : !c.img)))
+                        .sort((a, b) => S.cf_sort === 'most' ? np(b) - np(a) : S.cf_sort === 'subs' ? b.subs.length - a.subs.length : S.cf_sort === 'az' ? String(a.name).localeCompare(String(b.name)) : 0);
                     return l.length ? `<div class="tw"><table><thead><tr><th>${t('th_cat')}</th><th>${t('th_subs')}</th><th>${t('th_nprod')}</th><th></th></tr></thead><tbody>${l.map(c => `<tr><td><b>${c.img ? `<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-inline-end:8px">` : ''}${esc(cn(c.name))}</b></td>
 <td class="wrap">${c.subs.length ? c.subs.map(s => `<span class="chip">${esc(cn(s))} <small>${cat.filter(p => p.cat === c.name && p.sub === s).length}</small></span>`).join('') : '—'}</td><td>${cat.filter(p => p.cat === c.name).length}</td>
 <td class="nw"><button class="mini" data-act="cedit" data-id="${esc(c.name)}">${t('edit')}</button><button class="mini del" data-act="cdel" data-id="${esc(c.name)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`;
                 }
                 function catsView() {
                     return `<div class="head"><div><h1>${t('n_cats')}</h1><p class="sub">${t('c_sub')}</p></div><button class="btn" data-act="cadd">+ ${t('c_new')}</button></div>
-<div class="filters"><input type="search" placeholder="${t('c_search')}" value="${esc(S.ccq || '')}" data-q="ccq" data-v="cats"></div><div id="tbl">${catList()}</div>`;
+<div class="filters"><input type="search" placeholder="${t('c_search')}" value="${esc(S.ccq || '')}" data-q="ccq" data-v="cats">${[['cf_subs', 'c_with_s', 'c_wo_s'], ['cf_prod', 'c_with_p', 'c_wo_p'], ['cf_img', 'c_with_i', 'c_wo_i']].map(f => `<select data-q="${f[0]}" data-v="cats"><option value="">${t('all')}</option><option value="with" ${S[f[0]] === 'with' ? 'selected' : ''}>${t(f[1])}</option><option value="without" ${S[f[0]] === 'without' ? 'selected' : ''}>${t(f[2])}</option></select>`).join('')}<select data-q="cf_sort" data-v="cats"><option value="">${t('c_sort_def')}</option><option value="az" ${S.cf_sort === 'az' ? 'selected' : ''}>${t('c_sort_az')}</option><option value="most" ${S.cf_sort === 'most' ? 'selected' : ''}>${t('c_sort_most')}</option><option value="subs" ${S.cf_sort === 'subs' ? 'selected' : ''}>${t('c_sort_subs')}</option></select></div><div id="tbl">${catList()}</div>`;
                 }
                 function cform(c) {
                     c = c || { subs: [] };
@@ -8124,18 +8535,126 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
 <p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
                 }
 
+
                 /* ---------- Customers ---------- */
                 function custList() {
-                    const acc = rd(K.acc, {}), o = orders().filter(x => x.s !== 'Cancelled'), us = rd(K.ustat, {}), q = (S.cq || '').toLowerCase();
-                    const rows = Object.keys(acc).map(id => { const mine = o.filter(x => x.user === id); return { a: acc[id], id, n: mine.length, v: mine.reduce((s, x) => s + x.total, 0) }; }).filter(r => (!q || (r.a.name + ' ' + r.id).toLowerCase().includes(q)) && (!S.cs || (S.cs === 'blk') === !!(us[r.id] && us[r.id].blocked)));
-                    return rows.length ? `<div class="tw"><table><thead><tr><th>${t('th_name')}</th><th>${t('th_contact')}</th><th>${t('th_orders')}</th><th>${t('th_spent')}</th><th>${t('cu_active')}</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${esc(r.a.name)}</b></td><td>${esc(r.id)}</td><td>${r.n}</td><td>${money(r.v)}</td><td>${sw('cublock', { id: r.id }, !(us[r.id] && us[r.id].blocked))}</td>
-<td class="nw"><button class="mini" data-act="cudet" data-id="${esc(r.id)}">${t('details')}</button><button class="mini del" data-act="cudel" data-id="${esc(r.id)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('cu_none')}</div>`;
+                    const acc = rd(K.acc, {});
+                    const o = orders().filter(x => x.s !== 'Cancelled');
+                    const us = rd(K.ustat, {});
+                    const q = (S.cq || '').toLowerCase().trim();
+
+                    let rows = Object.keys(acc).map(id => {
+                        const mine = o.filter(x => String(x.user || '').toLowerCase() === String(id).toLowerCase());
+                        return {
+                            a: acc[id] || {},
+                            id,
+                            n: mine.length,
+                            v: mine.reduce((sum, x) => sum + (Number(x.total) || 0), 0)
+                        };
+                    });
+
+                    rows = rows.filter(r => {
+                        const blocked = !!(us[r.id] && us[r.id].blocked);
+                        const searchMatch = !q ||
+                            (String(r.a.name || '') + ' ' + r.id).toLowerCase().includes(q);
+
+                        const statusMatch = !S.cs ||
+                            (S.cs === 'blk' ? blocked : !blocked);
+
+                        const orderMatch = !S.corders ||
+                            (S.corders === 'none' ? r.n === 0 :
+                                S.corders === 'has' ? r.n > 0 :
+                                    S.corders === 'many' ? r.n >= 5 : true);
+
+                        const spentMatch = !S.cspent ||
+                            (S.cspent === 'low' ? r.v < 1000 :
+                                S.cspent === 'mid' ? r.v >= 1000 && r.v < 5000 :
+                                    S.cspent === 'high' ? r.v >= 5000 : true);
+
+                        return searchMatch && statusMatch && orderMatch && spentMatch;
+                    });
+
+                    if (S.csort === 'orders') rows.sort((a, b) => b.n - a.n);
+                    else if (S.csort === 'spent') rows.sort((a, b) => b.v - a.v);
+                    else if (S.csort === 'name') rows.sort((a, b) =>
+                        String(a.a.name || '').localeCompare(String(b.a.name || ''))
+                    );
+
+                    return rows.length ? `<div class="tw"><table>
+        <thead><tr>
+            <th>${t('th_name')}</th>
+            <th>${t('th_contact')}</th>
+            <th>${t('th_orders')}</th>
+            <th>${t('th_spent')}</th>
+            <th>${t('cu_active')}</th>
+            <th></th>
+        </tr></thead>
+        <tbody>${rows.map(r => `<tr>
+            <td><b>${esc(r.a.name || '—')}</b></td>
+            <td>${esc(r.id)}</td>
+            <td>${r.n}</td>
+            <td>${money(r.v)}</td>
+            <td>${sw('cublock', { id: r.id }, !(us[r.id] && us[r.id].blocked))}</td>
+            <td class="nw">
+                <button class="mini" data-act="cudet" data-id="${esc(r.id)}">${t('details')}</button>
+                <button class="mini del" data-act="cudel" data-id="${esc(r.id)}">${t('del')}</button>
+            </td>
+        </tr>`).join('')}</tbody>
+    </table></div>` : `<div class="empty tw">${t('cu_none')}</div>`;
                 }
+
                 function custView() {
                     const news = rd(K.news, []);
-                    return `<h1>${t('n_cust')}</h1><p class="sub">${t('n_cust_sub')}</p><div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.cq || '')}" data-q="cq" data-v="cust"><select data-q="cs" data-v="cust"><option value="">${t('cu_allst')}</option><option value="act" ${S.cs === 'act' ? 'selected' : ''}>${t('cu_st_act')}</option><option value="blk" ${S.cs === 'blk' ? 'selected' : ''}>${t('cu_st_blk')}</option></select></div><div id="tbl">${custList()}</div><div class="note">${t('cu_hint')}</div>
-<div class="box" style="margin-top:14px"><h2>${t('subscribers')} (${news.length})</h2>${news.length ? news.map(e => `<span class="pill info" style="margin:3px">${esc(e)}</span>`).join('') : `<p class="empty">${t('no_subs')}</p>`}</div>`;
+
+                    return `<h1>${t('n_cust')}</h1>
+    <p class="sub">${t('n_cust_sub')}</p>
+
+    <div class="filters">
+        <input type="search"
+            placeholder="${t('search')}"
+            value="${esc(S.cq || '')}"
+            data-q="cq" data-v="cust">
+
+        <select data-q="cs" data-v="cust">
+            <option value="">${t('cu_allst')}</option>
+            <option value="act" ${S.cs === 'act' ? 'selected' : ''}>${t('cu_st_act')}</option>
+            <option value="blk" ${S.cs === 'blk' ? 'selected' : ''}>${t('cu_st_blk')}</option>
+        </select>
+
+        <select data-q="corders" data-v="cust">
+            <option value="">كل العملاء حسب الطلبات</option>
+            <option value="none" ${S.corders === 'none' ? 'selected' : ''}>بدون طلبات</option>
+            <option value="has" ${S.corders === 'has' ? 'selected' : ''}>لديهم طلبات</option>
+            <option value="many" ${S.corders === 'many' ? 'selected' : ''}>5 طلبات أو أكثر</option>
+        </select>
+
+        <select data-q="cspent" data-v="cust">
+            <option value="">كل مستويات الشراء</option>
+            <option value="low" ${S.cspent === 'low' ? 'selected' : ''}>أقل من 1,000 جنيه</option>
+            <option value="mid" ${S.cspent === 'mid' ? 'selected' : ''}>من 1,000 إلى 4,999 جنيه</option>
+            <option value="high" ${S.cspent === 'high' ? 'selected' : ''}>5,000 جنيه أو أكثر</option>
+        </select>
+
+        <select data-q="csort" data-v="cust">
+            <option value="">الترتيب الافتراضي</option>
+            <option value="orders" ${S.csort === 'orders' ? 'selected' : ''}>الأكثر طلبات</option>
+            <option value="spent" ${S.csort === 'spent' ? 'selected' : ''}>الأكثر شراءً</option>
+            <option value="name" ${S.csort === 'name' ? 'selected' : ''}>الاسم أبجديًا</option>
+        </select>
+    </div>
+
+    <div id="tbl">${custList()}</div>
+    <div class="note">${t('cu_hint')}</div>
+
+    <div class="box" style="margin-top:14px">
+        <h2>${t('subscribers')} (${news.length})</h2>
+        ${news.length
+                            ? news.map(e => `<span class="pill info" style="margin:3px">${esc(e)}</span>`).join('')
+                            : `<p class="empty">${t('no_subs')}</p>`}
+    </div>`;
                 }
+
+
 
                 /* ---------- Generic CRUD modules ---------- */
                 const O = (...a) => a.map(x => [x, x.replace(/^/, '')]);
@@ -8155,9 +8674,15 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                         cols: [{ l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.desc || '').slice(0, 70))}</small>` }, { l: 'f_discount', f: r => `<b>${esc(r.discount)}%</b>` }, { l: 'f_code2', f: r => esc(r.code) || '—' }, { l: 'th_period', f: per }, { l: 'f_products', f: r => (r.products || []).length || '—' }, { l: 'th_status', f: rs }]
                     },
                     ads: {
-                        k: K.ads, ti: 'm_ads', su: 'ads_sub', nw: 'ads_new', tog: 'active', def: () => ({ active: true, place: 'home' }), q: r => r.title + ' ' + r.link,
+                        xf: r => adFilter(r), k: K.ads, ti: 'm_ads', su: 'ads_sub', nw: 'ads_new', tog: 'active', def: () => ({ active: true, place: 'home' }), q: r => r.title + ' ' + r.link,
                         fields: [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'place', l: 'f_place', ty: 'sel', o: [['header', 'pl_header'], ['home', 'pl_home'], ['sidebar', 'pl_sidebar'], ['popup', 'pl_popup'], ['footer', 'pl_footer']] }, { n: 'link', l: 'f_link', ty: 'text' }, { n: 'active', l: 'active', ty: 'sw' }, { n: 'start', l: 'f_start', ty: 'date' }, { n: 'end', l: 'f_end', ty: 'date' }, { n: 'img', l: 'f_img', ty: 'img' }],
                         cols: [{ l: '', f: r => thumb(r.img) }, { l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc(r.link)}</small>` }, { l: 'f_place', f: r => t('pl_' + r.place) }, { l: 'th_period', f: per }, { l: 'th_status', f: rs }]
+                    },
+                    docs: {
+                        k: K.docs, ti: 'm_docs', su: 'docs_sub', nw: 'docs_new', tog: 'active', togL: 'published', def: () => ({ active: true, doctype: 'manual', date: today(), version: '1.0' }), q: r => (r.title || '') + ' ' + (r.product || '') + ' ' + (r.version || ''),
+                        flt: { n: 'doctype', o: [['manual', 'dt_manual'], ['warranty', 'dt_warranty'], ['spec', 'dt_spec'], ['safety', 'dt_safety'], ['cert', 'dt_cert'], ['other', 'dt_other']] },
+                        get fields() { return [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'product', l: 'f_prodref', ty: 'sel', o: [['', 'none_sel']].concat(catalog().map(p => [p.id, p.name + ' (' + p.id + ')'])) }, { n: 'doctype', l: 'f_doctype', ty: 'sel', o: [['manual', 'dt_manual'], ['warranty', 'dt_warranty'], ['spec', 'dt_spec'], ['safety', 'dt_safety'], ['cert', 'dt_cert'], ['other', 'dt_other']] }, { n: 'version', l: 'f_version', ty: 'text' }, { n: 'date', l: 'f_date', ty: 'date' }, { n: 'active', l: 'published', ty: 'sw' }, { n: 'link', l: 'f_dlink', ty: 'text' }, { n: 'body', l: 'f_body', ty: 'area', rows: 7 }]; },
+                        cols: [{ l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.body || '').slice(0, 80))}</small>` }, { l: 'f_prodref', f: r => { const p = catalog().find(x => x.id === r.product); return p ? `${esc(p.name)}<br><small>${esc(p.id)}</small>` : '—'; } }, { l: 'f_doctype', f: r => t('dt_' + (r.doctype || 'other')) }, { l: 'f_version', f: r => esc(r.version) || '—' }, { l: 'f_date', f: r => dfmt(r.date) }]
                     },
                     comp: {
                         k: K.comp, ti: 'm_comp', su: 'comp_sub', nw: 'comp_new', def: () => ({ prio: 'med', status: 'open' }), q: r => (r.no || '') + r.customer + r.subject + r.contact, flt: { n: 'status', o: [['open', 'cs_open'], ['progress', 'cs_progress'], ['resolved', 'cs_resolved']] },
@@ -8198,13 +8723,30 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                 }
                 function gTable(k) {
                     const m = MODS[k], q = (S['q_' + k] || '').toLowerCase(), fv = S['f_' + k] || '';
-                    const l = GL(k).filter(r => (!fv || r[m.flt.n] === fv) && (!q || m.q(r).toLowerCase().includes(q)));
+                    const l = GL(k).filter(r => (!fv || r[m.flt.n] === fv) && (!q || m.q(r).toLowerCase().includes(q)) && (!m.xf || m.xf(r)));
                     if (!l.length) return `<div class="empty tw">${t('none')}</div>`;
                     return `<div class="tw"><table><thead><tr>${m.cols.map(c => `<th>${t(c.l)}</th>`).join('')}${m.tog ? `<th>${t(m.togL || 'active')}</th>` : ''}<th></th></tr></thead><tbody>${l.map(r => `<tr>${m.cols.map(c => `<td${c.w ? ' class="wrap"' : ''}>${c.f(r)}</td>`).join('')}${m.tog ? `<td>${sw('tog', { m: k, id: r.id, f: m.tog }, r[m.tog] !== false && !!r[m.tog])}</td>` : ''}<td class="nw"><button class="mini" data-act="gedit" data-m="${k}" data-id="${r.id}">${t('edit')}</button><button class="mini del" data-act="gdel" data-m="${k}" data-id="${r.id}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>`;
                 }
+                function adFilter(r) {
+                    const pl = S.ad_pl, st = S.ad_st, a = S.ad_from, z = S.ad_to, nowD = today();
+                    if (pl && r.place !== pl) return false;
+                    if (st) {
+                        const s0 = r.start || '', e0 = r.end || '', on = r.active !== false && !!r.active;
+                        const live = on && (!s0 || s0 <= nowD) && (!e0 || e0 >= nowD), sched = on && s0 && s0 > nowD, exp = e0 && e0 < nowD;
+                        const soon = live && e0 && e0 <= new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
+                        if (st === 'live' && !live) return false; if (st === 'sched' && !sched) return false; if (st === 'exp' && !exp) return false; if (st === 'soon' && !soon) return false; if (st === 'off' && on) return false;
+                    }
+                    if (a && (r.end || '9999') < a) return false;        // ad period must overlap [from, to]
+                    if (z && (r.start || '0000') > z) return false;
+                    return true;
+                }
+                function adFilterHtml() {
+                    const o = (k, l, cur) => `<option value="${k}" ${cur === k ? 'selected' : ''}>${t(l)}</option>`;
+                    return `<label class="fl"><span>${t('f_place')}</span><select data-q="ad_pl" data-v="ads"><option value="">${t('all')}</option>${['header', 'home', 'sidebar', 'popup', 'footer'].map(k => o(k, 'pl_' + k, S.ad_pl)).join('')}</select></label><label class="fl"><span>${t('th_status')}</span><select data-q="ad_st" data-v="ads"><option value="">${t('all')}</option>${o('live', 'ad_live', S.ad_st)}${o('soon', 'ad_soon', S.ad_st)}${o('sched', 'ad_sched', S.ad_st)}${o('exp', 'ad_exp', S.ad_st)}${o('off', 'ad_off', S.ad_st)}</select></label><label class="fl"><span>${t('fl_from')}</span><input type="date" data-q="ad_from" data-v="ads" value="${esc(S.ad_from || '')}"></label><label class="fl"><span>${t('fl_to')}</span><input type="date" data-q="ad_to" data-v="ads" value="${esc(S.ad_to || '')}"></label>`;
+                }
                 function gFilters(k) {
                     const m = MODS[k];
-                    return `<div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S['q_' + k] || '')}" data-q="q_${k}" data-v="${k}">${m.flt ? `<select data-q="f_${k}" data-v="${k}"><option value="">${t('all')}</option>${m.flt.o.map(o => `<option value="${o[0]}" ${S['f_' + k] === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select>` : ''}</div>`;
+                    return `<div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S['q_' + k] || '')}" data-q="q_${k}" data-v="${k}">${m.flt ? `<select data-q="f_${k}" data-v="${k}"><option value="">${t('all')}</option>${m.flt.o.map(o => `<option value="${o[0]}" ${S['f_' + k] === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select>` : ''}${k === 'ads' ? adFilterHtml() : ''}</div>`;
                 }
                 function gView(k, nohead) {
                     const m = MODS[k];
@@ -8342,7 +8884,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 function settingsView() {
                     const s = SITE(), g = s.general, sc = (n, l, on) => `<label class="swl"><span class="sw"><input type="checkbox" name="${n}" ${on ? 'checked' : ''}><i></i></span> ${t(l)}</label>`;
                     return `<h1>${t('n_settings')}</h1><p class="sub">${t('s_sub')}</p>
-<div class="set-grid"><div class="box"><h2>${t('s_ui')}</h2><label>${t('s_lang')}</label><div class="langs">${LK.map(k => `<button type="button" class="lchip ${k === LG ? 'on' : ''}" data-act="lang" data-l="${k}">${fl(k)} ${LANGS[k].name}</button>`).join('')}</div>
+<div class="set-grid"><div class="box"><h2>${t('s_ui')}</h2><label>${t('s_lang')}</label><div class="langs">${LK.map(k => `<button type="button" class="lchip ${k === LG ? 'on' : ''}" data-act="lang" data-l="${k}">${fl(k)} ${lname(k)}</button>`).join('')}</div>
 <label class="swl" style="margin-top:14px">${sw('theme', {}, THEME === 'dark')} ${t('s_theme')}</label></div>
 <form id="pwf" class="box"><h2>${t('s_pw')}</h2><label>${t('s_curpw')}<input name="cur" type="password" autocomplete="current-password" required></label><label>${t('s_newpw')}<input name="nw" type="password" autocomplete="new-password" minlength="6" required></label><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div></form></div>
 <form id="sf"><div class="set-grid">
@@ -8444,7 +8986,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     jobs.forEach(setupList);
                 }
                 ['input', 'change'].forEach(ev => document.addEventListener(ev, e => { const x = e.target; if (x.dataset && (x.dataset.q || x.dataset.rp)) { const k = pgKey(null) + (x.dataset.rp ? ':rep' : ''); if (PG[pgKey(null)]) PG[pgKey(null)].p = 1; if (PG[k]) PG[k].p = 1; } }, true));
-                const FLC = { pc: 'fl_cat', ps: 'fl_stock', pv: 'fl_vis' };
+                const FLC = { pc: 'fl_cat', ps: 'fl_stock', pv: 'fl_arch', od: 'fl_date', ost: 'fl_status', cf_subs: 'fl_subs', cf_prod: 'fl_prods', cf_img: 'fl_img', cf_sort: 'fl_sort' };
                 function enhanceFilters() {
                     document.querySelectorAll('#view .filters:not(.enh)').forEach(f => {
                         const qs = [...f.querySelectorAll('[data-q]')]; if (!qs.length) return;
@@ -8453,6 +8995,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                             const k = sel.dataset.q, cap = FLC[k] ? t(FLC[k]) : t('fl_status');
                             const l = document.createElement('label'); l.className = 'fl'; l.innerHTML = '<span>' + cap + '</span>'; sel.before(l); l.append(sel);
                         });
+                        if (['news', 'offers', 'msgs'].includes(location.hash.slice(1))) return;
                         const b = document.createElement('button'); b.type = 'button'; b.className = 'mini fclear'; b.textContent = '✕ ' + t('fl_clear');
                         b.onclick = () => { qs.forEach(x => { S[x.dataset.q] = ''; }); render(); };
                         f.append(b);
@@ -8519,8 +9062,8 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 }
 
                 /* ---------- Router ---------- */
-                const NAV = [['dash', '📊', dash], ['shipping', '🚚', shippingView], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
-                const TBLS = { shipping: () => '', orders: ordersList, products: prodList, cust: custList, cats: catList, msgs: msgList, newsl: newsList, govs: govTable, articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users') };
+                const NAV = [['dash', '📊', dash], ['shipping', '🚚', shippingView], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['docs', '📑', () => gView('docs')], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
+                const TBLS = { shipping: () => '', orders: ordersList, products: prodList, cust: custList, cats: catList, msgs: msgList, newsl: newsList, govs: govTable, docs: () => gTable('docs'), articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users') };
                 function render() {
                     const k = location.hash.slice(1), vis = NAV.filter(n => can(n[0])), cur = vis.find(n => n[0] === k) || vis[0];
                     const a = orders().filter(o => ['Pending', 'Processing'].includes(o.s)).length, unread = rd(K.msgs, []).filter(m => !m.read).length, oc = rd(K.comp, []).filter(c => c.status === 'open').length;
@@ -8543,11 +9086,144 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 /* ---------- Actions ---------- */
                 const dl = (name, blob) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); };
                 const csvOf = rows => '\ufeff' + rows.map(r => r.map(c => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(',')).join('\n');
+                /* ===== Admin add-ons: CSV import/export, centered dialogs, docs, print ===== */
+                $('#dlg').addEventListener('click', e => {            // click on the dark backdrop closes the dialog
+                    const d = e.currentTarget; if (e.target !== d) return;
+                    const r = d.getBoundingClientRect();
+                    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close();
+                });
+                function parseCSV(txt) {
+                    txt = String(txt).replace(/^\ufeff/, ''); const first = txt.split(/\r?\n/)[0] || '';
+                    const sep = (first.match(/;/g) || []).length > (first.match(/,/g) || []).length ? ';' : ',';
+                    const rows = []; let row = [], cur = '', q = false;
+                    for (let i = 0; i < txt.length; i++) {
+                        const c = txt[i];
+                        if (q) { if (c === '"') { if (txt[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; }
+                        else if (c === '"') q = true;
+                        else if (c === sep) { row.push(cur); cur = ''; }
+                        else if (c === '\n' || c === '\r') { if (c === '\r' && txt[i + 1] === '\n') i++; row.push(cur); cur = ''; rows.push(row); row = []; }
+                        else cur += c;
+                    }
+                    if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+                    return rows.filter(r => r.some(x => String(x).trim() !== '') && !String(r[0]).trim().startsWith('#'));
+                }
+                const toObjs = rows => { const h = rows[0].map(x => String(x).trim().toLowerCase()); return rows.slice(1).map(r => { const o = {}; h.forEach((k, i) => { o[k] = String(r[i] ?? '').trim(); }); return o; }); };
+                const splitL = s => String(s || '').split(/[|;،]/).map(x => x.trim()).filter(Boolean);
+                const yes = s => /^(yes|true|1|y|نعم)$/i.test(String(s || '').trim());
+                const SECRET = /^(pw|pass|password|hash|h|token)$/i;
+                const flat = list => { const keys = []; list.forEach(r => Object.keys(r).forEach(k => { if (!keys.includes(k) && !SECRET.test(k) && typeof r[k] !== 'object') keys.push(k); })); return [keys].concat(list.map(r => keys.map(k => r[k]))); };
+                const genImport = k => objs => {                    // generic importer for the MODS lists (ads, complaints …)
+                    const m = MODS[k], list = rd(m.k, []); let n = 0;
+                    objs.forEach((o, i) => {
+                        const r = { id: o.id || ('i' + Date.now().toString(36) + i), ...m.def() };
+                        m.fields.forEach(x => { if (x.ty === 'img' || x.ty === 'multi') return; const v = o[x.n.toLowerCase()]; if (v === undefined) return; r[x.n] = x.ty === 'sw' ? yes(v) : x.ty === 'num' ? (v === '' ? '' : +v) : v; });
+                        if (!m.fields.some(x => x.req && !r[x.n])) { const at = list.findIndex(y => String(y.id) === String(r.id)); if (at > -1) list[at] = { ...list[at], ...r }; else list.push(r); n++; }
+                    });
+                    wr(m.k, list); return n;
+                };
+                const IO = {
+                    products: {
+                        file: 'boda-products', head: ['id', 'name', 'cat', 'sub', 'price', 'old', 'qty', 'brand', 'condition', 'colors', 'sizes', 'in_stock', 'archived', 'img', 'desc', 'features'],
+                        rows: () => catalog().map(p => [p.id, p.name, p.cat, p.sub, p.price, p.old || '', p.qty ?? '', p.brand || '', p.condition || 'new', (p.colors || []).join('|'), (p.sizes || []).join('|'), p.stock === false ? 'no' : 'yes', p.hidden ? 'yes' : 'no', p.img || '', p.desc || '', (p.features || []).join('|')]),
+                        sample: [['', 'Sample Laptop', 'Electronics', 'Laptops', 800, 1000, 10, 'Brand', 'new', 'Black|Silver', '', 'yes', 'no', 'https://example.com/img.jpg', 'Short description', '8GB RAM|512GB SSD'], ['', 'Sample T-Shirt', 'Fashion', 'Clothing', 25, '', 50, 'Brand', 'new', 'Red|Blue', 'S|M|L|XL', 'yes', 'no', '', '', '']],
+                        help: ['# id: leave empty for a NEW product; keep the id to UPDATE an existing one', '# name, cat, sub: required (cat/sub must match the department names)', '# price/old: numbers (old = price before discount, optional)', '# colors/sizes/features: separate values with |', '# in_stock / archived: yes or no (archived = hidden from the store)'],
+                        imp: objs => {
+                            let n = 0;
+                            objs.forEach((o, i) => {
+                                if (!o.name) return;
+                                const rec = { name: o.name, cat: o.cat, sub: o.sub, price: +o.price || 0, old: +o.old > +o.price ? +o.old : 0, qty: o.qty === '' || o.qty === undefined ? null : +o.qty, brand: o.brand || '', condition: o.condition || 'new', colors: splitL(o.colors), sizes: splitL(o.sizes), stock: o.in_stock === '' || o.in_stock === undefined ? true : yes(o.in_stock), hidden: yes(o.archived), img: o.img || '', desc: o.desc || '', features: splitL(o.features) };
+                                const id = o.id || ('IMP' + Date.now().toString(36) + i);
+                                if (catalog().some(p => p.id === id)) patchProduct(id, rec); else { const a = PA(); a.added.push({ id, badge: '', ...rec }); wr(K.pa, a); }
+                                n++;
+                            });
+                            return n;
+                        }
+                    },
+                    cats: {
+                        file: 'boda-categories', head: ['name', 'icon', 'shop', 'desc', 'long', 'subs'],
+                        rows: () => CATS().map(c => [c.name, c.icon || '', c.shop || '', c.desc || '', c.long || '', (c.subs || []).join('|')]),
+                        sample: [['Electronics', '💻', 'Shop Electronics', 'Short text', 'Long text', 'Laptops|Monitors']], help: ['# subs: sub-departments separated with |', '# an existing name is updated, a new name is added'],
+                        imp: objs => { const cs = CATS().map(c => ({ ...c })); let n = 0; objs.forEach(o => { if (!o.name) return; const rec = { name: o.name, icon: o.icon || '', shop: o.shop || 'Shop ' + o.name, desc: o.desc || '', long: o.long || o.desc || '', subs: splitL(o.subs) }; const i = cs.findIndex(c => c.name === o.name); if (i > -1) cs[i] = { ...cs[i], ...rec }; else cs.push(rec); n++; }); wr(K.cats, cs); return n; }
+                    },
+                    govs: {
+                        file: 'boda-shipping', head: ['id', 'name_en', 'name_ar', 'fee', 'active', 'areas'],
+                        rows: () => GOVS().map(g => [g.id, g.en, g.n, g.fee, g.active === false ? 'no' : 'yes', (g.areas || []).map(a => a.n + (a.fee === '' || a.fee == null ? '' : ':' + a.fee)).join('|')]),
+                        sample: [['', 'Cairo', 'القاهرة', 5, 'yes', 'Nasr City|Maadi:7|Heliopolis']], help: ['# fee: delivery fee of the governorate', '# areas: separated with | ; add :fee after an area name for a special fee (Maadi:7)', '# active: yes / no'],
+                        imp: objs => {
+                            const gs = GOVS().map(g => ({ ...g, areas: (g.areas || []).map(a => ({ ...a })) })); let n = 0;
+                            objs.forEach((o, i) => {
+                                if (!o.name_en && !o.name_ar) return;
+                                const areas = splitL(o.areas).map(a => { const p = a.split(':'); return { n: p[0].trim(), fee: p[1] === undefined || p[1].trim() === '' ? '' : +p[1], active: true }; });
+                                const rec = { en: o.name_en || o.name_ar, n: o.name_ar || o.name_en, fee: +o.fee || 0, active: o.active === '' ? true : yes(o.active), areas };
+                                const at = gs.findIndex(g => (o.id && g.id === o.id) || g.en === rec.en || g.n === rec.n);
+                                if (at > -1) gs[at] = { ...gs[at], ...rec }; else gs.push({ id: o.id || 'G' + Date.now().toString(36) + i, ...rec });
+                                n++;
+                            });
+                            saveGov(gs); return n;
+                        }
+                    },
+                    ads: { file: 'boda-ads', head: () => MODS.ads.fields.filter(x => x.ty !== 'img').map(x => x.n), rows: () => rd(K.ads, []).map(r => MODS.ads.fields.filter(x => x.ty !== 'img').map(x => r[x.n])), sample: [], help: ['# place: header | home | sidebar | popup | footer ; dates: YYYY-MM-DD'], imp: genImport('ads') },
+                    comp: { file: 'boda-complaints', head: () => MODS.comp.fields.filter(x => x.ty !== 'img').map(x => x.n), rows: () => rd(K.comp, []).map(r => MODS.comp.fields.filter(x => x.ty !== 'img').map(x => r[x.n])), sample: [], help: [], imp: genImport('comp') },
+                    docs: { file: 'boda-docs', head: () => MODS.docs.fields.map(x => x.n), rows: () => rd(K.docs, []).map(r => MODS.docs.fields.map(x => r[x.n])), sample: [], help: ['# product: product id', '# doctype: manual | warranty | spec | safety | cert | other'], imp: genImport('docs') },
+                    cust: { file: 'boda-customers', exportOnly: 1, all: () => flat(rd(K.acc, [])) },
+                    users: { file: 'boda-admin-users', exportOnly: 1, all: () => flat(USERS()) }
+                };
+                IO.shipping = IO.govs;
+                const ioHead = k => typeof IO[k].head === 'function' ? IO[k].head() : IO[k].head;
+                function ioBar(k) {
+                    const c = IO[k]; return `<div class="iobar" data-iok="${k}"><button class="btn ghost" data-act="x_exp" data-k="${k}">⬇ ${t('io_exp')}</button>${c.exportOnly ? '' : `<button class="btn ghost" data-act="x_imp" data-k="${k}">⬆ ${t('io_imp')}</button><button class="btn ghost" data-act="x_tpl" data-k="${k}">📄 ${t('io_tpl')}</button>`}</div>`;
+                }
+                function enhanceIO() {
+                    const k = location.hash.slice(1) || 'dash', v = $('#view'); if (!v || !IO[k] || v.querySelector('.iobar')) return;
+                    const h = v.querySelector('.head'); if (!h) return; h.insertAdjacentHTML('afterend', ioBar(k));
+                }
+                new MutationObserver(enhanceIO).observe(document.body, { childList: true, subtree: true });
+                document.addEventListener('click', e => {
+                    const b = e.target.closest('[data-act^="x_"]'); if (!b) return; const a = b.dataset.act, k = b.dataset.k, c = IO[k];
+                    if (a === 'x_exp') { const rows = c.all ? c.all() : [ioHead(k)].concat(c.rows()); dl(c.file + '.csv', new Blob([csvOf(rows)], { type: 'text/csv' })); }
+                    else if (a === 'x_tpl') { const rows = [ioHead(k)].concat(c.sample || [], (c.help || []).map(x => [x])); dl(c.file + '-template.csv', new Blob([csvOf(rows)], { type: 'text/csv' })); }
+                    else if (a === 'x_imp') {
+                        const f = document.createElement('input'); f.type = 'file'; f.accept = '.csv,text/csv';
+                        f.onchange = () => { const file = f.files[0]; if (!file) return; const r = new FileReader(); r.onload = () => { try { const rows = parseCSV(r.result); if (rows.length < 2) throw 0; const n = c.imp(toObjs(rows)); log('log_save', 'io_imp', k); render(); toast(t('io_done') + ' ' + n); } catch (err) { toast(t('io_bad')); } }; r.readAsText(file, 'utf-8'); };
+                        f.click();
+                    }
+                    else if (a === 'x_print') { printDlg(b.dataset.id); }
+                });
+                /* ---- Print an order: type + place/copy ---- */
+                function printDlg(id) {
+                    open(`<form id="prtf" data-id="${esc(id)}"><h3>🖨️ ${t('pr_title')} — ${esc(id)}</h3><div class="g2">
+<label>${t('pr_type')}<select name="type"><option value="invoice">${t('pr_invoice')}</option><option value="label">${t('pr_label')}</option><option value="thermal">${t('pr_thermal')}</option></select></label>
+<label>${t('pr_place')}<select name="place"><option value="customer">${t('pr_customer')}</option><option value="courier">${t('pr_courier')}</option><option value="warehouse">${t('pr_warehouse')}</option><option value="accounts">${t('pr_accounts')}</option></select></label>
+<label>${t('pr_copies')}<input name="copies" type="number" min="1" max="5" value="1"></label></div>
+<div class="bar"><button class="btn">🖨️ ${t('pr_go')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`);
+                }
+                function printOrder(o, type, place, copies) {
+                    const ar = LG === 'ar', cat = catalog(), money2 = n => '$' + (Math.round((+n || 0) * 100) / 100);
+                    const det = i => { const p = cat.find(x => x.id === i.id) || {}; return [i.size && `${t('d_size')}: ${i.size}`, i.color && `${t('d_color')}: ${i.color}`, (i.brand || p.brand) && `${t('d_brand')}: ${i.brand || p.brand}`].concat(i.extras || [], i.options || []).filter(Boolean).join(' · '); };
+                    const placeName = t('pr_' + place), s = o.ship || {};
+                    const items = o.items.map(i => `<tr><td>${esc(i.name)}<br><small>${esc(i.id || '')} ${esc(det(i))}</small></td><td>${i.qty}</td><td>${money2(i.price)}</td><td>${money2(i.price * i.qty)}</td></tr>`).join('');
+                    const recip = `<div class="rc"><b>${esc(s.name)}</b><br>${esc(s.phone)}<br>${esc(s.address)}${s.city ? ' — ' + esc(s.city) : ''}</div>`;
+                    const one = type === 'label'
+                        ? `<div class="pg lab"><h2>${esc(o.id)}</h2><div class="tag">${esc(placeName)}</div>${recip.replace('class="rc"', 'class="rc big"')}<p>${t('th_pay')}: <b>${esc(o.payment)}</b> · ${t('th_total')}: <b>${money2(o.total)}</b></p><small>${when(o.created)}</small></div>`
+                        : `<div class="pg"><div class="top"><h2>Boda Store</h2><div><b>${t('o_order')} ${esc(o.id)}</b><br><small>${when(o.created)}</small><br><span class="tag">${esc(placeName)}</span></div></div>${recip}<table><thead><tr><th>${t('th_prod')}</th><th>${t('d_qty')}</th><th>${t('th_price')}</th><th>${t('th_total')}</th></tr></thead><tbody>${items}</tbody><tfoot><tr><td colspan="3">${t('o_shipfee')}</td><td>${money2(o.shipFee ?? o.shippingFee ?? 0)}</td></tr><tr><td colspan="3"><b>${t('th_total')}</b></td><td><b>${money2(o.total)}</b></td></tr></tfoot></table><p>${t('th_pay')}: ${esc(o.payment)}</p></div>`;
+                    const size = type === 'label' ? '100mm 150mm' : type === 'thermal' ? '80mm auto' : 'A4';
+                    const css = `@page{size:${size};margin:${type === 'invoice' ? '14mm' : '4mm'}}body{font-family:Arial,Tahoma,sans-serif;margin:0;font-size:${type === 'thermal' ? '11px' : '13px'};color:#000}.pg{page-break-after:always}.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}.rc{border:1px solid #000;padding:8px;margin:8px 0}.rc.big{font-size:20px;line-height:1.6;padding:14px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #999;padding:5px;text-align:start}.tag{display:inline-block;border:1px solid #000;padding:1px 8px;border-radius:4px;font-size:11px}.lab h2{font-size:30px;margin:4px 0}small{color:#444}`;
+                    const html = `<!doctype html><html dir="${ar ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>${css}</style></head><body>${Array(Math.max(1, Math.min(5, +copies || 1))).fill(one).join('')}</body></html>`;
+                    const fr = document.createElement('iframe'); fr.style.cssText = 'position:fixed;width:0;height:0;border:0;inset-inline-end:0;bottom:0'; document.body.appendChild(fr);
+                    fr.contentDocument.open(); fr.contentDocument.write(html); fr.contentDocument.close();
+                    setTimeout(() => { try { fr.contentWindow.focus(); fr.contentWindow.print(); } catch (e) { } setTimeout(() => fr.remove(), 4000); }, 350);
+                }
+                document.addEventListener('submit', e => {
+                    const f = e.target; if (f.id !== "prtf") return; e.preventDefault(); e.stopImmediatePropagation();
+                    const o = orders().find(x => x.id === f.dataset.id); if (!o) return;
+                    printOrder(o, f.elements.type.value, f.elements.place.value, f.elements.copies.value); $('#dlg').close();
+                }, true);
+
                 const ACT = {
                     close: () => $('#dlg').close(),
                     lmenu: (d, b) => { const m = b.nextElementSibling; const was = m.hidden; document.querySelectorAll('.lmenu').forEach(x => x.hidden = true); m.hidden = !was; },
                     lang: d => { LG = d.l; localStorage.setItem(K.lang, LG); applyLang(); gate(); },
-                    per: d => { S.per = d.p; localStorage.setItem('boda_dash_period', d.p); render(); },
+                    per: d => { S.per = d.p; render(); },
                     ctab: d => { S.ctab = d.k; render(); },
                     alerts: () => { const A = alertsList(); open(`<h3>🔔 ${t('alerts')}</h3>${A.length ? A.map(a => `<a class="alrow" href="#${a[0]}" data-act="close"><span>${a[1]} ${a[2]}</span><b>${a[3]}</b></a>`).join('') : `<p class="empty">${t('no_alerts')}</p>`}<div class="bar"><button class="btn ghost" data-act="close">${t('close')}</button></div>`); },
                     logout: () => { sessionStorage.removeItem('boda_token'); sessionStorage.removeItem('boda_admin'); sessionStorage.removeItem('boda_admin_user'); gate(); },
@@ -8567,8 +9243,8 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     /* orders */
                     odetail: d => {
                         const o = orders().find(x => x.id === d.id); if (!o) return;
-                        open(`<h3>${t('o_order')} ${esc(o.id)} ${pill(o.s)}</h3><div class="tw"><table><tbody>${o.items.map(i => { const parts = [].concat(i.extras || [], i.options || [], i.selectedOptions || []).filter(Boolean); return `<tr><td class="wrap"><b>${esc(i.name)}</b>${parts.length ? `<br><small>${esc(parts.join('، '))}</small>` : ''}</td><td>${money(i.price * i.qty)}</td></tr>`; }).join('')}<tr><td><b>${t('th_total')}</b></td><td></td><td><b>${money(o.total)}</b></td></tr></tbody></table></div>
-<p style="margin:14px 0"><b>حالة التوصيل:</b> ${esc(o.deliveryStatus || o.s)}${o.deliveryEta ? ' · ' + esc(o.deliveryEta) : ''}<br><b>رسوم الشحن:</b> ${money(o.shippingFee || 0)}<br><b>${t('o_ship')}:</b> ${esc(o.ship?.name)} — ${esc(o.ship?.phone)}<br>${esc(o.ship?.address)}, ${esc(o.ship?.city)}<br><b>${t('th_pay')}:</b> ${esc(o.payment)}<br><b>${t('th_date')}:</b> ${when(o.created)}</p><button class="btn ghost" data-act="close">${t('close')}</button>`);
+                        open(`<h3>${t('o_order')} ${esc(o.id)} ${pill(o.s)}</h3><div class="tw"><table><tbody>${o.items.map(i => { const parts = [].concat(i.extras || [], i.options || [], i.selectedOptions || []).filter(Boolean); const pr = catalog().find(x => x.id === i.id) || {}, dets = [i.size && `${t('d_size')}: ${i.size}`, i.color && `${t('d_color')}: ${i.color}`, (i.brand || pr.brand) && `${t('d_brand')}: ${i.brand || pr.brand}`, i.id && `${t('d_sku')}: ${i.id}`].filter(Boolean).concat(parts); return `<tr><td>${thumb(i.img || pr.img)}</td><td class="wrap"><b>${esc(i.name)}</b>${dets.length ? `<br><small>${esc(dets.join(' · '))}</small>` : ''}</td><td>×${i.qty}</td><td>${money(i.price * i.qty)}</td></tr>`; }).join('')}<tr><td colspan="3"><b>${t('th_total')}</b></td><td><b>${money(o.total)}</b></td></tr></tbody></table></div>
+<p style="margin:14px 0"><b>${t('o_delivery')}:</b> ${esc(o.deliveryStatus || o.s)}${o.deliveryEta ? ' · ' + esc(o.deliveryEta) : ''}<br><b>${t('o_shipfee')}:</b> ${money(o.shipFee ?? o.shippingFee ?? 0)}<br><b>${t('o_ship')}:</b> ${esc(o.ship?.name)} — ${esc(o.ship?.phone)}<br>${esc(o.ship?.address)}, ${esc(o.ship?.city)}<br><b>${t('th_pay')}:</b> ${esc(o.payment)}<br><b>${t('th_date')}:</b> ${when(o.created)}</p><button class="btn" data-act="x_print" data-id="${esc(o.id)}">🖨️ ${t('pr_title')}</button> <button class="btn ghost" data-act="close">${t('close')}</button>`);
                     },
                     odel: d => { if (!confirm(t('o_confirm_del'))) return; wr(K.orders, rd(K.orders, []).filter(o => o.id !== d.id)); log('log_del', 'n_orders', d.id); render(); toast(t('deleted')); },
                     csv: () => dl('boda-orders.csv', new Blob([csvOf([[t('th_order'), t('th_date'), t('th_cust'), t('r_phone'), t('r_city'), t('th_pay'), t('th_total'), t('th_status')]].concat(orders().map(o => [o.id, new Date(o.created).toISOString(), o.ship?.name, o.ship?.phone, o.ship?.city, o.payment, o.total, t('st_' + o.s)])))], { type: 'text/csv' })),

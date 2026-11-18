@@ -15,7 +15,7 @@ Appearance || المظهر || Apparence || Darstellung
 Dark mode and theme || الوضع الداكن والمظهر || Mode sombre et thème || Dunkelmodus und Design
 Dark Mode || الوضع الداكن || Mode sombre || Dunkelmodus
 Switch between light and dark appearance. || بدّل بين المظهر الفاتح والداكن. || Basculez entre l’apparence claire et sombre. || Zwischen hellem und dunklem Design wechseln.
-English, العربية, Français, Deutsch || English, العربية, Français, Deutsch || English, العربية, Français, Deutsch || English, العربية, Français, Deutsch
+English, Arabic, French, German || الإنجليزية، العربية، الفرنسية، الألمانية || Anglais, Arabe, Français, Allemand || Englisch, Arabisch, Französisch, Deutsch
 Display Language || لغة العرض || Langue d’affichage || Anzeigesprache
 Select your preferred language. || اختر لغتك المفضلة. || Choisissez votre langue préférée. || Wählen Sie Ihre bevorzugte Sprache.
 Account & Payments || الحساب والمدفوعات || Compte et paiements || Konto & Zahlungen
@@ -583,6 +583,11 @@ Hide password || إخفاء كلمة المرور || Masquer le mot de passe || 
 Toggle favorite || تبديل المفضلة || Basculer le favori || Favorit umschalten
 Alexandria, Egypt || الإسكندرية، مصر || Alexandrie, Égypte || Alexandria, Ägypten
 Daily: 10 AM – 9 PM || يوميًا: 10 ص – 9 م || Tous les jours : 10 h – 21 h || Täglich: 10 – 21 Uhr
+Checkout || إتمام الطلب || Paiement || Kasse
+Enter your shipping details and choose how to pay to complete your order. || اكتب بيانات الشحن واختار طريقة الدفع لإتمام طلبك. || Saisissez vos informations de livraison et choisissez le mode de paiement. || Geben Sie Ihre Lieferdaten ein und wählen Sie die Zahlungsart.
+Your checkout is empty || صفحة إتمام الطلب فاضية || Votre paiement est vide || Ihre Kasse ist leer
+Nothing to check out yet. Pick a product first. || مفيش منتج لإتمام الطلب. اختار منتج الأول. || Rien à commander. Choisissez d'abord un produit. || Noch nichts zu bestellen. Wählen Sie zuerst ein Produkt.
+← Back to product || ← رجوع للمنتج || ← Retour au produit || ← Zurück zum Produkt
 Jewelry || مجوهرات || Bijoux || Schmuck
 `;
 
@@ -599,6 +604,14 @@ Jewelry || مجوهرات || Bijoux || Schmuck
         { code: 'fr', label: '🇫🇷 Français' }, { code: 'de', label: '🇩🇪 Deutsch' }
     ];
     var ORDER = ['en', 'ar', 'fr', 'de'];
+    // language names follow the interface language: Arabic / Arabe / Arabisch / العربية …
+    var LNAMES = { en: { en: 'English', ar: 'Arabic', fr: 'French', de: 'German' }, ar: { en: 'الإنجليزية', ar: 'العربية', fr: 'الفرنسية', de: 'الألمانية' }, fr: { en: 'Anglais', ar: 'Arabe', fr: 'Français', de: 'Allemand' }, de: { en: 'Englisch', ar: 'Arabisch', fr: 'Französisch', de: 'Deutsch' } };
+    var FLAGS = { en: '🇬🇧', ar: '🇪🇬', fr: '🇫🇷', de: '🇩🇪' };
+    function langLabel(code, ui) { return FLAGS[code] + ' ' + (LNAMES[ui] || LNAMES.en)[code]; }
+    function paintLangNames() {
+        document.querySelectorAll('#language-dropdown button[data-lang]').forEach(function (b) { b.textContent = langLabel(b.dataset.lang, lang); });
+        var ls = document.getElementById('language-select'); if (ls) [].forEach.call(ls.options, function (o) { o.textContent = langLabel(o.value, lang); });
+    }
     var DICT = { ar: {}, fr: {}, de: {} };
     function norm(s) { return String(s).replace(/\s+/g, ' ').trim(); }
     RAW.split('\n').forEach(function (line) {
@@ -699,7 +712,8 @@ Jewelry || مجوهرات || Bijoux || Schmuck
     function doAttrs(e) {
         if (!e.getAttribute) return;
         var rec = ATTR.get(e) || {};
-        ATTRS.forEach(function (a) {
+        var list = (e.tagName === 'INPUT' && /^(submit|button|reset)$/i.test(e.type || '')) ? ATTRS.concat('value') : ATTRS;
+        list.forEach(function (a) {
             if (!e.hasAttribute(a)) return;
             var cur = e.getAttribute(a), r0 = rec[a], orig = (r0 && cur === r0.t) ? r0.o : cur, out = orig;
             var r = lang === 'en' ? null : tr(orig, lang); if (r) out = r;
@@ -751,6 +765,7 @@ Jewelry || مجوهرات || Bijoux || Schmuck
         var drop = document.getElementById('language-dropdown');
         if (drop) drop.querySelectorAll('button[data-lang]').forEach(function (b) { b.classList.toggle('active', b.dataset.lang === L); });
         var ls = document.getElementById('language-select'); if (ls) ls.value = L;
+        paintLangNames();
         if (window.BodaAuto) window.BodaAuto.ensure(L);
         document.dispatchEvent(new CustomEvent('boda:lang', { detail: L }));
     }

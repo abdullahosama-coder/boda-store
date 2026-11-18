@@ -24,6 +24,8 @@ function toast(msg) {
 }
 
 // ===== Search =====
+// Word-based, plural-insensitive match (search-suggest.js); falls back to a plain substring check
+function bsMatch(q, text) { return window.BodaSearch ? window.BodaSearch.match(q, text) : String(text).toLowerCase().indexOf(q) !== -1; }
 function searchProducts() {
     var inp = document.querySelector('input[name="search"]');
     var q = inp ? inp.value.trim() : '';
@@ -186,7 +188,7 @@ function rememberProduct(it) {
 function itemOf(a) {
     var im = a.querySelector('img');
     var p = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (x) { return x.id === a.dataset.id; }) || {};
-    return { id: a.dataset.id, name: ORIG(a.querySelector('h3')), price: +a.dataset.price, cat: a.dataset.cat || '', img: im ? im.src : '', brand: p.brand || '', condition: p.condition || 'new', colors: p.colors || [], sizes: p.sizes || [], components: p.components || [], features: p.features || [], stock: p.stock !== false }; 
+    return { id: a.dataset.id, name: ORIG(a.querySelector('h3')), price: +a.dataset.price, cat: a.dataset.cat || '', img: im ? im.src : '', brand: p.brand || '', condition: p.condition || 'new', colors: p.colors || [], sizes: p.sizes || [], components: p.components || [], features: p.features || [], stock: p.stock !== false };
 }
 function addToCart(it) {
     var live = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (p) { return p.id === it.id; });
@@ -312,7 +314,7 @@ function initFilters() {
     function match(a) {
         var p = +a.dataset.price, min = S.min === '' ? null : +S.min, max = S.max === '' ? null : +S.max;
         return (!S.cat || a.dataset.cat === S.cat) && (!S.sub || a.dataset.sub === S.sub) &&
-            (!S.q || a.textContent.toLowerCase().indexOf(S.q) !== -1 || ORIG(a).toLowerCase().indexOf(S.q) !== -1) && (min === null || p >= min) && (max === null || p <= max) &&
+            (!S.q || bsMatch(S.q, a.textContent) || bsMatch(S.q, ORIG(a))) && (min === null || p >= min) && (max === null || p <= max) &&
             (!S.stock || /available/i.test(ORIG(a))) && (!S.sale || !!a.querySelector('.sale-badge:not(.new-badge)'));
     }
     function apply() {
@@ -380,7 +382,7 @@ function initCart() {
         if (t.classList.contains('qty')) { var it = c[+t.dataset.n]; it.qty += +t.dataset.d; if (it.qty < 1) c.splice(+t.dataset.n, 1); }
         else if (t.classList.contains('rm')) c.splice(+t.dataset.n, 1);
         else if (t.id === 'clear') c = [];
-        else if (t.id === 'checkout') return startCheckout();
+        else if (t.id === 'checkout') { location.href = 'index.html?page=checkout'; return; }
         else return;
         LS.set('boda_cart', c); updateBadges(); renderCart();
     };
@@ -581,8 +583,24 @@ function renderOrders() {
     };
 }
 
-function startCheckout() {
-    var box = $id('cart-box'), cart = LS.get('boda_cart'), u = getUser(), pays = getPays(), gws = getGateways(), total = 0;
+// ===== Checkout page (separate from the cart): shipping + payment =====
+// "Buy Now" sends ONE product here through sessionStorage and never touches the cart.
+function checkoutSource() {
+    var q = new URLSearchParams(location.search), buy = null;
+    if (q.get('mode') === 'buynow') { try { buy = JSON.parse(sessionStorage.getItem('boda_buynow')); } catch (e) { } }
+    return buy && buy.length ? { items: buy, buyNow: true } : { items: LS.get('boda_cart'), buyNow: false };
+}
+function initCheckout() {
+    var box = $id('checkout-box'); if (!box) return;
+    var src = checkoutSource();
+    if (!src.items.length) {
+        box.innerHTML = '<div class="empty-state"><div class="empty-big">🧾</div><h3>Your checkout is empty</h3><p>Nothing to check out yet. Pick a product first.</p><a class="favorites-btn" href="index.html?page=products">Browse All Products</a></div>';
+        return;
+    }
+    startCheckout(src.items, src.buyNow);
+}
+function startCheckout(cart, buyNow) {
+    var box = $id('checkout-box'), u = getUser(), pays = getPays(), gws = getGateways(), total = 0;
     var ship = {}; try { ship = JSON.parse(localStorage.getItem('boda_ship')) || {}; } catch (e) { }
     var shipCfg = {}; try { shipCfg = JSON.parse(localStorage.getItem('boda_shipping_settings')) || {}; } catch (e) { }
     var deliveryFee = shipCfg.enabled === false ? 0 : Math.max(0, Number(shipCfg.defaultFee ?? 5)); var freeFrom = Math.max(0, Number(shipCfg.freeFrom ?? 500));
@@ -603,15 +621,15 @@ function startCheckout() {
 
     box.innerHTML = '<form id="checkout-form" class="checkout"><div><fieldset><legend>Shipping details</legend><div class="card-grid">' +
         '<label>Full name<input id="sh-name" required value="' + esc(ship.name || (u ? u.name : '')) + '"></label><label>Phone<input id="sh-phone" type="tel" required value="' + esc(ship.phone || '') + '"></label>' +
-        '<label>Address<input id="sh-addr" required value="' + esc(ship.address || '') + '"></label><label>City / Area<input id="sh-city" required value="' + esc(ship.city || '') + '"></label></div><p class="gw-tip">' + (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (freeFrom > 0 && subtotal >= freeFrom ? 'Free delivery applied.' : 'Delivery fee: ' + money(deliveryFee)) ) + (shipCfg.eta ? ' · Estimated: ' + esc(shipCfg.eta) : '') + '</p></fieldset>' +
+        '<label>Address<input id="sh-addr" required value="' + esc(ship.address || '') + '"></label><label>City / Area<input id="sh-city" required value="' + esc(ship.city || '') + '"></label></div><p class="gw-tip">' + (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (freeFrom > 0 && subtotal >= freeFrom ? 'Free delivery applied.' : 'Delivery fee: ' + money(deliveryFee))) + (shipCfg.eta ? ' · Estimated: ' + esc(shipCfg.eta) : '') + '</p></fieldset>' +
         '<fieldset><legend>Payment method</legend>' + payHtml + '<div id="new-card" hidden>' + cardFields('nc') + '<label class="chk"><input type="checkbox" id="nc-save"> Save this card</label></div>' +
         '<p class="gw-tip"><a href="#payment">Manage payment methods &amp; gateways →</a></p></fieldset><p class="form-error"></p></div>' +
         '<aside class="co-sum"><h3>Order summary</h3>' + lines + '<div class="co-total"><span>Total</span><strong>' + money(total) + '</strong></div>' +
-        '<button type="submit" class="co-place">Place order</button><button type="button" id="co-back" class="secondary">← Back to cart</button></aside></form>';
+        '<button type="submit" class="co-place">Place order</button><button type="button" id="co-back" class="secondary">' + (buyNow ? '← Back to product' : '← Back to cart') + '</button></aside></form>';
     bindCard('nc');
     var f = $id('checkout-form');
     f.addEventListener('change', function () { $id('new-card').hidden = f.pay.value !== 'new'; });
-    $id('co-back').onclick = function () { renderCart(); };
+    $id('co-back').onclick = function () { if (buyNow && history.length > 1) history.back(); else location.href = buyNow ? 'index.html?page=products' : 'index.html?page=cart'; };
     f.onsubmit = function (e) {
         e.preventDefault();
         var err = f.querySelector('.form-error'), val = f.pay.value, label = 'Cash on Delivery';
@@ -629,7 +647,7 @@ function startCheckout() {
         var s = { name: $id('sh-name').value.trim(), phone: $id('sh-phone').value.trim(), address: $id('sh-addr').value.trim(), city: $id('sh-city').value.trim() };
         localStorage.setItem('boda_ship', JSON.stringify(s));
         var o = { id: 'BD-' + String(Date.now()).slice(-6), user: u ? u.email : 'guest', created: Date.now(), status: 'Pending', cancelled: false, items: cart, subtotal: subtotal, shippingFee: total - subtotal, deliveryStatus: 'Pending', deliveryEta: shipCfg.eta || '', total: total, payment: label, ship: s };
-        var os = getOrders(); os.unshift(o); LS.set('boda_orders', os); LS.set('boda_cart', []); updateBadges();
+        var os = getOrders(); os.unshift(o); LS.set('boda_orders', os); if (buyNow) { try { sessionStorage.removeItem('boda_buynow'); } catch (e) { } } else LS.set('boda_cart', []); updateBadges();
         notify('Order ' + o.id + ' placed (' + money(total) + ').', 'index.html?page=orders');
         // Go to the dedicated confirmation page (edit quantities / delete items / change shipping there, not in the cart)
         location.href = 'index.html?page=order-confirm&id=' + encodeURIComponent(o.id) + '&placed=1';
@@ -767,8 +785,12 @@ function initAuth() {
             if (pw.value !== pw2.value) { err.textContent = 'Passwords do not match.'; return; }
             var accs = getAccounts(); if (accs[id]) { err.textContent = 'Account already exists.'; return; }
             hashPw(pw.value).then(function (h) {
-                accs[id] = { name: su.name.value.trim(), login: id, hash: h };
-                localStorage.setItem('boda_accounts', JSON.stringify(accs));
+                accs[id] = {
+                    name: su.name.value.trim(),
+                    login: id,
+                    hash: h,
+                    createdAt: Date.now()
+                }; localStorage.setItem('boda_accounts', JSON.stringify(accs));
                 localStorage.setItem('boda_user', JSON.stringify({ name: accs[id].name, email: id }));
                 sessionStorage.removeItem('boda_add');
                 toast('Account created!');
@@ -1161,6 +1183,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (document.body.classList.contains('products')) initFilters();
     initCards();
     if ($id('cart-box')) initCart();
+    if ($id('checkout-box')) initCheckout();
     if ($id('fav-box')) renderFavs();
     if ($id('orders-box')) renderOrders();
     if ($id('reviews-box')) renderReviews();
