@@ -8923,9 +8923,9 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
 
 
                 /* ---------- Backend (FastAPI) sync: products + categories ---------- */
-                var API_BASE = (localStorage.getItem('boda_api') || window.BODA_API_BASE || 'https://boda-store-api-abdullahosama.onrender.com').replace(/\/$/, '');
+                var API_BASE = ''; // Frontend-only mode: no backend connection.
                 var SRV = { p: {}, c: {} }, syncChain = Promise.resolve();
-                function apiOn() { return !!sessionStorage.getItem('boda_token'); }
+                function apiOn() { return false; }
                 async function api(path, opt) {
                     opt = opt || {}; const h = {}, tk = sessionStorage.getItem('boda_token'); let body = opt.body;
                     if (tk) h.Authorization = 'Bearer ' + tk;
@@ -8952,10 +8952,20 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     localStorage.setItem(K.cats, JSON.stringify(C));
                 }
                 async function apiLogin(u, p) {
-                    const d = await api('/api/auth/login', { method: 'POST', json: { username: u, password: p } });
-                    sessionStorage.setItem('boda_token', d.token);
-                    await loadFromApi();
-                    sessionStorage.setItem('boda_admin', '1'); sessionStorage.setItem('boda_admin_user', d.username); log('log_login'); gate();
+                    const username = String(u || '').trim();
+                    if (!username || String(p || '').length < 8) throw new Error('login_err');
+                    const bytes = new TextEncoder().encode(username + '\\0' + p);
+                    const digest = await crypto.subtle.digest('SHA-256', bytes);
+                    const hash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+                    const key = 'boda_admin_local_auth';
+                    let saved = null;
+                    try { saved = JSON.parse(localStorage.getItem(key) || 'null'); } catch (_) {}
+                    if (!saved) localStorage.setItem(key, JSON.stringify({ username, hash }));
+                    else if (saved.username !== username || saved.hash !== hash) throw new Error('login_err');
+                    sessionStorage.removeItem('boda_token');
+                    sessionStorage.setItem('boda_admin', '1');
+                    sessionStorage.setItem('boda_admin_user', username);
+                    log('log_login'); gate();
                 }
                 async function syncAll() {
                     const cm = {}; CATS().forEach(c => { cm[c.name] = normC(c); });
@@ -8995,7 +9005,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 function applyLang() { const d = document.documentElement; d.lang = LG; d.dir = LANGS[LG].dir; d.dataset.theme = THEME; document.title = t('title'); if (window.BodaAuto) { try { BodaAuto.watch(CATS().flatMap(c => [c.name].concat(c.subs))); } catch (e) { } BodaAuto.ensure(LG); } }
                 document.addEventListener('boda:autotr', () => { const dl = document.getElementById('dlg'); if (!(dl && dl.open)) render(); });
                 function drawLogin() {
-                    $('#login').innerHTML = `<div class="ltools">${tools()}</div><form id="lf"><div class="lico">🛒</div><h1>Boda Store</h1><p class="sub">${t('login_t')}</p><label>${t('user')}<input name="u" autocomplete="username" required></label><label>${t('pass')}<input name="p" type="password" autocomplete="current-password" required></label><p class="err" id="lerr"></p><button class="btn">${t('login')}</button></form>`;
+                    $('#login').innerHTML = `<div class="ltools">${tools()}</div><form id="lf"><div class="lico">🛒</div><h1>Boda Store</h1><p class="sub">${t('login_t')}</p><p class="sub">وضع الواجهة فقط: المنتجات والطلبات والتعديلات تُحفظ على هذا الجهاز فقط.</p><label>${t('user')}<input name="u" autocomplete="username" required></label><label>${t('pass')}<input name="p" type="password" autocomplete="current-password" required></label><p class="err" id="lerr"></p><button class="btn">${t('login')}</button></form>`;
                 }
                 function gate() { const ok = sessionStorage.getItem('boda_admin') === '1'; $('#login').hidden = ok; $('#app').hidden = !ok; if (ok) render(); else drawLogin(); }
                 addEventListener('hashchange', () => { if (!$('#app').hidden) render(); });
