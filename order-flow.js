@@ -275,6 +275,10 @@
             stock: cur.stock !== false
         };
         var m = lsGet('boda_meta', {}); m[cur.id] = { name: cur.name, img: cur.img, price: cur.price, cat: cur.cat }; lsSet('boda_meta', m);
+        /* Close the product panel before navigating so browser Back restores
+           the storefront without leaving the panel layered over the page. */
+        if (backdrop) { backdrop.remove(); backdrop = null; }
+        if (panel) { panel.remove(); panel = null; }
         /* → separate checkout page (shipping + payment). The cart is NOT touched. */
         try { sessionStorage.setItem('boda_buynow', JSON.stringify([payload])); } catch (e) { }
         location.href = 'index.html?page=checkout&mode=buynow';
