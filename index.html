@@ -8297,7 +8297,8 @@ restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide.
                 const USERS = () => rd(K.users, []);
                 const ROLES = { super: '*', manager: ['dash', 'shipping', 'orders', 'products', 'cats', 'docs', 'pages', 'cust', 'govs', 'news', 'offers', 'ads', 'comp', 'reports', 'notifs', 'msgs', 'hero', 'newsl', 'coupons', 'logs', 'notiflog', 'keywords', 'seo', 'engines', 'social'], support: ['dash', 'orders', 'cust', 'comp', 'msgs', 'notifs', 'notiflog', 'logs', 'reports'] };
                 const me = () => sessionStorage.getItem('boda_admin_user') || ADMIN.user;
-                const myRole = () => { if (me() === ADMIN.user) return 'super'; const u = USERS().find(x => x.u === me()); return u ? u.role : 'support'; };
+                // Match the built-in administrator case-insensitively; API usernames may differ in letter case.
+                const myRole = () => { if (me().toLowerCase() === ADMIN.user.toLowerCase()) return 'super'; const u = USERS().find(x => x.u === me()); return u ? u.role : 'support'; };
                 const can = k => { const r = ROLES[myRole()]; return r === '*' || r.includes(k) || k === 'settings'; };
                 const hash = s => { s = 'boda:' + s; let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0, c; i < s.length; i++) { c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
                 function tryLogin(u, p) {
