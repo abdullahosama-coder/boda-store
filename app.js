@@ -1,3 +1,6 @@
+Failed to create stream fd: Operation not permitted
+Failed to create stream fd: Operation not permitted
+Failed to create stream fd: Operation not permitted
 // ===== Boda Store - app.js (Unified Store Script) =====
 
 function el(tag, cls, text) {
@@ -1218,7 +1221,7 @@ document.addEventListener('error', function (e) {
 
 // ===== Backend Products Connection =====
 async function loadBackendCatalog() {
-    var API_BASE = (localStorage.getItem('boda_api') || 'http://127.0.0.1:8000').replace(/\/$/, '');
+    var API_BASE = (localStorage.getItem('boda_api') || window.BODA_API_BASE || 'https://boda-store-api-abdullahosama.onrender.com').replace(/\/$/, '');
     try {
         // The page must never wait on an unreachable backend (every button stays dead until the request ends),
         // so the request gets a short timeout and the store starts with the local catalog if it is slow / offline.

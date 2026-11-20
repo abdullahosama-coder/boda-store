@@ -8923,7 +8923,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
 
 
                 /* ---------- Backend (FastAPI) sync: products + categories ---------- */
-                var API_BASE = (localStorage.getItem('boda_api') || 'http://127.0.0.1:8000').replace(/\/$/, '');
+                var API_BASE = (localStorage.getItem('boda_api') || window.BODA_API_BASE || 'https://boda-store-api-abdullahosama.onrender.com').replace(/\/$/, '');
                 var SRV = { p: {}, c: {} }, syncChain = Promise.resolve();
                 function apiOn() { return !!sessionStorage.getItem('boda_token'); }
                 async function api(path, opt) {

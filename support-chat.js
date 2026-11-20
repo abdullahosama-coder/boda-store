@@ -1,3 +1,6 @@
+Failed to create stream fd: Operation not permitted
+Failed to create stream fd: Operation not permitted
+Failed to create stream fd: Operation not permitted
 /* ============================================================
    Boda Store — support-chat.js
    Floating "Technical support" chat on every store page.
@@ -150,7 +153,7 @@
         try { if (typeof window.recordStoreEvent === 'function') window.recordStoreEvent('support_chat', 'Support chat'); } catch (e) { }
         /* Also deliver to the FastAPI backend when it is configured:  localStorage.setItem('boda_api','https://your-api.example.com') */
         try {
-            var api = (localStorage.getItem('boda_api') || '').replace(/\/$/, '');
+            var api = (localStorage.getItem('boda_api') || window.BODA_API_BASE || 'https://boda-store-api-abdullahosama.onrender.com').replace(/\/$/, '');
             if (api && window.fetch) fetch(api + '/api/messages', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: msgs[0].name, email: msgs[0].email, phone: msgs[0].phone, subject: 'Support chat', message: msgs[0].message }) }).catch(function () { });
         } catch (e) { }
         st.awaitContact = false; st.pending = ''; st.unknown = 0;
