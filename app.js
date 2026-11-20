@@ -1216,44 +1216,10 @@ document.addEventListener('error', function (e) {
     }
 }, true);
 
-// ===== Backend Products Connection =====
+// ===== Frontend-only catalog =====
 async function loadBackendCatalog() {
-    var API_BASE = (localStorage.getItem('boda_api') || window.BODA_API_BASE || 'https://boda-store-api-abdullahosama.onrender.com').replace(/\/$/, '');
-    try {
-        // The page must never wait on an unreachable backend (every button stays dead until the request ends),
-        // so the request gets a short timeout and the store starts with the local catalog if it is slow / offline.
-        var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
-        var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 1500);
-        var response = await Promise.race([
-            fetch(API_BASE + '/api/products?page=1&limit=200', { cache: 'no-store', signal: ctl ? ctl.signal : undefined }),
-            new Promise(function (_, rej) { setTimeout(function () { rej(new Error('timeout')); }, 1600); })
-        ]);
-        clearTimeout(timer);
-        if (!response.ok) throw new Error('API status: ' + response.status);
-        var data = await response.json();
-        if (Array.isArray(data.items)) {
-            var products = data.items, pages = Number(data.pages) || 1;
-            for (var page = 2; page <= pages; page++) {
-                var next = await fetch(API_BASE + '/api/products?page=' + page + '&limit=200', { cache: 'no-store', signal: ctl ? ctl.signal : undefined });
-                if (!next.ok) break;
-                var more = await next.json(); if (Array.isArray(more.items)) products = products.concat(more.items);
-            }
-            window.BODA_PRODUCTS = products;
-            window.BODA_BACKEND_CATALOG = true;
-            console.log('Boda Store: Products loaded from backend:', products.length);
-        }
-        var catsResponse = await fetch(API_BASE + '/api/categories', { cache: 'no-store', signal: ctl ? ctl.signal : undefined });
-        if (catsResponse.ok) {
-            var categories = await catsResponse.json();
-            if (Array.isArray(categories)) {
-                CATEGORIES = categories.slice(0, 20).map(function (c) { return { name: c.name, icon: c.icon || '', img: c.img || '', shop: c.shop || '', desc: c.desc || '', long: c.long || c.desc || '', subs: Array.isArray(c.subs) ? c.subs : [] }; });
-                try { localStorage.setItem('boda_categories', JSON.stringify(CATEGORIES)); } catch (e) { }
-                if (window.BodaAuto) { window.BodaAuto.watch(CATEGORIES.reduce(function (a, c) { return a.concat([c.name, c.desc, c.long], c.subs); }, [])); window.BodaAuto.ensure(localStorage.getItem('boda_language') || 'en'); }
-            }
-        }
-    } catch (error) {
-        console.warn('Backend unavailable. Using local products.', error);
-    }
+    // Product and category changes stay in this browser's localStorage.
+    window.BODA_BACKEND_CATALOG = false;
 }
 
 // ===== Boot =====
