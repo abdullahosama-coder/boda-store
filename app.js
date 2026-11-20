@@ -22,6 +22,13 @@ function toast(msg) {
     document.body.appendChild(t);
     setTimeout(function () { t.remove(); }, 1800);
 }
+function recordStoreEvent(action, details) {
+    try {
+        var rows = JSON.parse(localStorage.getItem('boda_admin_log')) || [], u = getUser();
+        rows.unshift({ t: Date.now(), u: u ? u.email : 'visitor', k: 'store_' + action, a: 'store', n: String(details || '') });
+        localStorage.setItem('boda_admin_log', JSON.stringify(rows.slice(0, 200)));
+    } catch (e) { }
+}
 
 // ===== Search =====
 // Word-based, plural-insensitive match (search-suggest.js); falls back to a plain substring check
@@ -29,7 +36,7 @@ function bsMatch(q, text) { return window.BodaSearch ? window.BodaSearch.match(q
 function searchProducts() {
     var inp = document.querySelector('input[name="search"]');
     var q = inp ? inp.value.trim() : '';
-    if (q) location.href = 'index.html?page=products&q=' + encodeURIComponent(q);
+    if (q) { recordStoreEvent('search', q); location.href = 'index.html?page=products&q=' + encodeURIComponent(q); }
 }
 
 // ===== Dark Mode (Controlled from Settings only) =====
@@ -70,6 +77,9 @@ function openSettingsPanel(boxId) {
 function initSettingsMenu() {
     var btn = $id('settings-menu-btn'), drop = $id('settings-dropdown');
     if (!btn || !drop) return;
+    // Language remains available from the dedicated globe button, not inside Settings.
+    var languageSection = drop.querySelector('.sl-item #language-select');
+    if (languageSection) languageSection.closest('.sl-item').remove();
     document.addEventListener('click', function (e) {
         var a = e.target.closest && e.target.closest('a[href="#payment"]');
         if (a) { e.preventDefault(); openSettingsPanel('pay-box'); }
@@ -188,14 +198,22 @@ function rememberProduct(it) {
 function itemOf(a) {
     var im = a.querySelector('img');
     var p = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (x) { return x.id === a.dataset.id; }) || {};
-    return { id: a.dataset.id, name: ORIG(a.querySelector('h3')), price: +a.dataset.price, cat: a.dataset.cat || '', img: im ? im.src : '', brand: p.brand || '', condition: p.condition || 'new', colors: p.colors || [], sizes: p.sizes || [], components: p.components || [], features: p.features || [], stock: p.stock !== false };
+    return { id: a.dataset.id, name: ORIG(a.querySelector('h3')), price: +a.dataset.price, cat: a.dataset.cat || '', img: im ? im.src : '', brand: p.brand || '', condition: p.condition || 'new', colors: p.colors || [], sizes: p.sizes || [], components: p.components || [], features: p.features || [], stock: p.stock !== false }; 
 }
 function addToCart(it) {
     var live = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (p) { return p.id === it.id; });
     if ((live && live.stock === false) || it.stock === false) { toast('هذا المنتج غير متوفر حاليًا'); return; }
     var c = LS.get('boda_cart'), f = c.find(function (x) { return x.id === it.id; });
     if (f) f.qty++; else { it.qty = 1; c.push(it); }
-    LS.set('boda_cart', c); updateBadges(); toast(it.name + ' added to cart');
+    LS.set('boda_cart', c); updateBadges(); syncCartActions(); recordStoreEvent('cart_add', it.id); toast(it.name + ' added to cart');
+}
+function syncCartActions() {
+    var ids = LS.get('boda_cart').map(function (x) { return x.id; });
+    document.querySelectorAll('article[data-id] .add-cart').forEach(function (b) {
+        var a = b.closest('article[data-id]'), active = !!(a && ids.indexOf(a.dataset.id) > -1);
+        b.classList.toggle('in-cart', active); b.setAttribute('aria-pressed', active ? 'true' : 'false');
+        b.textContent = active ? T('Remove from Cart') : T('Add to Cart');
+    });
 }
 function buyNow(it) {
     var live = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (p) { return p.id === it.id; });
@@ -208,7 +226,7 @@ function toggleFav(it) {
     var f = LS.get('boda_favs'), i = f.findIndex(function (x) { return x.id === it.id; });
     if (i > -1) { f.splice(i, 1); toast('Removed from favorites'); }
     else { f.push(it); toast('Added to favorites'); }
-    LS.set('boda_favs', f); updateBadges(); return i === -1;
+    LS.set('boda_favs', f); updateBadges(); recordStoreEvent(i === -1 ? 'favorite_add' : 'favorite_remove', it.id); return i === -1;
 }
 
 function initProductCard(a) {
@@ -216,7 +234,11 @@ function initProductCard(a) {
     var item = function () { return itemOf(a); };
     rememberProduct(item());
     a.querySelector('.buy-btn').onclick = function () { buyNow(item()); };
-    a.querySelector('.add-cart').onclick = function () { addToCart(item()); };
+    a.querySelector('.add-cart').onclick = function () {
+        var it = item(), c = LS.get('boda_cart'), i = c.findIndex(function (x) { return x.id === it.id; });
+        if (i > -1) { c.splice(i, 1); LS.set('boda_cart', c); updateBadges(); syncCartActions(); recordStoreEvent('cart_remove', it.id); toast(it.name + ' removed from cart'); }
+        else addToCart(it);
+    };
     var fav = a.querySelector('.fav-action');
     function paintFav() {
         var on = LS.get('boda_favs').some(function (x) { return x.id === a.dataset.id; });
@@ -224,6 +246,7 @@ function initProductCard(a) {
     }
     fav.onclick = function () { toggleFav(item()); paintFav(); };
     paintFav();
+    syncCartActions();
 
     var stars = a.querySelectorAll('.star'), txt = a.querySelector('.rating-text'), box = a.querySelector('.rating');
     if (!box) return;
@@ -278,15 +301,13 @@ function initFilters() {
     var grid = document.querySelector('.product-grid'); if (!grid) return;
     var secs = [].slice.call(grid.children); secs.forEach(function (s, i) { s.dataset.i = i; });
     var P = new URLSearchParams(location.search);
-    var S = { cat: P.get('cat') || '', sub: P.get('sub') || '', q: (P.get('q') || '').toLowerCase(), min: '', max: '', stock: false, sale: P.get('sale') === '1', sort: '' };
+    var S = { cat: P.get('cat') || '', sub: P.get('sub') || '', q: (P.get('q') || '').toLowerCase(), stock: false, sale: P.get('sale') === '1' };
     var art = function (s) { return s.querySelector('article'); };
     var panel = el('div', 'filter-panel');
     panel.innerHTML =
-        '<div class="fp-top"><input id="f-q" type="search" placeholder="Search in products..." aria-label="Search in products">' +
-        '<label class="fp-sort">Sort by <select id="f-sort"><option value="">Featured</option><option value="asc">Price: low to high</option><option value="desc">Price: high to low</option><option value="name">Name: A to Z</option></select></label></div>' +
+        '<div class="fp-top"><input id="f-q" type="search" placeholder="Search in products..." aria-label="Search in products"></div>' +
         '<div class="fp-label">Categories</div><div class="chips" id="f-cats"></div><div class="chips subs" id="f-subs"></div>' +
-        '<div class="fp-row"><div class="fp-price"><span>Price ($)</span><input id="f-min" type="number" min="0" placeholder="Min"><span>–</span><input id="f-max" type="number" min="0" placeholder="Max"></div>' +
-        '<label class="chk"><input id="f-stock" type="checkbox"> In stock only</label><label class="chk"><input id="f-sale" type="checkbox"> On sale</label></div>' +
+        '<div class="fp-row"><label class="chk"><input id="f-stock" type="checkbox"> In stock only</label><label class="chk"><input id="f-sale" type="checkbox"> On sale</label></div>' +
         '<div class="fp-foot"><span id="f-count"></span><button type="button" id="f-reset">Clear all filters</button></div>';
     grid.before(panel);
     var none = el('div', 'no-results'); grid.before(none);
@@ -312,21 +333,13 @@ function initFilters() {
         s.style.display = cur ? '' : 'none';
     }
     function match(a) {
-        var p = +a.dataset.price, min = S.min === '' ? null : +S.min, max = S.max === '' ? null : +S.max;
         return (!S.cat || a.dataset.cat === S.cat) && (!S.sub || a.dataset.sub === S.sub) &&
-            (!S.q || bsMatch(S.q, a.textContent) || bsMatch(S.q, ORIG(a))) && (min === null || p >= min) && (max === null || p <= max) &&
+            (!S.q || bsMatch(S.q, a.textContent) || bsMatch(S.q, ORIG(a)) || (window.BodaSearch && BodaSearch.matchProduct(S.q, a.dataset.id, a.dataset.cat, a.textContent))) &&
             (!S.stock || /available/i.test(ORIG(a))) && (!S.sale || !!a.querySelector('.sale-badge:not(.new-badge)'));
     }
     function apply() {
         var shown = 0;
         secs.forEach(function (s) { var ok = match(art(s)); s.style.display = ok ? '' : 'none'; if (ok) shown++; });
-        secs.slice().sort(function (x, y) {
-            var a = art(x), b = art(y);
-            if (S.sort === 'asc') return a.dataset.price - b.dataset.price;
-            if (S.sort === 'desc') return b.dataset.price - a.dataset.price;
-            if (S.sort === 'name') return a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent);
-            return x.dataset.i - y.dataset.i;
-        }).forEach(function (s) { grid.appendChild(s); });
         drawChips();
         $id('f-count').textContent = 'Showing ' + shown + ' of ' + secs.length + ' products';
         none.className = 'no-results' + (shown ? '' : ' show');
@@ -342,14 +355,11 @@ function initFilters() {
     $id('f-q').value = S.q;
     $id('f-sale').checked = S.sale;
     $id('f-q').oninput = function () { S.q = this.value.trim().toLowerCase(); apply(); };
-    $id('f-sort').onchange = function () { S.sort = this.value; apply(); };
-    $id('f-min').oninput = function () { S.min = this.value; apply(); };
-    $id('f-max').oninput = function () { S.max = this.value; apply(); };
     $id('f-stock').onchange = function () { S.stock = this.checked; apply(); };
     $id('f-sale').onchange = function () { S.sale = this.checked; apply(); };
     $id('f-reset').onclick = function () {
-        S.cat = S.sub = S.q = S.min = S.max = S.sort = ''; S.stock = S.sale = false;
-        ['f-q', 'f-min', 'f-max', 'f-sort'].forEach(function (id) { $id(id).value = ''; });
+        S.cat = S.sub = S.q = ''; S.stock = S.sale = false;
+        $id('f-q').value = '';
         $id('f-stock').checked = $id('f-sale').checked = false; apply();
     };
     apply();
@@ -368,20 +378,22 @@ function renderCart() {
         var thumb = liveImg(i.id, i.img) ? '<img src="' + esc(liveImg(i.id, i.img)) + '" alt="' + esc(i.name) + '" referrerpolicy="no-referrer">' : '<div class="cart-thumb">' + esc(i.name.charAt(0)) + '</div>';
         return '<tr><td><div class="cart-item-cell">' + thumb + '<div><strong>' + esc(i.name) + '</strong>' + (i.cat ? '<small>' + esc(i.cat) + '</small>' : '') + '</div></div></td><td>$' + i.price + '</td><td><button class="qty" data-n="' + n + '" data-d="-1">−</button> ' + i.qty + ' <button class="qty" data-n="' + n + '" data-d="1">+</button></td><td>$' + s + '</td><td><button class="rm" data-n="' + n + '">Remove</button></td></tr>';
     }).join('');
-    var free = total >= 500;
-    var note = '<div class="cart-shipping-note' + (free ? ' free' : '') + '">' + (free ? '✅ You qualify for Free Delivery on this order!' : '🚚 Add $' + (500 - total) + ' more for Free Delivery.') + '</div>';
+    var cfgS = {}; try { cfgS = JSON.parse(localStorage.getItem('boda_shipping_settings')) || {}; } catch (e) { }
+    var freeAt = Math.max(0, Number(cfgS.freeFrom != null ? cfgS.freeFrom : 500)) || 500;
+    var free = total >= freeAt;
+    var note = '<div class="cart-shipping-note' + (free ? ' free' : '') + '">' + (free ? '✅ You qualify for Free Delivery on this order!' : '🚚 Add $' + Math.ceil(freeAt - total) + ' more for Free Delivery.') + '</div>';
     box.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead><tbody>' + rows +
         '</tbody><tfoot><tr><td colspan="3">Total</td><td colspan="2">$' + total + '</td></tr></tfoot></table></div>' + note +
-        '<div class="cart-actions"><button id="checkout" type="button">Proceed to Checkout</button><a href="index.html?page=products" class="cart-continue">Continue Shopping</a><button id="clear" type="button" class="secondary">Clear cart</button></div>';
+        '<div class="cart-actions"><button id="checkout" type="button">Proceed to Checkout</button><a href="index.html?page=products" class="cart-continue">Continue Shopping</a><button id="clear" type="button" class="cart-cancel">Cancel Cart</button></div>';
 }
 
 function initCart() {
     var box = $id('cart-box'); renderCart();
     box.onclick = function (e) {
-        var t = e.target, c = LS.get('boda_cart');
-        if (t.classList.contains('qty')) { var it = c[+t.dataset.n]; it.qty += +t.dataset.d; if (it.qty < 1) c.splice(+t.dataset.n, 1); }
-        else if (t.classList.contains('rm')) c.splice(+t.dataset.n, 1);
-        else if (t.id === 'clear') c = [];
+        var t = e.target.closest ? (e.target.closest('button,a') || e.target) : e.target, c = LS.get('boda_cart');
+        if (t.classList.contains('qty')) { var it = c[+t.dataset.n]; if (!it) return; it.qty += +t.dataset.d; if (it.qty < 1) c.splice(+t.dataset.n, 1); recordStoreEvent('cart_update', it.id); }
+        else if (t.classList.contains('rm')) { var removed = c[+t.dataset.n]; if (removed) recordStoreEvent('cart_remove', removed.id); c.splice(+t.dataset.n, 1); }
+        else if (t.id === 'clear') { if (!confirm(T('Cancel the cart and remove all items?'))) return; c = []; recordStoreEvent('cart_clear', ''); toast(T('Cart cancelled')); }
         else if (t.id === 'checkout') { location.href = 'index.html?page=checkout'; return; }
         else return;
         LS.set('boda_cart', c); updateBadges(); renderCart();
@@ -503,12 +515,13 @@ function renderPays() {
         addCard(r.card); toast('Card saved'); renderPays();
     };
     box.onclick = function (e) {
-        var t = e.target, ps = getPays(), allGw = getGateways();
+        var t = e.target.closest ? (e.target.closest('button,a') || e.target) : e.target, ps = getPays(), allGw = getGateways();
         if (t.classList.contains('pay-del')) { ps = ps.filter(function (p) { return p.id !== t.dataset.id; }); if (ps.length && !ps.some(function (p) { return p.def; })) ps[0].def = true; LS.set('boda_pays', ps); renderPays(); }
         else if (t.classList.contains('pay-def')) { ps.forEach(function (p) { p.def = p.id === t.dataset.id; }); LS.set('boda_pays', ps); renderPays(); }
         else if (t.classList.contains('gw-connect')) {
             var meta = GATEWAYS.filter(function (x) { return x.id === t.dataset.gw; })[0];
-            if (meta.field) { gwEdit = meta.id; renderPays(); }
+            if (!meta) return;
+            if (meta.field) { gwEdit = meta.id; renderPays(); var inp = box.querySelector('.gw-form input'); if (inp) inp.focus(); }
             else { allGw[meta.id] = { enabled: true, account: '' }; saveGateways(allGw); notify(meta.name + ' enabled for checkout.', '#payment'); toast(meta.name + ' enabled'); renderPays(); }
         }
         else if (t.classList.contains('gw-toggle')) {
@@ -621,7 +634,7 @@ function startCheckout(cart, buyNow) {
 
     box.innerHTML = '<form id="checkout-form" class="checkout"><div><fieldset><legend>Shipping details</legend><div class="card-grid">' +
         '<label>Full name<input id="sh-name" required value="' + esc(ship.name || (u ? u.name : '')) + '"></label><label>Phone<input id="sh-phone" type="tel" required value="' + esc(ship.phone || '') + '"></label>' +
-        '<label>Address<input id="sh-addr" required value="' + esc(ship.address || '') + '"></label><label>City / Area<input id="sh-city" required value="' + esc(ship.city || '') + '"></label></div><p class="gw-tip">' + (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (freeFrom > 0 && subtotal >= freeFrom ? 'Free delivery applied.' : 'Delivery fee: ' + money(deliveryFee))) + (shipCfg.eta ? ' · Estimated: ' + esc(shipCfg.eta) : '') + '</p></fieldset>' +
+        '<label>Address<input id="sh-addr" required value="' + esc(ship.address || '') + '"></label><label>City / Area<input id="sh-city" required value="' + esc(ship.city || '') + '"></label></div><p class="gw-tip">' + (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (freeFrom > 0 && subtotal >= freeFrom ? 'Free delivery applied.' : 'Delivery fee: ' + money(deliveryFee)) ) + (shipCfg.eta ? ' · Estimated: ' + esc(shipCfg.eta) : '') + '</p></fieldset>' +
         '<fieldset><legend>Payment method</legend>' + payHtml + '<div id="new-card" hidden>' + cardFields('nc') + '<label class="chk"><input type="checkbox" id="nc-save"> Save this card</label></div>' +
         '<p class="gw-tip"><a href="#payment">Manage payment methods &amp; gateways →</a></p></fieldset><p class="form-error"></p></div>' +
         '<aside class="co-sum"><h3>Order summary</h3>' + lines + '<div class="co-total"><span>Total</span><strong>' + money(total) + '</strong></div>' +
@@ -647,7 +660,7 @@ function startCheckout(cart, buyNow) {
         var s = { name: $id('sh-name').value.trim(), phone: $id('sh-phone').value.trim(), address: $id('sh-addr').value.trim(), city: $id('sh-city').value.trim() };
         localStorage.setItem('boda_ship', JSON.stringify(s));
         var o = { id: 'BD-' + String(Date.now()).slice(-6), user: u ? u.email : 'guest', created: Date.now(), status: 'Pending', cancelled: false, items: cart, subtotal: subtotal, shippingFee: total - subtotal, deliveryStatus: 'Pending', deliveryEta: shipCfg.eta || '', total: total, payment: label, ship: s };
-        var os = getOrders(); os.unshift(o); LS.set('boda_orders', os); if (buyNow) { try { sessionStorage.removeItem('boda_buynow'); } catch (e) { } } else LS.set('boda_cart', []); updateBadges();
+        var os = getOrders(); os.unshift(o); LS.set('boda_orders', os); if (buyNow) { try { sessionStorage.removeItem('boda_buynow'); } catch (e) { } } else LS.set('boda_cart', []); updateBadges(); recordStoreEvent('order', o.id);
         notify('Order ' + o.id + ' placed (' + money(total) + ').', 'index.html?page=orders');
         // Go to the dedicated confirmation page (edit quantities / delete items / change shipping there, not in the cart)
         location.href = 'index.html?page=order-confirm&id=' + encodeURIComponent(o.id) + '&placed=1';
@@ -659,6 +672,9 @@ function getNotifs() { return LS.get('boda_notifs'); }
 function notify(text, href) {
     var n = getNotifs(); n.unshift({ text: text, href: href || '', time: Date.now(), read: false });
     LS.set('boda_notifs', n.slice(0, 30)); drawNotifs();
+    var h = []; try { h = JSON.parse(localStorage.getItem('boda_notif_log')) || []; } catch (e) { }
+    h.unshift({ text: text, href: href || '', time: n[0].time });
+    try { localStorage.setItem('boda_notif_log', JSON.stringify(h.slice(0, 100))); } catch (e) { }
 }
 function drawNotifs() {
     var list = $id('notif-list'), cnt = document.querySelector('.notif-count'); if (!list) return;
@@ -694,6 +710,7 @@ function initNotifs() {
 }
 
 // ===== Accounts & Settings (Remember Me, Forgot Password & Validation) =====
+function markLogin(id) { try { var all = getAccounts(); if (all[id]) { all[id].lastLogin = Date.now(); localStorage.setItem('boda_accounts', JSON.stringify(all)); } } catch (e) { } }
 function getAccounts() { try { return JSON.parse(localStorage.getItem('boda_accounts')) || {}; } catch (e) { return {}; } }
 function hashPw(p) {
     if (window.crypto && crypto.subtle && window.TextEncoder) {
@@ -753,6 +770,8 @@ function initAuth() {
                 if ($id('a-remember') && $id('a-remember').checked) localStorage.setItem('boda_remember_login', id);
                 else localStorage.removeItem('boda_remember_login');
                 localStorage.setItem('boda_user', JSON.stringify({ name: acc.name, email: acc.login }));
+                markLogin(id);
+                recordStoreEvent('login', id);
                 sessionStorage.removeItem('boda_add');
                 toast('Welcome, ' + acc.name + '!');
                 setTimeout(function () { location.href = 'index.html?page=home'; }, 700);
@@ -785,13 +804,10 @@ function initAuth() {
             if (pw.value !== pw2.value) { err.textContent = 'Passwords do not match.'; return; }
             var accs = getAccounts(); if (accs[id]) { err.textContent = 'Account already exists.'; return; }
             hashPw(pw.value).then(function (h) {
-                accs[id] = {
-                    name: su.name.value.trim(),
-                    login: id,
-                    hash: h,
-                    createdAt: Date.now()
-                }; localStorage.setItem('boda_accounts', JSON.stringify(accs));
+                accs[id] = { name: su.name.value.trim(), login: id, hash: h, created: Date.now(), lastLogin: Date.now() };
+                localStorage.setItem('boda_accounts', JSON.stringify(accs));
                 localStorage.setItem('boda_user', JSON.stringify({ name: accs[id].name, email: id }));
+                recordStoreEvent('signup', id);
                 sessionStorage.removeItem('boda_add');
                 toast('Account created!');
                 setTimeout(function () { location.href = 'index.html?page=home'; }, 700);
@@ -823,6 +839,7 @@ function renderSwitch() {
         hashPw(f.querySelector('input').value).then(function (h) {
             if (!acc || acc.hash !== h) { toast('Wrong password'); return; }
             localStorage.setItem('boda_user', JSON.stringify({ name: acc.name, email: acc.login }));
+            markLogin(id);
             switchTarget = ''; toast('Switched to ' + acc.name); renderSwitch();
         });
     };
@@ -949,7 +966,7 @@ function initNewsletter() {
         e.preventDefault();
         var email = form.querySelector('input[type="email"]').value.trim().toLowerCase();
         var list = LS.get('boda_newsletter');
-        if (list.indexOf(email) === -1) { list.push(email); LS.set('boda_newsletter', list); }
+        if (list.indexOf(email) === -1) { list.push(email); LS.set('boda_newsletter', list); recordStoreEvent('newsletter', email); }
         var msg = document.querySelector('.nl-msg');
         if (msg) { msg.textContent = 'Subscribed! Offers will be sent to ' + email; msg.classList.add('show'); }
         toast('Subscribed to Boda Store offers!'); form.reset();
@@ -957,17 +974,39 @@ function initNewsletter() {
 }
 
 // ===== Standard Footer Fallback =====
+// Social icons in the footer. Links come from Admin -> Settings -> Social links (boda_site.social); defaults are used until set.
+function socialLinks() {
+    var site = {}; try { site = JSON.parse(localStorage.getItem('boda_site')) || {}; } catch (e) { }
+    var s = site.social || {}, ico = site.socialIcons || {};
+    var wa = String(s.whatsapp || '201000000000'), waUrl = /^https?:/i.test(wa) ? wa : 'https://wa.me/' + wa.replace(/[^\d]/g, '');
+    var list = [
+        ['Facebook', s.facebook || 'https://facebook.com/bodastore', 'facebook', '📘', 'fa-facebook-f'],
+        ['Instagram', s.instagram || 'https://instagram.com/bodastore', 'instagram', '📸', 'fa-instagram'],
+        ['X', s.x || 'https://x.com/bodastore', 'x', '𝕏', 'fa-x-twitter'],
+        ['WhatsApp', waUrl, 'whatsapp', '💬', 'fa-whatsapp'],
+        ['Telegram', s.telegram || 'https://t.me/bodastore', 'telegram', '✈️', 'fa-telegram']
+    ];
+    return list.map(function (x) {
+        var href = /^https?:\/\//i.test(x[1]) ? x[1] : '#', custom = ico[x[2]] && ico[x[2]] !== x[3];
+        var mark = custom ? '<span class="social-emoji" aria-hidden="true">' + esc(ico[x[2]]) + '</span>' : '<i class="fa-brands ' + x[4] + '" aria-hidden="true"></i>';
+        return '<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" aria-label="' + x[0] + '" title="' + x[0] + '">' + mark + '</a>';
+    }).join('');
+}
+
 function initStandardFooter() {
     if (document.body.classList.contains('sign-page')) return;
     var footer = document.querySelector('footer'), grid = footer && footer.querySelector('.footer-grid');
     if (!grid) return;
+    var site = {}; try { site = JSON.parse(localStorage.getItem('boda_site')) || {}; } catch (e) { }
+    var contact = site.contact || {}, ci = { email: contact.emailIcon || '📧', phone: contact.phoneIcon || '📞', address: contact.addressIcon || '📍', hours: contact.hoursIcon || '🕒' };
+    var cats = CATEGORIES.map(function (k) { return '<li><a href="' + esc(catUrl(k.name)) + '">' + esc(k.name) + '</a></li>'; }).join('');
     grid.innerHTML =
         '<div><h3>Boda Store</h3><p>Your trusted place for everything you need — all in one store.</p>' +
-        '<div class="footer-social"><a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a><a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a><a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a></div></div>' +
+        '<div class=\"footer-social\">' + socialLinks() + '</div></div>' +
         '<div><h3>Quick Links</h3><ul><li><a href="index.html?page=home">Home</a></li><li><a href="index.html?page=categories">Categories</a></li><li><a href="index.html?page=products">Products</a></li><li><a href="index.html?page=offers">Offers</a></li><li><a href="index.html?page=about">About Us</a></li><li><a href="index.html?page=contact">Contact</a></li></ul></div>' +
-        '<div><h3>Categories</h3><ul><li><a href="index.html?page=category&cat=Electronics">Electronics</a></li><li><a href="index.html?page=category&cat=Home%20%26%20Appliances">Home &amp; Appliances</a></li><li><a href="index.html?page=category&cat=Fashion">Fashion</a></li><li><a href="index.html?page=category&cat=Beauty">Beauty</a></li><li><a href="index.html?page=category&cat=Sports">Sports</a></li><li><a href="index.html?page=category&cat=Books">Books</a></li></ul></div>' +
-        '<div><h3>Customer Service</h3><ul><li><a href="index.html?page=orders">My Orders</a></li><li><a href="index.html?page=cart">Cart</a></li><li><a href="index.html?page=favorites">Favorites</a></li><li><a href="index.html?page=reviews">My Reviews</a></li></ul></div>' +
-        '<div><h3>Contact</h3><ul><li>📧 info@bodastore.com</li><li>📞 +20 100 000 0000</li><li>📍 Alexandria, Egypt</li><li>🕒 Daily: 10 AM – 9 PM</li></ul></div>';
+        '<div><h3>Categories</h3><ul>' + cats + '</ul></div>' +
+        '<div><h3>Customer Service</h3><ul><li><a href="index.html?page=orders">My Orders</a></li><li><a href="index.html?page=cart">Cart</a></li><li><a href="index.html?page=favorites">Favorites</a></li><li><a href="index.html?page=reviews">My Reviews</a></li><li><a href="index.html?page=help">Help Center</a></li><li><a href="index.html?page=privacy">Privacy Policy</a></li><li><a href="index.html?page=terms">Terms &amp; Conditions</a></li></ul></div>' +
+        '<div><h3>Contact</h3><ul><li class="fc"><span class="ci">' + esc(ci.email) + '</span><span>' + esc(contact.email || 'info@bodastore.com') + '</span></li><li class="fc"><span class="ci">' + esc(ci.phone) + '</span><span dir="ltr">' + esc(contact.phone || '+20 100 000 0000') + '</span></li><li class="fc"><span class="ci">' + esc(ci.address) + '</span><span>' + esc(contact.address || 'Alexandria, Egypt') + '</span></li><li class="fc"><span class="ci">' + esc(ci.hours) + '</span><span>' + esc(contact.hours || 'Daily: 10 AM – 9 PM') + '</span></li></ul></div>';
     var bottom = footer.querySelector('.footer-bottom');
     if (bottom) {
         bottom.innerHTML = '<span>&copy; 2026 Boda Store. All Rights Reserved.</span>' +
@@ -978,7 +1017,16 @@ function initStandardFooter() {
 function initBackToTop() {
     var btt = document.querySelector('.back-to-top');
     if (!btt) return;
-    window.addEventListener('scroll', function () { btt.classList.toggle('show', window.scrollY > 350); }, { passive: true });
+    btt.style.setProperty('position', 'fixed', 'important');
+    var place = function () { btt.style.setProperty('inset', window.innerWidth <= 520 ? 'auto 14px 16px auto' : 'auto 22px 22px auto', 'important'); };
+    place(); window.addEventListener('resize', place);
+    btt.style.setProperty('display', 'flex', 'important');
+    btt.style.setProperty('z-index', '9999', 'important');
+    var update = function () {
+        var bottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+        btt.classList.toggle('show', bottom);
+    };
+    update(); window.addEventListener('scroll', update, { passive: true }); window.addEventListener('resize', update);
     btt.onclick = function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 }
 
@@ -1035,10 +1083,17 @@ function emptyBox(icon, title, text, href, label) {
 function linkCard(a) {
     var url = productUrl(a.dataset.id), go = function () { location.href = url; };
     ['img', 'h3'].forEach(function (s) { var n = a.querySelector(s); if (n) { n.style.cursor = 'pointer'; n.onclick = go; } });
-    var v = [].slice.call(a.querySelectorAll('a')).filter(function (x) { return /View Details/.test(x.textContent); })[0];
+    // Find the card's existing "View Details" link in ANY language (the text may already be translated, which used to make
+    // this code add a second link every time the cards were re-initialised in Arabic / French / German).
+    var DET = /View Details|عرض التفاصيل|Voir les détails|Details ansehen|Details anzeigen/i;
+    var links = [].slice.call(a.querySelectorAll('a')).filter(function (x) {
+        return x.classList.contains('view-details') || DET.test(x.textContent) || /[?&]page=products?(&|#|$)/.test(x.getAttribute('href') || '');
+    }).filter(function (x) { return !x.querySelector('img,h3'); });
+    var v = links[0];
+    links.slice(1).forEach(function (x) { x.remove(); });      // keep it once only
     var acts = a.querySelector('.card-actions');
     if (!v && acts) { v = el('a', 'view-details', 'View Details \u2192'); acts.before(v); }
-    if (v) v.href = url;
+    if (v) { v.classList.add('view-details'); v.href = url; }
 }
 
 // Apply admin changes to the hard-coded cards (price, name, stock, hidden/deleted, new products)
@@ -1049,7 +1104,7 @@ function applyAdminDom() {
     document.querySelectorAll('article[data-id]').forEach(function (art) {
         var id = art.dataset.id, p = map[id], e = a.edits[id];
         var wrap = art.parentNode.tagName === 'SECTION' ? art.parentNode : art;
-        if (a.deleted.indexOf(id) > -1 || (p && p.hidden)) { wrap.remove(); return; }
+        if (a.deleted.indexOf(id) > -1 || (p && p.hidden) || (!p && window.BODA_BACKEND_CATALOG)) { wrap.remove(); return; }
         if (p && !e) { var im0 = art.querySelector('img'); if (im0 && p.img) { im0.setAttribute('referrerpolicy', 'no-referrer'); if (im0.getAttribute('src') !== p.img) im0.src = p.img; } }
         if (!e || !p) return;
         // Rebuild the card from the catalog so EVERY admin edit (image, description, features, badge, category, price, stock) shows up.
@@ -1064,7 +1119,10 @@ function applyAdminDom() {
         if (og) og.innerHTML = allProducts().filter(function (p) { return p.old > p.price; }).map(cardHTML).join('');
         return;
     }
-    if (grid) a.added.forEach(function (p) { if (!p.hidden && a.deleted.indexOf(p.id) < 0) grid.insertAdjacentHTML('beforeend', cardHTML(p)); });
+    if (grid) allProducts().forEach(function (p) {
+        var exists = [].some.call(grid.querySelectorAll('article[data-id]'), function (x) { return x.dataset.id === p.id; });
+        if (!exists && !p.hidden && a.deleted.indexOf(p.id) < 0) grid.insertAdjacentHTML('beforeend', cardHTML(p));
+    });
 }
 
 // ---- Product page: index.html?page=product&id=LAP001 ----
@@ -1120,6 +1178,36 @@ function renderCategory() {
         (shown.length ? '<div class="product-grid">' + shown.map(function (x) { return cardHTML(x); }).join('') + '</div>' : emptyBox('\uD83D\uDCE6', 'No products here yet', 'New items are added regularly.', catUrl(cat), 'Back to ' + esc(cat)));
 }
 
+function initSEO() {
+    var page = new URLSearchParams(location.search).get('page') || 'home', rows = [], engine = {};
+    try { rows = JSON.parse(localStorage.getItem('boda_seo_pages')) || []; } catch (e) { }
+    try { engine = JSON.parse(localStorage.getItem('boda_search_engines')) || {}; } catch (e) { }
+    var cfg = rows.find(function (x) { return x.page === page; }) || {};
+    function meta(name, content) {
+        var node = document.querySelector('meta[name="' + name + '"]');
+        if (!node) { node = document.createElement('meta'); node.name = name; document.head.appendChild(node); }
+        node.content = content || '';
+    }
+    if (cfg.title) document.title = cfg.title;
+    if (cfg.description) meta('description', cfg.description);
+    if (cfg.keywords) meta('keywords', cfg.keywords);
+    meta('robots', cfg.robots || engine.robots || 'index,follow');
+    var canonical = document.querySelector('link[rel="canonical"]');
+    if (cfg.canonical || engine.siteUrl) {
+        if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
+        canonical.href = cfg.canonical || (engine.siteUrl.replace(/\/$/, '') + location.pathname + location.search);
+    }
+    [['google-site-verification', engine.google], ['msvalidate.01', engine.bing]].forEach(function (x) {
+        if (!x[1]) return;
+        var n = document.querySelector('meta[name="' + x[0] + '"]');
+        if (!n) { n = document.createElement('meta'); n.name = x[0]; document.head.appendChild(n); }
+        n.content = x[1];
+    });
+    if (engine.sitemap && !document.querySelector('link[rel="sitemap"]')) {
+        var sm = document.createElement('link'); sm.rel = 'sitemap'; sm.type = 'application/xml'; sm.href = engine.sitemap; document.head.appendChild(sm);
+    }
+}
+
 // Broken product image -> neutral placeholder (no broken-icon / alt text in cards)
 document.addEventListener('error', function (e) {
     var t = e.target;
@@ -1132,14 +1220,36 @@ document.addEventListener('error', function (e) {
 async function loadBackendCatalog() {
     var API_BASE = (localStorage.getItem('boda_api') || 'http://127.0.0.1:8000').replace(/\/$/, '');
     try {
-        var response = await fetch(API_BASE + '/api/products?page=1&limit=50', {
-            cache: 'no-store'
-        });
+        // The page must never wait on an unreachable backend (every button stays dead until the request ends),
+        // so the request gets a short timeout and the store starts with the local catalog if it is slow / offline.
+        var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
+        var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 1500);
+        var response = await Promise.race([
+            fetch(API_BASE + '/api/products?page=1&limit=200', { cache: 'no-store', signal: ctl ? ctl.signal : undefined }),
+            new Promise(function (_, rej) { setTimeout(function () { rej(new Error('timeout')); }, 1600); })
+        ]);
+        clearTimeout(timer);
         if (!response.ok) throw new Error('API status: ' + response.status);
         var data = await response.json();
-        if (Array.isArray(data.items) && data.items.length) {
-            window.BODA_PRODUCTS = data.items;
-            console.log('Boda Store: Products loaded from backend:', data.items.length);
+        if (Array.isArray(data.items)) {
+            var products = data.items, pages = Number(data.pages) || 1;
+            for (var page = 2; page <= pages; page++) {
+                var next = await fetch(API_BASE + '/api/products?page=' + page + '&limit=200', { cache: 'no-store', signal: ctl ? ctl.signal : undefined });
+                if (!next.ok) break;
+                var more = await next.json(); if (Array.isArray(more.items)) products = products.concat(more.items);
+            }
+            window.BODA_PRODUCTS = products;
+            window.BODA_BACKEND_CATALOG = true;
+            console.log('Boda Store: Products loaded from backend:', products.length);
+        }
+        var catsResponse = await fetch(API_BASE + '/api/categories', { cache: 'no-store', signal: ctl ? ctl.signal : undefined });
+        if (catsResponse.ok) {
+            var categories = await catsResponse.json();
+            if (Array.isArray(categories)) {
+                CATEGORIES = categories.slice(0, 20).map(function (c) { return { name: c.name, icon: c.icon || '', img: c.img || '', shop: c.shop || '', desc: c.desc || '', long: c.long || c.desc || '', subs: Array.isArray(c.subs) ? c.subs : [] }; });
+                try { localStorage.setItem('boda_categories', JSON.stringify(CATEGORIES)); } catch (e) { }
+                if (window.BodaAuto) { window.BodaAuto.watch(CATEGORIES.reduce(function (a, c) { return a.concat([c.name, c.desc, c.long], c.subs); }, [])); window.BodaAuto.ensure(localStorage.getItem('boda_language') || 'en'); }
+            }
         }
     } catch (error) {
         console.warn('Backend unavailable. Using local products.', error);
@@ -1149,6 +1259,7 @@ async function loadBackendCatalog() {
 // ===== Boot =====
 document.addEventListener('DOMContentLoaded', async function () {
     await loadBackendCatalog();
+    if (!window.BODA_ADMIN) recordStoreEvent('page_view', new URLSearchParams(location.search).get('page') || 'home');
     var inp = document.querySelector('input[name="search"]');
     if (inp) {
         inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') searchProducts(); });
@@ -1160,35 +1271,43 @@ document.addEventListener('DOMContentLoaded', async function () {
         var m = LS.get('boda_messages'), f = cf.elements;
         m.unshift({ id: 'm' + Date.now(), name: f.full_name.value, email: f.email.value, phone: f.phone.value, subject: f.subject.value, message: f.message.value, time: Date.now(), read: false });
         LS.set('boda_messages', m);
+        recordStoreEvent('contact', f.subject.value);
         document.querySelector('.form-msg').classList.add('show'); cf.reset();
     };
 
     // Admin saved something in another tab -> refresh the storefront automatically
     window.addEventListener('storage', function (ev) {
-        if (ev.key === 'boda_admin_products' || ev.key === 'boda_categories') location.reload();
+        if (['boda_admin_products', 'boda_categories', 'boda_site', 'boda_seo_pages', 'boda_search_engines', 'boda_search_keywords'].indexOf(ev.key) > -1) location.reload();
+        else if (ev.key === 'boda_cart') { updateBadges(); syncCartActions(); }
     });
-    initTheme();
-    initSettingsMenu();
-    initActiveNav();
-    renderCategoryCards();
-    applyAdminDom();
-    if ($id('product-box')) { renderProduct(); initGallery(); }
-    if ($id('category-box')) renderCategory();
-    initHeaderSlider();
-    initHeroSlider();
-    initNewsletter();
-    initStandardFooter();
-    initLanguage();
-    updateBadges();
-    if (document.body.classList.contains('products')) initFilters();
-    initCards();
-    if ($id('cart-box')) initCart();
-    if ($id('checkout-box')) initCheckout();
-    if ($id('fav-box')) renderFavs();
-    if ($id('orders-box')) renderOrders();
-    if ($id('reviews-box')) renderReviews();
-    initAuth();
-    initNotifs(); syncOrders(); setInterval(syncOrders, 20000);
-    initSettings();
-    initBackToTop();
+    // Every start-up step is isolated: one failing step can no longer stop the rest of the page
+    // (settings panel, payment gateways, notifications ... used to stay dead when an earlier step threw).
+    function step(fn) { try { fn(); } catch (err) { if (window.console) console.error('[Boda] init step failed:', err); } }
+    step(initTheme);
+    step(initSettingsMenu);
+    step(initActiveNav);
+    step(renderCategoryCards);
+    step(applyAdminDom);
+    step(function () { if ($id('product-box')) { renderProduct(); initGallery(); } });
+    step(function () { if ($id('category-box')) renderCategory(); });
+    step(initHeaderSlider);
+    step(initHeroSlider);
+    step(initNewsletter);
+    step(initStandardFooter);
+    step(initLanguage);
+    step(updateBadges);
+    step(function () { if (document.body.classList.contains('products')) initFilters(); });
+    step(function () { initCards(); });
+    step(function () { if ($id('cart-box')) initCart(); });
+    step(function () { if ($id('checkout-box')) initCheckout(); });
+    step(function () { if ($id('fav-box')) renderFavs(); });
+    step(function () { if ($id('orders-box')) renderOrders(); });
+    step(function () { if ($id('reviews-box')) renderReviews(); });
+    step(initSEO);
+    step(initAuth);
+    step(initNotifs);
+    step(syncOrders);
+    step(function () { setInterval(function () { step(syncOrders); }, 20000); });
+    step(initSettings);
+    step(initBackToTop);
 });

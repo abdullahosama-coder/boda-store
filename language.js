@@ -303,6 +303,7 @@ In Stock || متوفر || En stock || Auf Lager
 Status: Available || الحالة: متوفر || Statut : disponible || Status: verfügbar
 Features || المميزات || Caractéristiques || Merkmale
 Add to Cart || أضف للسلة || Ajouter au panier || In den Warenkorb
+Remove from Cart || إزالة من السلة || Retirer du panier || Aus dem Warenkorb entfernen
 Buy Now || اشترِ الآن || Acheter maintenant || Jetzt kaufen
 ♡ Add to Favorites || ♡ أضف للمفضلة || ♡ Ajouter aux favoris || ♡ Zu Favoriten
 ♥ In Favorites || ♥ في المفضلة || ♥ Dans les favoris || ♥ In Favoriten
@@ -589,6 +590,53 @@ Your checkout is empty || صفحة إتمام الطلب فاضية || Votre pai
 Nothing to check out yet. Pick a product first. || مفيش منتج لإتمام الطلب. اختار منتج الأول. || Rien à commander. Choisissez d'abord un produit. || Noch nichts zu bestellen. Wählen Sie zuerst ein Produkt.
 ← Back to product || ← رجوع للمنتج || ← Retour au produit || ← Zurück zum Produkt
 Jewelry || مجوهرات || Bijoux || Schmuck
+Help Center || مركز المساعدة || Centre d'aide || Hilfe-Center
+Privacy Policy || سياسة الخصوصية || Politique de confidentialité || Datenschutzerklärung
+Terms & Conditions || الشروط والأحكام || Conditions générales || Allgemeine Geschäftsbedingungen
+Loading more products… || جارٍ تحميل المزيد من المنتجات… || Chargement de plus de produits… || Weitere Produkte werden geladen…
+No more products to show. || لا توجد منتجات أخرى لعرضها. || Plus aucun produit à afficher. || Keine weiteren Produkte.
+No products available. || لا توجد منتجات متاحة. || Aucun produit disponible. || Keine Produkte verfügbar.
+Find quick answers about orders, delivery, payment and returns — or contact our support team. || اعثر على إجابات سريعة حول الطلبات والتوصيل والدفع والإرجاع — أو تواصل مع فريق الدعم. || Trouvez des réponses sur les commandes, la livraison, le paiement et les retours — ou contactez le support. || Schnelle Antworten zu Bestellungen, Lieferung, Zahlung und Rückgabe — oder kontaktieren Sie den Support.
+What can we help you with? || كيف يمكننا مساعدتك؟ || Comment pouvons-nous vous aider ? || Wie können wir helfen?
+Your Orders || طلباتك || Vos commandes || Ihre Bestellungen
+Track, edit or cancel an order || تتبّع الطلب أو عدّله أو ألغِه || Suivre, modifier ou annuler une commande || Bestellung verfolgen, ändern oder stornieren
+Shipping & Delivery || الشحن والتوصيل || Livraison || Versand & Lieferung
+Fees, free delivery and times || الرسوم والتوصيل المجاني والمواعيد || Frais, livraison gratuite et délais || Gebühren, Gratislieferung und Zeiten
+Returns & Refunds || الإرجاع والاسترداد || Retours et remboursements || Rückgabe & Erstattung
+Return an item or get a refund || إرجاع منتج أو استرداد المبلغ || Retourner un article ou être remboursé || Artikel zurückgeben oder Geld erstattet bekommen
+Payment || الدفع || Paiement || Zahlung
+Cards, cash on delivery, gateways || البطاقات والدفع عند الاستلام وبوابات الدفع || Cartes, paiement à la livraison, passerelles || Karten, Nachnahme, Zahlungsanbieter
+Account & Security || الحساب والأمان || Compte et sécurité || Konto & Sicherheit
+Sign in, password and privacy || تسجيل الدخول وكلمة المرور والخصوصية || Connexion, mot de passe et confidentialité || Anmeldung, Passwort und Datenschutz
+Talk to support || تحدث مع الدعم || Parler au support || Mit dem Support sprechen
+Chat with us now || تحدث معنا الآن || Discutez avec nous || Jetzt mit uns chatten
+How much does delivery cost? || كم تبلغ تكلفة التوصيل؟ || Combien coûte la livraison ? || Was kostet der Versand?
+How long does delivery take? || كم تستغرق مدة التوصيل؟ || Quel est le délai de livraison ? || Wie lange dauert die Lieferung?
+What is the return policy? || ما هي سياسة الإرجاع؟ || Quelle est la politique de retour ? || Wie lautet die Rückgabepolitik?
+How do I get a refund? || كيف أسترد المبلغ؟ || Comment être remboursé ? || Wie erhalte ich eine Erstattung?
+Which payment methods do you accept? || ما وسائل الدفع المتاحة؟ || Quels moyens de paiement acceptez-vous ? || Welche Zahlungsmethoden akzeptieren Sie?
+Is my payment information safe? || هل بيانات الدفع الخاصة بي آمنة؟ || Mes informations de paiement sont-elles sécurisées ? || Sind meine Zahlungsdaten sicher?
+I forgot my password || نسيت كلمة المرور || J'ai oublié mon mot de passe || Ich habe mein Passwort vergessen
+How do I contact you? || كيف أتواصل معكم؟ || Comment vous contacter ? || Wie kann ich Sie kontaktieren?
+No help topics match your search. || لا توجد مواضيع مساعدة مطابقة لبحثك. || Aucun sujet ne correspond à votre recherche. || Keine passenden Hilfethemen gefunden.
+Social links || روابط التواصل الاجتماعي || Réseaux sociaux || Soziale Netzwerke
+Product documentation || توثيق المنتج || Documentation produit || Produktdokumentation
+User manual || دليل الاستخدام || Mode d'emploi || Bedienungsanleitung
+Specifications || المواصفات الفنية || Spécifications || Spezifikationen
+Safety || السلامة || Sécurité || Sicherheit
+Certificate || شهادة || Certificat || Zertifikat
+Open file || فتح الملف || Ouvrir le fichier || Datei öffnen
+Search for help, e.g. delivery, return, payment... || ابحث عن مساعدة، مثل: التوصيل أو الاسترجاع أو الدفع... || Rechercher de l’aide, p. ex. livraison, retour, paiement... || Hilfe suchen, z. B. Lieferung, Rückgabe, Zahlung...
+Search help || ابحث في المساعدة || Rechercher dans l’aide || Hilfe durchsuchen
+Cancel Cart || إلغاء السلة || Annuler le panier || Warenkorb leeren
+Cancel the cart and remove all items? || هل تريد إلغاء السلة وحذف كل المنتجات؟ || Annuler le panier et supprimer tous les articles ? || Warenkorb leeren und alle Artikel entfernen?
+Cart cancelled || تم إلغاء السلة || Panier annulé || Warenkorb geleert
+City / Area || المدينة / المنطقة || Ville / Zone || Stadt / Gebiet
+Free delivery applied. || تم تطبيق التوصيل المجاني. || Livraison gratuite appliquée. || Kostenlose Lieferung angewendet.
+View details || عرض التفاصيل || Voir les détails || Details ansehen
+Go to Store || الذهاب إلى المتجر || Aller à la boutique || Zum Shop
+● In stock — ready to ship || ● متوفر — جاهز للشحن || ● En stock — prêt à expédier || ● Auf Lager — versandbereit
+1 year || سنة واحدة || 1 an || 1 Jahr
 `;
 
 /* ===== Boda Store — site-wide language engine (EN / AR / FR / DE) =====
@@ -656,6 +704,7 @@ Jewelry || مجوهرات || Bijoux || Schmuck
         [/^All (.+)$/, { ar: 'كل {1}', fr: 'Tout : {1}', de: 'Alle {1}' }, 1],
         [/^(.+):$/, { ar: '{1}:', fr: '{1} :', de: '{1}:' }, 1],
         [/^Browse (.+) →$/, { ar: 'تصفّح {1} →', fr: 'Parcourir {1} →', de: '{1} durchsuchen →' }, 1],
+        [/^More in (.+)$/, { ar: 'المزيد في {1}', fr: 'Plus dans {1}', de: 'Mehr in {1}' }, 1],
         [/^Shop (.+) →$/, { ar: 'تسوّق {1} →', fr: 'Voir {1} →', de: '{1} shoppen →' }, 1]
     ];
 

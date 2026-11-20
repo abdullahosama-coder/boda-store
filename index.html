@@ -17,7 +17,17 @@
         (function () {
             var admin = /[?&]page=admin(&|$)/.test(location.search);
             window.BODA_ADMIN = admin;
-            (admin ? ['auto-translate.js', 'products-data.js'] : ['auto-translate.js', 'language.js', 'products-data.js', 'app.js', 'search-suggest.js', 'order-flow.js', 'order-confirm.js', 'product-extras.js', 'support-chat.js']).forEach(function (f) {
+            /* Refresh always starts from the top of the page (storefront pages only; admin keeps its own scroll) */
+            if (!admin) {
+                try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) { }
+                var navType = function () { try { var n = performance.getEntriesByType('navigation')[0]; return n ? n.type : ''; } catch (e) { return ''; } };
+                var toTop = function () { var t = navType(); if (t === 'reload' || t === 'back_forward' || !location.hash) window.scrollTo(0, 0); };
+                toTop();
+                document.addEventListener('DOMContentLoaded', function () { toTop(); setTimeout(toTop, 60); });
+                window.addEventListener('load', function () { toTop(); setTimeout(toTop, 120); });
+                window.addEventListener('pageshow', function (e) { if (e.persisted) window.scrollTo(0, 0); });
+            }
+            (admin ? ['auto-translate.js', 'products-data.js', 'pages-content.js'] : ['auto-translate.js', 'language.js', 'pages-content.js', 'products-data.js', 'app.js', 'lazy-load.js', 'search-suggest.js', 'order-flow.js', 'order-confirm.js', 'product-extras.js', 'support-chat.js']).forEach(function (f) {
                 document.write('<script src="' + f + '" defer><\/script>');
             });
             if (admin) document.write('<style>link[href="style.css"]{display:none}</style>');
@@ -89,8 +99,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -398,8 +407,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -897,8 +905,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -1179,8 +1186,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -1463,8 +1469,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -1747,8 +1752,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -2427,137 +2431,6 @@
                     </article>
                 </section>
             </div>
-
-            <h2>Complete Store Price List</h2>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>HP Laptop</td>
-                            <td>Electronics</td>
-                            <td>$800</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Desktop Computer</td>
-                            <td>Electronics</td>
-                            <td>$500</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Gaming PC</td>
-                            <td>Electronics</td>
-                            <td>$1200</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Samsung Monitor</td>
-                            <td>Electronics</td>
-                            <td>$250</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Curved Monitor 165Hz</td>
-                            <td>Electronics</td>
-                            <td>$390</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Pro Smartphone 5G</td>
-                            <td>Electronics</td>
-                            <td>$650</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Gaming Keyboard</td>
-                            <td>Electronics</td>
-                            <td>$75</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Espresso Coffee Maker</td>
-                            <td>Home &amp; Appliances</td>
-                            <td>$160</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Smart Wi-Fi LED Desk Lamp</td>
-                            <td>Home &amp; Appliances</td>
-                            <td>$95</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Jewelry &amp; Rings Set</td>
-                            <td>Fashion</td>
-                            <td>$50</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Essential Cotton Hoodie</td>
-                            <td>Fashion</td>
-                            <td>$55</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Signature Eau de Parfum</td>
-                            <td>Beauty</td>
-                            <td>$65</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Hydrating Daily Care Kit</td>
-                            <td>Beauty</td>
-                            <td>$38</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Adjustable Dumbbell Set</td>
-                            <td>Sports</td>
-                            <td>$110</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>GPS Fitness Smart Band</td>
-                            <td>Sports</td>
-                            <td>$140</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>STEM Building Blocks</td>
-                            <td>Kids &amp; Toys</td>
-                            <td>$40</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Full HD Dash Cam</td>
-                            <td>Automotive</td>
-                            <td>$85</td>
-                            <td>Available</td>
-                        </tr>
-                        <tr>
-                            <td>Clean Architecture Guide</td>
-                            <td>Books</td>
-                            <td>$25</td>
-                            <td>Available</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="2">Catalog Summary</td>
-                            <td>8 Categories</td>
-                            <td>18 Products Available</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
         </main>
 
         <section class="trust">
@@ -2698,8 +2571,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -3148,8 +3020,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -3431,8 +3302,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -3713,8 +3583,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -3993,8 +3862,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -4273,8 +4141,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -4586,8 +4453,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -4805,12 +4671,6 @@
         </section>
 
         <main>
-
-            <!-- Shop by Category -->
-            <section id="categories">
-                <h2>Shop by Category</h2>
-                <ul class="cat-grid" id="cat-grid"></ul>
-            </section>
 
             <!-- Featured Products -->
             <section>
@@ -5413,8 +5273,7 @@
                                 <details class="sl-item">
                                     <summary>
                                         <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
-                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French,
-                                                German</small></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
                                         <i class="fa-solid fa-chevron-down"></i>
                                     </summary>
                                     <div class="sl-body">
@@ -7276,53 +7135,14 @@
                 line-height: 1.65
             }
 
-            dialog h3 {
-                font-size: 1.4rem;
-                margin-bottom: 20px
-            }
-
-            dialog label,
-            dialog th,
-            dialog td,
-            dialog p {
-                font-size: 1.04rem
-            }
-
-            dialog input,
-            dialog select,
-            dialog textarea {
-                font-size: 1.04rem;
-                padding: 11px 13px
-            }
-
-            dialog .btn,
-            dialog .mini {
-                font-size: 1.02rem
-            }
-
-            dialog::backdrop {
-                background: rgba(10, 18, 32, .62);
-                backdrop-filter: blur(2px)
-            }
-
-            .iobar {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                margin: -6px 0 14px
-            }
-
-            .iobar .btn {
-                padding: 8px 14px;
-                font-size: .92rem
-            }
-
-            @media (max-width: 560px) {
-                dialog {
-                    padding: 18px;
-                    width: 96vw
-                }
-            }
+            dialog h3 { font-size: 1.4rem; margin-bottom: 20px }
+            dialog label, dialog th, dialog td, dialog p { font-size: 1.04rem }
+            dialog input, dialog select, dialog textarea { font-size: 1.04rem; padding: 11px 13px }
+            dialog .btn, dialog .mini { font-size: 1.02rem }
+            dialog::backdrop { background: rgba(10, 18, 32, .62); backdrop-filter: blur(2px) }
+            .iobar { display: flex; flex-wrap: wrap; gap: 8px; margin: -6px 0 14px }
+            .iobar .btn { padding: 8px 14px; font-size: .92rem }
+            @media (max-width: 560px) { dialog { padding: 18px; width: 96vw } }
 
             @media (min-width: 821px) {
                 aside nav {
@@ -7822,7 +7642,7 @@
                 const ADMIN = { user: 'admin', pass: '' };
                 const K = {
                     orders: 'boda_orders', acc: 'boda_accounts', msgs: 'boda_messages', news: 'boda_newsletter', cats: 'boda_categories', pa: 'boda_admin_products', notifs: 'boda_notifs', hero: 'boda_hero', site: 'boda_site',
-                    articles: 'boda_news', offers: 'boda_offers', ads: 'boda_ads', comp: 'boda_complaints', warn: 'boda_warnings', govs: 'boda_govs', docs: 'boda_docs', users: 'boda_admin_users', ustat: 'boda_cust_status', nlog: 'boda_notif_log', log: 'boda_admin_log', apw: 'boda_admin_pw', lang: 'boda_admin_lang', theme: 'boda_admin_theme'
+                    articles: 'boda_news', offers: 'boda_offers', ads: 'boda_ads', comp: 'boda_complaints', warn: 'boda_warnings', govs: 'boda_govs', docs: 'boda_docs', pages: 'boda_pages', users: 'boda_admin_users', ustat: 'boda_cust_status', nlog: 'boda_notif_log', log: 'boda_admin_log', apw: 'boda_admin_pw', lang: 'boda_admin_lang', theme: 'boda_admin_theme', coupons: 'boda_coupons', keywords: 'boda_search_keywords', seo: 'boda_seo_pages', engines: 'boda_search_engines'
                 };
                 const $ = (s, r = document) => r.querySelector(s);
                 const rd = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
@@ -7882,6 +7702,33 @@ search || بحث... || Search... || Rechercher... || Suchen...
 all || الكل || All || Tout || Alle
 none || لا توجد بيانات مطابقة. || Nothing to show. || Rien à afficher. || Nichts anzuzeigen.
 fl_arch || حالة الأرشفة || Archive status || Statut d'archivage || Archivstatus
+s_social || روابط التواصل الاجتماعي || Social links || Réseaux sociaux || Soziale Netzwerke
+s_social_h || تظهر كأيقونات في أسفل المتجر. اترك الحقل فارغًا لاستخدام الرابط الافتراضي. واتساب: رقم بصيغة دولية أو رابط. || Shown as icons in the store footer. Leave empty for the default link. WhatsApp: international number or a link. || Affichées dans le pied de page. Laissez vide pour le lien par défaut. WhatsApp : numéro international ou lien. || Als Symbole in der Fußzeile. Leer lassen für den Standardlink. WhatsApp: internationale Nummer oder Link.
+fl_acc || حالة الحساب || Account status || Statut du compte || Kontostatus
+fl_ctype || نوع التواصل || Contact type || Type de contact || Kontaktart
+fl_reg || تاريخ التسجيل || Registration date || Date d'inscription || Registrierungsdatum
+fl_vfy || التوثيق || Verification || Vérification || Verifizierung
+fl_ordn || عدد الطلبات || Orders count || Nombre de commandes || Anzahl Bestellungen
+fl_spent || إجمالي المشتريات || Total purchases || Total des achats || Gesamtkäufe
+fl_login || آخر تسجيل دخول || Last login || Dernière connexion || Letzte Anmeldung
+cu_st_idle || غير نشط (لا نشاط 30 يومًا) || Inactive (no activity in 30 days) || Inactif (30 jours) || Inaktiv (30 Tage)
+ct_email || بريد إلكتروني || Email || E-mail || E-Mail
+ct_phone || رقم هاتف || Phone || Téléphone || Telefon
+cu_d7 || آخر 7 أيام || Last 7 days || 7 derniers jours || Letzte 7 Tage
+cu_d30 || آخر 30 يومًا || Last 30 days || 30 derniers jours || Letzte 30 Tage
+cu_vfy || موثّق || Verified || Vérifié || Verifiziert
+cu_vfy_yes || موثّق || Verified || Vérifié || Verifiziert
+cu_vfy_no || غير موثّق || Not verified || Non vérifié || Nicht verifiziert
+cu_o_none || بدون طلبات || No orders || Sans commandes || Keine Bestellungen
+cu_o_has || لديه طلبات || Has orders || Avec commandes || Mit Bestellungen
+cu_o_5 || أكثر من 5 طلبات || More than 5 orders || Plus de 5 commandes || Mehr als 5 Bestellungen
+cu_p_zero || صفر || Zero || Zéro || Null
+cu_p_lt1 || أقل من 1000 || Under 1000 || Moins de 1000 || Unter 1000
+cu_p_mid || من 1000 إلى 5000 || 1000 to 5000 || De 1000 à 5000 || 1000 bis 5000
+cu_p_gt5 || أكثر من 5000 || Over 5000 || Plus de 5000 || Über 5000
+cu_l_never || لم يسجّل الدخول || Never logged in || Jamais connecté || Nie angemeldet
+cu_reg || تاريخ التسجيل || Registered || Inscrit le || Registriert am
+cu_lastlogin || آخر دخول || Last login || Dernière connexion || Letzte Anmeldung
 fl_subs || الأقسام الفرعية || Sub-departments || Sous-rayons || Unterkategorien
 fl_prods || المنتجات || Products || Produits || Produkte
 fl_img || صورة القسم || Department image || Image du rayon || Abteilungsbild
@@ -7915,6 +7762,34 @@ n_docs || إدارة التوثيق || Documentation || Documentation || Dokumen
 m_docs || توثيق المنتجات || Product documentation || Documentation produit || Produktdokumentation
 docs_sub || أدلة الاستخدام والضمان والمواصفات والشهادات الخاصة بكل منتج. || Manuals, warranties, specifications and certificates for each product. || Manuels, garanties, spécifications et certificats par produit. || Anleitungen, Garantien, Spezifikationen und Zertifikate je Produkt.
 docs_new || مستند جديد || New document || Nouveau document || Neues Dokument
+n_pages || الصفحات (المساعدة والسياسات) || Pages (Help & Policies) || Pages (Aide et politiques) || Seiten (Hilfe & Richtlinien)
+m_pages || محتوى صفحات المساعدة والخصوصية والشروط || Help, Privacy & Terms content || Contenu Aide, Confidentialité et Conditions || Inhalt Hilfe, Datenschutz & AGB
+pages_sub || عدّل أو أضف أو احذف أقسام صفحات مركز المساعدة وسياسة الخصوصية والشروط والأحكام بالأربع لغات. || Edit, add or delete sections of the Help Center, Privacy Policy and Terms pages in all four languages. || Modifiez, ajoutez ou supprimez les sections du Centre d’aide, de la Politique de confidentialité et des Conditions dans les quatre langues. || Bearbeiten, ergänzen oder löschen Sie Abschnitte von Hilfe, Datenschutz und AGB in allen vier Sprachen.
+pages_new || قسم جديد || New section || Nouvelle section || Neuer Abschnitt
+pg_page || الصفحة || Page || Page || Seite
+pg_help || مركز المساعدة || Help Center || Centre d’aide || Hilfe-Center
+pg_privacy || سياسة الخصوصية || Privacy Policy || Politique de confidentialité || Datenschutzerklärung
+pg_terms || الشروط والأحكام || Terms & Conditions || Conditions générales || AGB
+pg_group || القسم داخل الصفحة || Group inside the page || Groupe dans la page || Gruppe auf der Seite
+pg_g_none || بند عادي (سياسة / شروط) || Normal section (policy / terms) || Section normale (politique / conditions) || Normaler Abschnitt (Richtlinie / AGB)
+pg_g_intro || مقدمة أعلى الصفحة || Intro text at the top || Texte d’introduction || Einleitungstext oben
+pg_g_delivery || المساعدة: الشحن والتوصيل || Help: Shipping & Delivery || Aide : Livraison || Hilfe: Versand & Lieferung
+pg_g_returns || المساعدة: الاسترجاع والاسترداد || Help: Returns & Refunds || Aide : Retours et remboursements || Hilfe: Rückgabe & Erstattung
+pg_g_payment || المساعدة: الدفع || Help: Payment || Aide : Paiement || Hilfe: Zahlung
+pg_g_account || المساعدة: الحساب والأمان || Help: Account & Security || Aide : Compte et sécurité || Hilfe: Konto & Sicherheit
+pg_order || الترتيب || Order || Ordre || Reihenfolge
+pg_shown || ظاهر في الموقع || Shown on the site || Affiché sur le site || Auf der Seite sichtbar
+pg_t_ar || العنوان (عربي) || Title (Arabic) || Titre (arabe) || Titel (Arabisch)
+pg_t_en || العنوان (إنجليزي) || Title (English) || Titre (anglais) || Titel (Englisch)
+pg_t_fr || العنوان (فرنسي) || Title (French) || Titre (français) || Titel (Französisch)
+pg_t_de || العنوان (ألماني) || Title (German) || Titre (allemand) || Titel (Deutsch)
+pg_b_ar || النص (عربي) || Text (Arabic) || Texte (arabe) || Text (Arabisch)
+pg_b_en || النص (إنجليزي) || Text (English) || Texte (anglais) || Text (Englisch)
+pg_b_fr || النص (فرنسي) || Text (French) || Texte (français) || Text (Französisch)
+pg_b_de || النص (ألماني) || Text (German) || Texte (allemand) || Text (Deutsch)
+pg_reset || استرجاع المحتوى الافتراضي || Restore default content || Restaurer le contenu par défaut || Standardinhalt wiederherstellen
+pg_confirm_reset || سيتم استبدال كل التعديلات بالمحتوى الافتراضي. متأكد؟ || All your edits will be replaced by the default content. Continue? || Toutes vos modifications seront remplacées par le contenu par défaut. Continuer ? || Alle Änderungen werden durch den Standardinhalt ersetzt. Fortfahren?
+pg_hint || سطر فارغ = فقرة جديدة. للرابط اكتب: [النص](index.html?page=terms) || Blank line = new paragraph. For a link write: [text](index.html?page=terms) || Ligne vide = nouveau paragraphe. Pour un lien : [texte](index.html?page=terms) || Leerzeile = neuer Absatz. Link: [Text](index.html?page=terms)
 f_prodref || المنتج || Product || Produit || Produkt
 f_doctype || نوع المستند || Document type || Type de document || Dokumenttyp
 f_version || الإصدار || Version || Version || Version
@@ -7974,7 +7849,7 @@ p_lowstock || مخزون منخفض || Low stock || Stock faible || Niedriger Be
 p_allvis || كل المنتجات (ظاهر/مخفي) || All (shown/hidden) || Tous (visibles/masqués) || Alle (sichtbar/versteckt)
 p_shown || غير مؤرشف (ظاهر في المتجر) || Shown in store || Visible || Sichtbar
 p_hidden || مؤرشف (مخفي) || Hidden || Masqué || Versteckt
-cu_allst || كل العملاء || All customers || Tous les clients || Alle Kunden
+cu_allst || كل الحالات || All customers || Tous les clients || Alle Kunden
 cu_st_act || نشط || Active || Actif || Aktiv
 cu_st_blk || محظور || Blocked || Bloqué || Gesperrt
 m_allst || كل الرسائل || All messages || Tous les messages || Alle Nachrichten
@@ -8017,6 +7892,23 @@ no_orders_hint || ستظهر هنا الطلبات التي ينشئها الع�
 no_act || لا يوجد نشاط حتى الآن. || No activity yet. || Aucune activité. || Noch keine Aktivität.
 pcs || قطعة || pcs || pcs || Stk.
 log_login || تسجيل دخول || Signed in || Connexion || Angemeldet
+store_search || بحث في المتجر || Store search || Recherche boutique || Shopsuche
+store_cart_add || إضافة منتج إلى السلة || Added to cart || Ajout au panier || In den Warenkorb
+store_cart_remove || إزالة منتج من السلة || Removed from cart || Retrait du panier || Aus dem Warenkorb
+store_cart_update || تعديل كمية السلة || Cart quantity changed || Quantité modifiée || Warenkorbmenge geändert
+store_cart_clear || تفريغ السلة || Cart cleared || Panier vidé || Warenkorb geleert
+store_order || إنشاء طلب || Order placed || Commande créée || Bestellung erstellt
+store_order_edit || تعديل طلب || Order edited || Commande modifiée || Bestellung bearbeitet
+store_order_cancel || إلغاء طلب || Order cancelled || Commande annulée || Bestellung storniert
+store_order_delete || حذف طلب || Order removed || Commande supprimée || Bestellung gelöscht
+store_contact || إرسال رسالة تواصل || Contact message sent || Message envoyé || Kontaktanfrage gesendet
+store_support_chat || تواصل مع الدعم || Support chat handoff || Contact support || Supportkontakt
+store_page_view || زيارة صفحة || Page view || Visite de page || Seitenaufruf
+store_login || تسجيل دخول عميل || Customer login || Connexion client || Kundenanmeldung
+store_signup || إنشاء حساب عميل || Customer account created || Compte client créé || Kundenkonto erstellt
+store_favorite_add || إضافة للمفضلة || Added to favorites || Ajout aux favoris || Zu Favoriten hinzugefügt
+store_favorite_remove || إزالة من المفضلة || Removed from favorites || Retrait des favoris || Aus Favoriten entfernt
+store_newsletter || اشتراك في النشرة البريدية || Newsletter subscription || Inscription à la newsletter || Newsletter-Anmeldung
 log_save || حفظ في || Saved in || Enregistré dans || Gespeichert in
 log_del || حذف من || Deleted from || Supprimé de || Gelöscht aus
 log_order || تحديث حالة طلب || Order status updated || Statut de commande mis à jour || Bestellstatus aktualisiert
@@ -8227,6 +8119,63 @@ r_phone || التليفون || Phone || Téléphone || Telefon
 r_avail || متوفر || In stock || En stock || Verfügbar
 r_unavail || غير متوفر || Out of stock || Rupture || Nicht verfügbar
 m_notifs || الإشعارات || Notifications || Notifications || Benachrichtigungen
+n_coupons || كوبونات المنتجات || Product coupons || Coupons produits || Produktcoupons
+n_logs || سجلات الإدارة || Activity logs || Journaux d’activité || Aktivitätsprotokoll
+n_notiflog || سجل الإشعارات || Notification log || Journal des notifications || Benachrichtigungsverlauf
+n_keywords || كلمات البحث || Search keywords || Mots-clés de recherche || Suchbegriffe
+n_seo || تهيئة صفحات SEO || Page SEO || SEO des pages || Seiten-SEO
+n_engines || إعدادات محركات البحث || Search engine settings || Réglages des moteurs || Suchmaschineneinstellungen
+n_social || روابط التواصل والأيقونات || Social links & icons || Liens sociaux et icônes || Social-Links & Symbole
+social_sub || حدّث الروابط واختَر إيموجي أو رمزًا كرتونيًا لكل منصة. || Update social URLs and choose a cartoon emoji or symbol for each platform. || Modifiez les liens et choisissez une icône. || Links und Symbole jeder Plattform bearbeiten.
+th_details || التفاصيل || Details || Détails || Details
+m_coupons || كوبونات المنتجات || Product coupons || Coupons produits || Produktcoupons
+page_home || الرئيسية || Home || Accueil || Startseite
+page_products || المنتجات || Products || Produits || Produkte
+page_categories || الأقسام || Categories || Catégories || Kategorien
+page_offers || العروض || Offers || Offres || Angebote
+page_about || من نحن || About || À propos || Über uns
+page_contact || اتصل بنا || Contact || Contact || Kontakt
+page_help || المساعدة || Help || Aide || Hilfe
+page_privacy || الخصوصية || Privacy || Confidentialité || Datenschutz
+page_terms || الشروط || Terms || Conditions || Bedingungen
+kw_all || كل الموقع || Entire site || Tout le site || Gesamte Website
+kw_products || المنتجات || Products || Produits || Produkte
+kw_categories || الأقسام || Categories || Catégories || Kategorien
+coupons_sub || أنشئ كوبونات واربطها بمنتجات محددة. || Create coupons and assign them to selected products. || Créez des coupons et associez-les à des produits. || Gutscheine erstellen und Produkten zuweisen.
+coupon_value_err || أدخل قيمة خصم أكبر من صفر، وبحد أقصى 100% للنسبة. || Enter a discount above zero; percentage discounts cannot exceed 100%. || Saisissez une remise supérieure à zéro (100 % maximum). || Rabatt muss größer als null sein (maximal 100 %).
+coupon_new || كوبون جديد || New coupon || Nouveau coupon || Neuer Gutschein
+coupon_dup || كود الكوبون مستخدم بالفعل. || Coupon code already exists. || Ce code promo existe déjà. || Gutscheincode bereits vorhanden.
+seo_dup || توجد إعدادات SEO لهذه الصفحة بالفعل. || SEO settings already exist for this page. || Des paramètres SEO existent déjà pour cette page. || SEO-Einstellungen für diese Seite existieren bereits.
+keywords_sub || أضف كلمات ومرادفات لتحسين اقتراحات البحث داخل المتجر. || Add phrases and synonyms to improve store search suggestions. || Ajoutez des termes et synonymes aux suggestions. || Begriffe und Synonyme für Suchvorschläge hinzufügen.
+keyword_new || كلمة بحث جديدة || New search phrase || Nouveau terme || Neuer Suchbegriff
+seo_sub || عناوين وأوصاف وروابط أساسية وتعليمات فهرسة لكل صفحة. || Titles, descriptions, canonical URLs and indexing directives per page. || Titres, descriptions et indexation par page. || Titel, Beschreibungen und Indexierung pro Seite.
+seo_new || إعداد SEO لصفحة || Add page SEO || Ajouter le SEO d’une page || Seiten-SEO hinzufügen
+coupon_code || كود الكوبون || Coupon code || Code promo || Gutscheincode
+coupon_type || نوع الخصم || Discount type || Type de remise || Rabattart
+coupon_value || قيمة الخصم || Discount value || Valeur de remise || Rabattwert
+coupon_percent || نسبة مئوية || Percentage || Pourcentage || Prozent
+coupon_fixed || مبلغ ثابت || Fixed amount || Montant fixe || Fester Betrag
+coupon_products || المنتجات المشمولة || Eligible products || Produits concernés || Gültige Produkte
+coupon_max || أقصى عدد للاستخدام || Usage limit || Limite d’utilisation || Nutzungslimit
+coupon_used || مرات الاستخدام || Times used || Utilisierungen || Verwendet
+kw_word || كلمة البحث || Search phrase || Terme recherché || Suchbegriff
+kw_alias || كلمات بديلة (افصل بينها بفواصل) || Synonyms (comma separated) || Synonymes (séparés par des virgules) || Synonyme (kommagetrennt)
+kw_target || نوع النتائج || Search target || Cible de recherche || Suchziel
+kw_targetid || كود المنتج/القسم (اختياري) || Product/category ID (optional) || ID produit/catégorie (facultatif) || Produkt-/Kategorie-ID (optional)
+seo_page || الصفحة || Page || Page || Seite
+seo_title || عنوان الصفحة || Page title || Titre de la page || Seitentitel
+seo_desc || وصف الصفحة || Page description || Description de la page || Seitenbeschreibung
+seo_keys || الكلمات المفتاحية || Meta keywords || Mots-clés meta || Meta-Keywords
+seo_canonical || الرابط الأساسي (Canonical) || Canonical URL || URL canonique || Canonical-URL
+seo_robots || تعليمات الفهرسة || Indexing directives || Directives d’indexation || Indexierungsanweisungen
+engine_sub || إعدادات التحقق والفهرسة الخاصة بمحركات البحث. || Search engine verification and indexing settings. || Vérification et indexation des moteurs. || Verifizierung und Indexierung.
+engine_site || رابط الموقع الأساسي || Base site URL || URL principale du site || Basis-URL der Website
+engine_sitemap || رابط Sitemap || Sitemap URL || URL du sitemap || Sitemap-URL
+engine_google || رمز تحقق Google Search Console || Google Search Console verification || Vérification Google Search Console || Google Search Console-Verifizierung
+engine_bing || رمز تحقق Bing Webmaster || Bing Webmaster verification || Vérification Bing Webmaster || Bing Webmaster-Verifizierung
+engine_robots || سياسة الفهرسة الافتراضية || Default indexing policy || Politique d’indexation par défaut || Standard-Indexierungsrichtlinie
+logs_sub || سجل العمليات التي يسجلها مدير الموقع. || Recorded administrator activity. || Activité administrateur enregistrée. || Erfasste Administratoraktivitäten.
+notiflog_sub || سجل الإشعارات التي أرسلها المتجر. || Notifications sent by the store. || Notifications envoyées par la boutique. || Vom Shop gesendete Benachrichtigungen.
 nt_sub || أرسل إشعارًا يظهر في جرس المتجر، وراجع الإشعارات المرسلة. || Send a notification to the store bell and review sent ones. || Envoyez une notification à la boutique. || Benachrichtigung an den Shop senden.
 nt_text || نص الإشعار || Notification text || Texte || Text
 nt_link || الرابط عند الضغط || Link on click || Lien || Link
@@ -8341,12 +8290,12 @@ restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide.
                 const SITE = () => {
                     const d = rd(K.site, {}), a = d.announce || {}, c = d.contact || {}, g = d.general || {};
                     return {
-                        announce: { show: a.show !== false, text: a.text || '', linkText: a.linkText || '', linkHref: a.linkHref || '' }, contact: { email: c.email || '', phone: c.phone || '', address: c.address || '', hours: c.hours || '' },
+                        announce: { show: a.show !== false, text: a.text || '', linkText: a.linkText || '', linkHref: a.linkHref || '' }, contact: { email: c.email || '', phone: c.phone || '', address: c.address || '', hours: c.hours || '', emailIcon: c.emailIcon || '📧', phoneIcon: c.phoneIcon || '📞', addressIcon: c.addressIcon || '📍', hoursIcon: c.hoursIcon || '🕒' }, social: { whatsapp: (d.social || {}).whatsapp || '', x: (d.social || {}).x || '', instagram: (d.social || {}).instagram || '', facebook: (d.social || {}).facebook || '', telegram: (d.social || {}).telegram || '' }, socialIcons: { facebook: (d.socialIcons || {}).facebook || '📘', instagram: (d.socialIcons || {}).instagram || '📸', x: (d.socialIcons || {}).x || '𝕏', whatsapp: (d.socialIcons || {}).whatsapp || '💬', telegram: (d.socialIcons || {}).telegram || '✈️' },
                         general: { name: g.name || 'Boda Store', free: g.free ?? 500, low: g.low ?? 5, tax: g.tax ?? 0, maint: !!g.maint, reg: g.reg !== false, guest: g.guest !== false, reviews: g.reviews !== false, mail: g.mail !== false }
                     };
                 };
                 const USERS = () => rd(K.users, []);
-                const ROLES = { super: '*', manager: ['dash', 'shipping', 'orders', 'products', 'cats', 'docs', 'cust', 'govs', 'news', 'offers', 'ads', 'comp', 'reports', 'notifs', 'msgs', 'hero', 'newsl'], support: ['dash', 'orders', 'cust', 'comp', 'msgs', 'notifs', 'reports'] };
+                const ROLES = { super: '*', manager: ['dash', 'shipping', 'orders', 'products', 'cats', 'docs', 'pages', 'cust', 'govs', 'news', 'offers', 'ads', 'comp', 'reports', 'notifs', 'msgs', 'hero', 'newsl', 'coupons', 'logs', 'notiflog', 'keywords', 'seo', 'engines', 'social'], support: ['dash', 'orders', 'cust', 'comp', 'msgs', 'notifs', 'notiflog', 'logs', 'reports'] };
                 const me = () => sessionStorage.getItem('boda_admin_user') || ADMIN.user;
                 const myRole = () => { if (me() === ADMIN.user) return 'super'; const u = USERS().find(x => x.u === me()); return u ? u.role : 'support'; };
                 const can = k => { const r = ROLES[myRole()]; return r === '*' || r.includes(k) || k === 'settings'; };
@@ -8535,126 +8484,45 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
 <p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
                 }
 
-
                 /* ---------- Customers ---------- */
-                function custList() {
-                    const acc = rd(K.acc, {});
-                    const o = orders().filter(x => x.s !== 'Cancelled');
-                    const us = rd(K.ustat, {});
-                    const q = (S.cq || '').toLowerCase().trim();
-
-                    let rows = Object.keys(acc).map(id => {
-                        const mine = o.filter(x => String(x.user || '').toLowerCase() === String(id).toLowerCase());
-                        return {
-                            a: acc[id] || {},
-                            id,
-                            n: mine.length,
-                            v: mine.reduce((sum, x) => sum + (Number(x.total) || 0), 0)
-                        };
-                    });
-
-                    rows = rows.filter(r => {
-                        const blocked = !!(us[r.id] && us[r.id].blocked);
-                        const searchMatch = !q ||
-                            (String(r.a.name || '') + ' ' + r.id).toLowerCase().includes(q);
-
-                        const statusMatch = !S.cs ||
-                            (S.cs === 'blk' ? blocked : !blocked);
-
-                        const orderMatch = !S.corders ||
-                            (S.corders === 'none' ? r.n === 0 :
-                                S.corders === 'has' ? r.n > 0 :
-                                    S.corders === 'many' ? r.n >= 5 : true);
-
-                        const spentMatch = !S.cspent ||
-                            (S.cspent === 'low' ? r.v < 1000 :
-                                S.cspent === 'mid' ? r.v >= 1000 && r.v < 5000 :
-                                    S.cspent === 'high' ? r.v >= 5000 : true);
-
-                        return searchMatch && statusMatch && orderMatch && spentMatch;
-                    });
-
-                    if (S.csort === 'orders') rows.sort((a, b) => b.n - a.n);
-                    else if (S.csort === 'spent') rows.sort((a, b) => b.v - a.v);
-                    else if (S.csort === 'name') rows.sort((a, b) =>
-                        String(a.a.name || '').localeCompare(String(b.a.name || ''))
-                    );
-
-                    return rows.length ? `<div class="tw"><table>
-        <thead><tr>
-            <th>${t('th_name')}</th>
-            <th>${t('th_contact')}</th>
-            <th>${t('th_orders')}</th>
-            <th>${t('th_spent')}</th>
-            <th>${t('cu_active')}</th>
-            <th></th>
-        </tr></thead>
-        <tbody>${rows.map(r => `<tr>
-            <td><b>${esc(r.a.name || '—')}</b></td>
-            <td>${esc(r.id)}</td>
-            <td>${r.n}</td>
-            <td>${money(r.v)}</td>
-            <td>${sw('cublock', { id: r.id }, !(us[r.id] && us[r.id].blocked))}</td>
-            <td class="nw">
-                <button class="mini" data-act="cudet" data-id="${esc(r.id)}">${t('details')}</button>
-                <button class="mini del" data-act="cudel" data-id="${esc(r.id)}">${t('del')}</button>
-            </td>
-        </tr>`).join('')}</tbody>
-    </table></div>` : `<div class="empty tw">${t('cu_none')}</div>`;
+                function custRows() {
+                    const acc = rd(K.acc, {}), o = orders().filter(x => x.s !== 'Cancelled'), us = rd(K.ustat, {}), q = (S.cq || '').toLowerCase(), D = 864e5, now = Date.now(), d0 = dayStart(now);
+                    const rows = Object.keys(acc).map(id => { const mine = o.filter(x => x.user === id), a = acc[id]; return { a, id, n: mine.length, v: mine.reduce((s, x) => s + (+x.total || 0), 0), blk: !!(us[id] && us[id].blocked), vfy: !!(us[id] && us[id].vfy), kind: id.includes('@') ? 'email' : 'phone', cr: a.created || 0, ll: a.lastLogin || 0, last: mine.length ? Math.max(...mine.map(x => x.created)) : 0 }; });
+                    const rng = (v, k) => k === 'today' ? v >= d0 : k === '7' ? v >= d0 - 6 * D : k === '30' ? v >= d0 - 29 * D : true;
+                    const df = S.cdf ? new Date(S.cdf + 'T00:00:00').getTime() : null, dt = S.cdt ? new Date(S.cdt + 'T00:00:00').getTime() + D : (df !== null ? df + D : null);
+                    return rows.filter(r => (!q || (r.a.name + ' ' + r.id).toLowerCase().includes(q))
+                        && (!S.cs || (S.cs === 'blk' ? r.blk : S.cs === 'act' ? (!r.blk && (r.ll >= now - 30 * D || r.last >= now - 30 * D)) : (!r.blk && !(r.ll >= now - 30 * D || r.last >= now - 30 * D))))
+                        && (!S.ct || r.kind === S.ct)
+                        && (!S.cd || (r.cr && rng(r.cr, S.cd)))
+                        && (df === null || (r.cr && r.cr >= df && r.cr < dt))
+                        && (!S.cv || (S.cv === 'yes') === r.vfy)
+                        && (!S.co || (S.co === 'none' ? r.n === 0 : S.co === 'has' ? r.n > 0 : r.n > 5))
+                        && (!S.cp || (S.cp === 'zero' ? r.v === 0 : S.cp === 'lt1' ? r.v > 0 && r.v < 1000 : S.cp === 'mid' ? r.v >= 1000 && r.v <= 5000 : r.v > 5000))
+                        && (!S.cl || (S.cl === 'never' ? !r.ll : (r.ll && rng(r.ll, S.cl)))));
                 }
-
+                function custList() {
+                    const rows = custRows(), fd = x => x ? dfmt(x) : '—';
+                    return rows.length ? `<p class="sub" style="margin:0 0 10px"><b>${rows.length}</b> ${t('n_cust')}</p><div class="tw"><table><thead><tr><th>${t('th_name')}</th><th>${t('th_contact')}</th><th>${t('cu_reg')}</th><th>${t('cu_lastlogin')}</th><th>${t('th_orders')}</th><th>${t('th_spent')}</th><th>${t('cu_vfy')}</th><th>${t('cu_active')}</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${esc(r.a.name)}</b></td><td>${esc(r.id)}<br><small>${t('ct_' + r.kind)}</small></td><td>${fd(r.cr)}</td><td>${fd(r.ll)}</td><td>${r.n}</td><td>${money(Math.round(r.v * 100) / 100)}</td><td>${sw('cuvfy', { id: r.id }, r.vfy)}</td><td>${sw('cublock', { id: r.id }, !r.blk)}</td>
+<td class="nw"><button class="mini" data-act="cudet" data-id="${esc(r.id)}">${t('details')}</button><button class="mini del" data-act="cudel" data-id="${esc(r.id)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('cu_none')}</div>`;
+                }
+                function custFilters() {
+                    const sel = (k, opts, all) => `<select data-q="${k}" data-v="cust"><option value="">${t(all || 'all')}</option>${opts.map(o => `<option value="${o[0]}" ${S[k] === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select>`;
+                    return `<div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S.cq || '')}" data-q="cq" data-v="cust">`
+                        + sel('cs', [['act', 'cu_st_act'], ['idle', 'cu_st_idle'], ['blk', 'cu_st_blk']], 'cu_allst')
+                        + sel('ct', [['email', 'ct_email'], ['phone', 'ct_phone']])
+                        + sel('cd', [['today', 'od_today'], ['7', 'cu_d7'], ['30', 'cu_d30']])
+                        + `<label class="fl"><span>${t('fl_from')}</span><input type="date" data-q="cdf" data-v="cust" value="${esc(S.cdf || '')}"></label><label class="fl"><span>${t('fl_to')}</span><input type="date" data-q="cdt" data-v="cust" value="${esc(S.cdt || '')}"></label>`
+                        + sel('cv', [['yes', 'cu_vfy_yes'], ['no', 'cu_vfy_no']])
+                        + sel('co', [['none', 'cu_o_none'], ['has', 'cu_o_has'], ['5', 'cu_o_5']])
+                        + sel('cp', [['zero', 'cu_p_zero'], ['lt1', 'cu_p_lt1'], ['mid', 'cu_p_mid'], ['gt5', 'cu_p_gt5']])
+                        + sel('cl', [['today', 'od_today'], ['7', 'cu_d7'], ['30', 'cu_d30'], ['never', 'cu_l_never']])
+                        + `</div>`;
+                }
                 function custView() {
                     const news = rd(K.news, []);
-
-                    return `<h1>${t('n_cust')}</h1>
-    <p class="sub">${t('n_cust_sub')}</p>
-
-    <div class="filters">
-        <input type="search"
-            placeholder="${t('search')}"
-            value="${esc(S.cq || '')}"
-            data-q="cq" data-v="cust">
-
-        <select data-q="cs" data-v="cust">
-            <option value="">${t('cu_allst')}</option>
-            <option value="act" ${S.cs === 'act' ? 'selected' : ''}>${t('cu_st_act')}</option>
-            <option value="blk" ${S.cs === 'blk' ? 'selected' : ''}>${t('cu_st_blk')}</option>
-        </select>
-
-        <select data-q="corders" data-v="cust">
-            <option value="">كل العملاء حسب الطلبات</option>
-            <option value="none" ${S.corders === 'none' ? 'selected' : ''}>بدون طلبات</option>
-            <option value="has" ${S.corders === 'has' ? 'selected' : ''}>لديهم طلبات</option>
-            <option value="many" ${S.corders === 'many' ? 'selected' : ''}>5 طلبات أو أكثر</option>
-        </select>
-
-        <select data-q="cspent" data-v="cust">
-            <option value="">كل مستويات الشراء</option>
-            <option value="low" ${S.cspent === 'low' ? 'selected' : ''}>أقل من 1,000 جنيه</option>
-            <option value="mid" ${S.cspent === 'mid' ? 'selected' : ''}>من 1,000 إلى 4,999 جنيه</option>
-            <option value="high" ${S.cspent === 'high' ? 'selected' : ''}>5,000 جنيه أو أكثر</option>
-        </select>
-
-        <select data-q="csort" data-v="cust">
-            <option value="">الترتيب الافتراضي</option>
-            <option value="orders" ${S.csort === 'orders' ? 'selected' : ''}>الأكثر طلبات</option>
-            <option value="spent" ${S.csort === 'spent' ? 'selected' : ''}>الأكثر شراءً</option>
-            <option value="name" ${S.csort === 'name' ? 'selected' : ''}>الاسم أبجديًا</option>
-        </select>
-    </div>
-
-    <div id="tbl">${custList()}</div>
-    <div class="note">${t('cu_hint')}</div>
-
-    <div class="box" style="margin-top:14px">
-        <h2>${t('subscribers')} (${news.length})</h2>
-        ${news.length
-                            ? news.map(e => `<span class="pill info" style="margin:3px">${esc(e)}</span>`).join('')
-                            : `<p class="empty">${t('no_subs')}</p>`}
-    </div>`;
+                    return `<div class="head"><div><h1>${t('n_cust')}</h1><p class="sub">${t('n_cust_sub')}</p></div></div>${custFilters()}<div id="tbl">${custList()}</div><div class="note">${t('cu_hint')}</div>
+<div class="box" style="margin-top:14px"><h2>${t('subscribers')} (${news.length})</h2>${news.length ? news.map(e => `<span class="pill info" style="margin:3px">${esc(e)}</span>`).join('') : `<p class="empty">${t('no_subs')}</p>`}</div>`;
                 }
-
-
 
                 /* ---------- Generic CRUD modules ---------- */
                 const O = (...a) => a.map(x => [x, x.replace(/^/, '')]);
@@ -8663,6 +8531,35 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                 const per = r => `${dfmt(r.start)} → ${dfmt(r.end)}`;
                 const PRIO = { low: 'info', med: 'warn', high: 'bad' }, CST = { open: 'bad', progress: 'warn', resolved: 'ok' }, SEV = { info: 'info', warn: 'warn', crit: 'bad' };
                 const MODS = {
+                    coupons: {
+                        k: K.coupons, ti: 'm_coupons', su: 'coupons_sub', nw: 'coupon_new', tog: 'active', def: () => ({ active: true, type: 'percent', value: 10, products: [], maxUses: 0, used: 0 }),
+                        q: r => [r.code, r.type, (r.products || []).join(' ')].join(' '),
+                        val: (r, old, list) => list.some(x => String(x.code || '').toLowerCase() === String(r.code || '').toLowerCase() && (!old || x.id !== old.id)) ? 'coupon_dup' : (+r.value <= 0 || (r.type === 'percent' && +r.value > 100) ? 'coupon_value_err' : null),
+                        fields: [{ n: 'code', l: 'coupon_code', ty: 'text', req: 1 }, { n: 'type', l: 'coupon_type', ty: 'sel', o: [['percent', 'coupon_percent'], ['fixed', 'coupon_fixed']] }, { n: 'value', l: 'coupon_value', ty: 'num', req: 1 }, { n: 'products', l: 'coupon_products', ty: 'multi', o: () => catalog().map(p => [p.id, p.name + ' (' + p.id + ')']) }, { n: 'start', l: 'f_start', ty: 'date' }, { n: 'end', l: 'f_end', ty: 'date' }, { n: 'maxUses', l: 'coupon_max', ty: 'num' }, { n: 'used', l: 'coupon_used', ty: 'num' }, { n: 'active', l: 'active', ty: 'sw' }],
+                        cols: [{ l: 'coupon_code', w: 1, f: r => `<b>${esc(r.code)}</b>` }, { l: 'coupon_type', f: r => `${t('coupon_' + r.type)} · ${esc(r.value)}${r.type === 'percent' ? '%' : ''}` }, { l: 'coupon_products', f: r => (r.products || []).length || t('all') }, { l: 'th_period', f: per }, { l: 'coupon_used', f: r => `${esc(r.used || 0)} / ${esc(r.maxUses || '∞')}` }]
+                    },
+                    keywords: {
+                        k: K.keywords, ti: 'n_keywords', su: 'keywords_sub', nw: 'keyword_new', tog: 'active', def: () => ({ target: 'all', active: true }), q: r => [r.keyword, r.aliases, r.targetId].join(' '),
+                        fields: [{ n: 'keyword', l: 'kw_word', ty: 'text', req: 1 }, { n: 'aliases', l: 'kw_alias', ty: 'text' }, { n: 'target', l: 'kw_target', ty: 'sel', o: [['all', 'kw_all'], ['products', 'kw_products'], ['categories', 'kw_categories']] }, { n: 'targetId', l: 'kw_targetid', ty: 'text' }, { n: 'active', l: 'active', ty: 'sw' }],
+                        cols: [{ l: 'kw_word', w: 1, f: r => `<b>${esc(r.keyword)}</b><br><small>${esc(r.aliases || '')}</small>` }, { l: 'kw_target', f: r => t('kw_' + (r.target || 'all')) }, { l: 'kw_targetid', f: r => esc(r.targetId || '—') }]
+                    },
+                    seo: {
+                        k: K.seo, ti: 'n_seo', su: 'seo_sub', nw: 'seo_new', def: () => ({ page: 'home', robots: 'index,follow' }), q: r => [r.page, r.title, r.description, r.keywords].join(' '),
+                        val: (r, old, list) => list.some(x => x.page === r.page && (!old || x.id !== old.id)) ? 'seo_dup' : null,
+                        fields: [{ n: 'page', l: 'seo_page', ty: 'sel', o: [['home', 'page_home'], ['products', 'page_products'], ['categories', 'page_categories'], ['offers', 'page_offers'], ['about', 'page_about'], ['contact', 'page_contact'], ['help', 'page_help'], ['privacy', 'page_privacy'], ['terms', 'page_terms']] }, { n: 'title', l: 'seo_title', ty: 'text', req: 1 }, { n: 'description', l: 'seo_desc', ty: 'area', rows: 3 }, { n: 'keywords', l: 'seo_keys', ty: 'area', rows: 2 }, { n: 'canonical', l: 'seo_canonical', ty: 'text' }, { n: 'robots', l: 'seo_robots', ty: 'text' }],
+                        cols: [{ l: 'seo_page', f: r => t('page_' + r.page) }, { l: 'seo_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.description || '').slice(0, 100))}</small>` }, { l: 'seo_robots', f: r => esc(r.robots || 'index,follow') }]
+                    },
+                    pages: {
+                        k: K.pages, ti: 'm_pages', su: 'pages_sub', nw: 'pages_new', tog: 'active', togL: 'pg_shown',
+                        def: () => ({ active: true, page: 'help', group: 'delivery', order: GL('pages').length + 1 }),
+                        q: r => ['title', 'body'].map(f => LK.map(l => r[f + '_' + l] || '').join(' ')).join(' '),
+                        flt: { n: 'page', o: [['help', 'pg_help'], ['privacy', 'pg_privacy'], ['terms', 'pg_terms']] },
+                        pre: r => { if (r.page === 'help') { if (!r.group || r.group === 'intro') r.group = 'delivery'; } else if (r.group !== 'intro') r.group = ''; if (r.order === '' || r.order == null) r.order = 99; },
+                        fields: [{ n: 'page', l: 'pg_page', ty: 'sel', o: [['help', 'pg_help'], ['privacy', 'pg_privacy'], ['terms', 'pg_terms']] }, { n: 'group', l: 'pg_group', ty: 'sel', o: [['', 'pg_g_none'], ['intro', 'pg_g_intro'], ['delivery', 'pg_g_delivery'], ['returns', 'pg_g_returns'], ['payment', 'pg_g_payment'], ['account', 'pg_g_account']] }, { n: 'order', l: 'pg_order', ty: 'num' }, { n: 'active', l: 'pg_shown', ty: 'sw' },
+                            { n: 'title_ar', l: 'pg_t_ar', ty: 'text' }, { n: 'title_en', l: 'pg_t_en', ty: 'text' }, { n: 'title_fr', l: 'pg_t_fr', ty: 'text' }, { n: 'title_de', l: 'pg_t_de', ty: 'text' },
+                            { n: 'body_ar', l: 'pg_b_ar', ty: 'area', rows: 4 }, { n: 'body_en', l: 'pg_b_en', ty: 'area', rows: 4, req: 1 }, { n: 'body_fr', l: 'pg_b_fr', ty: 'area', rows: 4 }, { n: 'body_de', l: 'pg_b_de', ty: 'area', rows: 4 }],
+                        cols: [{ l: 'pg_page', f: r => t('pg_' + r.page) }, { l: 'pg_group', f: r => t('pg_g_' + (r.group || 'none')) }, { l: 'f_title', w: 1, f: r => `<b>${esc(r['title_' + LG] || r.title_en || r.title_ar || '—')}</b><br><small>${esc((r['body_' + LG] || r.body_en || r.body_ar || '').slice(0, 90))}</small>` }, { l: 'pg_order', f: r => esc(r.order) }]
+                    },
                     articles: {
                         k: K.articles, ti: 'm_news', su: 'news_sub', nw: 'news_new', tog: 'active', togL: 'published', def: () => ({ active: true, date: today() }), q: r => r.title + ' ' + r.summary + ' ' + r.tag,
                         fields: [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'tag', l: 'f_tag', ty: 'text' }, { n: 'date', l: 'f_date', ty: 'date' }, { n: 'active', l: 'published', ty: 'sw' }, { n: 'summary', l: 'f_summary', ty: 'area', rows: 2 }, { n: 'body', l: 'f_body', ty: 'area', rows: 6 }, { n: 'img', l: 'f_img', ty: 'img' }],
@@ -8703,7 +8600,10 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                         cols: [{ l: 'th_name', f: r => `<b>${esc(r.name)}</b>` }, { l: 'u_user', f: r => esc(r.u) }, { l: 'u_role', f: r => `<span class="pill info">${t('role_' + r.role)}</span>` }, { l: 'th_date', f: r => dfmt(r.created) }]
                     }
                 };
-                const GL = k => rd(MODS[k].k, []);
+                const GL = k => { const l = rd(MODS[k].k, []); if (k !== 'pages') return l; const pr = { help: 0, privacy: 1, terms: 2 }; return l.slice().sort((a, b) => (pr[a.page] ?? 9) - (pr[b.page] ?? 9) || (Number(a.order) || 0) - (Number(b.order) || 0)); };
+                /* first run: put the default Help / Privacy / Terms text in the store so the admin can edit it */
+                if (localStorage.getItem(K.pages) === null && window.BodaPages) { try { localStorage.setItem(K.pages, JSON.stringify(BodaPages.defaults())); } catch (e) { } }
+                const pagesView = () => `<div class="head"><div><h1>${t('n_pages')}</h1><p class="sub">${t('pages_sub')}</p></div><div><button class="btn ghost" data-act="pgreset">${t('pg_reset')}</button> <button class="btn" data-act="gadd" data-m="pages">+ ${t('pages_new')}</button></div></div><p class="sub">${t('pg_hint')}</p>${gFilters('pages')}<div id="tbl">${gTable('pages')}</div>`;
                 function fld(x, v) {
                     const L = t(x.l), r = x.req ? ' required' : '';
                     if (x.ty === 'area') return `<label class="wide">${L}<textarea name="${x.n}" rows="${x.rows || 3}"${r}>${esc(v)}</textarea></label>`;
@@ -8730,12 +8630,10 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                 function adFilter(r) {
                     const pl = S.ad_pl, st = S.ad_st, a = S.ad_from, z = S.ad_to, nowD = today();
                     if (pl && r.place !== pl) return false;
-                    if (st) {
-                        const s0 = r.start || '', e0 = r.end || '', on = r.active !== false && !!r.active;
+                    if (st) { const s0 = r.start || '', e0 = r.end || '', on = r.active !== false && !!r.active;
                         const live = on && (!s0 || s0 <= nowD) && (!e0 || e0 >= nowD), sched = on && s0 && s0 > nowD, exp = e0 && e0 < nowD;
                         const soon = live && e0 && e0 <= new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
-                        if (st === 'live' && !live) return false; if (st === 'sched' && !sched) return false; if (st === 'exp' && !exp) return false; if (st === 'soon' && !soon) return false; if (st === 'off' && on) return false;
-                    }
+                        if (st === 'live' && !live) return false; if (st === 'sched' && !sched) return false; if (st === 'exp' && !exp) return false; if (st === 'soon' && !soon) return false; if (st === 'off' && on) return false; }
                     if (a && (r.end || '9999') < a) return false;        // ad period must overlap [from, to]
                     if (z && (r.start || '0000') > z) return false;
                     return true;
@@ -8838,6 +8736,20 @@ ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2
 <div class="box" style="margin-top:14px"><h2>${t('nt_history')}</h2>${h.length ? `<div id="tbl"><div class="tw"><table><thead><tr><th>${t('nt_text')}</th><th></th><th></th></tr></thead><tbody>${h.map(x => `<tr><td class="wrap">${esc(x.text)}<br><small>${esc(x.href)}</small></td><td>${when(x.time)}</td><td><button class="mini del" data-act="nldel" data-id="${x.time}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div></div>` : `<p class="empty">${t('nt_none')}</p>`}</div>`;
                 }
 
+                function logsView() {
+                    const h = rd(K.log, []);
+                    return `<div class="head"><div><h1>${t('n_logs')}</h1><p class="sub">${t('logs_sub')}</p></div><div><button class="btn ghost" data-act="logcsv">${t('exp_csv')}</button> <button class="btn ghost" data-act="logclear">${t('s_clearlog')}</button></div></div>${h.length ? `<div class="tw"><table><thead><tr><th>${t('th_date')}</th><th>${t('th_name')}</th><th>${t('th_status')}</th><th>${t('th_details')}</th></tr></thead><tbody>${h.map(x => `<tr><td>${when(x.t)}</td><td>${esc(x.u || '')}</td><td>${t(x.k || '')} ${esc(x.a || '')}</td><td class="wrap">${esc(x.n || '')}</td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`}`;
+                }
+                function notifLogView() {
+                    const h = rd(K.nlog, []);
+                    return `<div class="head"><div><h1>${t('n_notiflog')}</h1><p class="sub">${t('notiflog_sub')}</p></div><button class="btn ghost" data-act="nlogclear">${t('nt_clear')}</button></div>${h.length ? `<div class="tw"><table><thead><tr><th>${t('nt_text')}</th><th>${t('nt_link')}</th><th>${t('th_date')}</th><th></th></tr></thead><tbody>${h.map(x => `<tr><td class="wrap">${esc(x.text)}</td><td class="wrap">${esc(x.href || '')}</td><td>${when(x.time)}</td><td><button class="mini del" data-act="nldel" data-id="${x.time}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('nt_none')}</div>`}`;
+                }
+                const ENGINE_KEY = K.engines;
+                function engineView() {
+                    const c = { siteUrl: '', google: '', bing: '', sitemap: '', robots: 'index,follow', ...(rd(ENGINE_KEY, {}) || {}) };
+                    return `<div class="head"><div><h1>${t('n_engines')}</h1><p class="sub">${t('engine_sub')}</p></div></div><form id="enginef" class="box"><div class="g2"><label>${t('engine_site')}<input name="siteUrl" type="url" placeholder="https://example.com" value="${esc(c.siteUrl)}"></label><label>${t('engine_sitemap')}<input name="sitemap" type="url" placeholder="https://example.com/sitemap.xml" value="${esc(c.sitemap)}"></label><label>${t('engine_google')}<input name="google" value="${esc(c.google)}"></label><label>${t('engine_bing')}<input name="bing" value="${esc(c.bing)}"></label><label>${t('engine_robots')}<select name="robots"><option value="index,follow" ${c.robots === 'index,follow' ? 'selected' : ''}>index, follow</option><option value="noindex,nofollow" ${c.robots === 'noindex,nofollow' ? 'selected' : ''}>noindex, nofollow</option><option value="noindex,follow" ${c.robots === 'noindex,follow' ? 'selected' : ''}>noindex, follow</option></select></label></div><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div><p class="sub">${LG === 'ar' ? 'تحفظ هذه القيم محليًا الآن، ويمكن ربطها بالباك إند لاحقًا.' : 'These values are stored locally for now and can be connected to the backend later.'}</p></form>`;
+                }
+
                 /* ---------- Messages / Hero / Newsletter ---------- */
                 function msgList() {
                     const q = (S.mq || '').toLowerCase(), m = rd(K.msgs, []).filter(x => (!S.ms || (S.ms === 'new' ? !x.read : !!x.read)) && (!q || ((x.name || '') + ' ' + (x.email || '') + ' ' + (x.phone || '') + ' ' + (x.subject || '') + ' ' + (x.message || '')).toLowerCase().includes(q)));
@@ -8889,11 +8801,17 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
 <form id="pwf" class="box"><h2>${t('s_pw')}</h2><label>${t('s_curpw')}<input name="cur" type="password" autocomplete="current-password" required></label><label>${t('s_newpw')}<input name="nw" type="password" autocomplete="new-password" minlength="6" required></label><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div></form></div>
 <form id="sf"><div class="set-grid">
 <div class="box"><h2>${t('s_announce')}</h2><div class="chks">${sc('show', 's_showbar', s.announce.show)}</div><label>${t('s_atext')}<input name="text" value="${esc(s.announce.text)}"></label><label>${t('s_alink')}<input name="linkText" value="${esc(s.announce.linkText)}"></label><label>${t('s_ahref')}<input name="linkHref" value="${esc(s.announce.linkHref)}"></label></div>
-<div class="box"><h2>${t('s_contact')}</h2><label>${t('s_email')}<input name="email" type="email" value="${esc(s.contact.email)}"></label><label>${t('s_phone')}<input name="phone" value="${esc(s.contact.phone)}"></label><label>${t('s_addr')}<input name="address" value="${esc(s.contact.address)}"></label><label>${t('s_hours')}<input name="hours" value="${esc(s.contact.hours)}"></label></div>
+<div class="box"><h2>${t('s_contact')}</h2><label>${t('s_email')}<input name="email" type="email" value="${esc(s.contact.email)}"></label><label>${t('s_phone')}<input name="phone" value="${esc(s.contact.phone)}"></label><label>${t('s_addr')}<input name="address" value="${esc(s.contact.address)}"></label><label>${t('s_hours')}<input name="hours" value="${esc(s.contact.hours)}"></label><div class="g2"><label>📧 ${LG === 'ar' ? 'أيقونة البريد' : 'Email icon'}<input name="i_email" maxlength="8" value="${esc(s.contact.emailIcon)}"></label><label>📞 ${LG === 'ar' ? 'أيقونة الهاتف' : 'Phone icon'}<input name="i_phone" maxlength="8" value="${esc(s.contact.phoneIcon)}"></label><label>📍 ${LG === 'ar' ? 'أيقونة العنوان' : 'Address icon'}<input name="i_address" maxlength="8" value="${esc(s.contact.addressIcon)}"></label><label>🕒 ${LG === 'ar' ? 'أيقونة المواعيد' : 'Hours icon'}<input name="i_hours" maxlength="8" value="${esc(s.contact.hoursIcon)}"></label></div></div>
+<div class="box"><h2>🔗 ${t('s_social')}</h2><p class="sub" style="margin:0 0 8px">${t('s_social_h')}</p><div class="g2"><label>WhatsApp<input name="s_wa" dir="ltr" placeholder="201000000000" value="${esc(s.social.whatsapp)}"></label><label>${LG === 'ar' ? 'أيقونة WhatsApp' : 'WhatsApp icon'}<input name="i_wa" maxlength="8" value="${esc(s.socialIcons.whatsapp)}"></label><label>X (Twitter)<input name="s_x" dir="ltr" placeholder="https://x.com/..." value="${esc(s.social.x)}"></label><label>${LG === 'ar' ? 'أيقونة X' : 'X icon'}<input name="i_x" maxlength="8" value="${esc(s.socialIcons.x)}"></label><label>Instagram<input name="s_ig" dir="ltr" placeholder="https://instagram.com/..." value="${esc(s.social.instagram)}"></label><label>${LG === 'ar' ? 'أيقونة Instagram' : 'Instagram icon'}<input name="i_ig" maxlength="8" value="${esc(s.socialIcons.instagram)}"></label><label>Facebook<input name="s_fb" dir="ltr" placeholder="https://facebook.com/..." value="${esc(s.social.facebook)}"></label><label>${LG === 'ar' ? 'أيقونة Facebook' : 'Facebook icon'}<input name="i_fb" maxlength="8" value="${esc(s.socialIcons.facebook)}"></label><label>Telegram<input name="s_tg" dir="ltr" placeholder="https://t.me/..." value="${esc(s.social.telegram)}"></label><label>${LG === 'ar' ? 'أيقونة Telegram' : 'Telegram icon'}<input name="i_tg" maxlength="8" value="${esc(s.socialIcons.telegram)}"></label></div><small>${LG === 'ar' ? 'يمكن إدخال إيموجي كرتوني أو رمز نصي.' : 'Enter a cartoon emoji or text symbol.'}</small></div>
 <div class="box"><h2>${t('s_general')}</h2><label>${t('s_sname')}<input name="gname" value="${esc(g.name)}"></label><div class="g2"><label>${t('s_free')}<input name="free" type="number" min="0" value="${g.free}"></label><label>${t('s_lowstock')}<input name="low" type="number" min="0" value="${g.low}"></label><label>${t('s_tax')}<input name="tax" type="number" min="0" step="any" value="${g.tax}"></label></div>
 <div class="chks col">${sc('maint', 's_maint', g.maint)}${sc('reg', 's_reg', g.reg)}${sc('guest', 's_guest', g.guest)}${sc('reviews', 's_reviews', g.reviews)}${sc('mail', 's_mail', g.mail)}</div></div></div>
 <div class="bar"><button class="btn">${t('s_save')}</button><button type="button" class="btn ghost" data-act="sreset">${t('s_reset')}</button><button type="button" class="btn ghost" data-act="lclear">${t('s_clearlog')}</button></div></form>
 <div class="note" style="margin-top:16px">${t('s_note')}<br>${t('s_store_note')}</div>`;
+                }
+
+                function socialView() {
+                    const s = SITE();
+                    return `<div class="head"><div><h1>${t('n_social')}</h1><p class="sub">${t('social_sub')}</p></div></div><form id="socialf" class="box"><div class="g2">${[['Facebook', 'facebook', '📘', 'https://facebook.com/...'], ['Instagram', 'instagram', '📸', 'https://instagram.com/...'], ['X', 'x', '𝕏', 'https://x.com/...'], ['WhatsApp', 'whatsapp', '💬', '201000000000 or https://wa.me/...'], ['Telegram', 'telegram', '✈️', 'https://t.me/...']].map(x => `<label>${x[0]} URL<input name="${x[1]}" dir="ltr" placeholder="${x[3]}" value="${esc(s.social[x[1]])}"></label><label>${LG === 'ar' ? 'شكل الأيقونة' : 'Icon style'} · ${x[0]}<input name="i_${x[1]}" maxlength="8" value="${esc(s.socialIcons[x[1]] || x[2])}"></label>`).join('')}</div><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div></form>`;
                 }
 
 
@@ -8986,7 +8904,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     jobs.forEach(setupList);
                 }
                 ['input', 'change'].forEach(ev => document.addEventListener(ev, e => { const x = e.target; if (x.dataset && (x.dataset.q || x.dataset.rp)) { const k = pgKey(null) + (x.dataset.rp ? ':rep' : ''); if (PG[pgKey(null)]) PG[pgKey(null)].p = 1; if (PG[k]) PG[k].p = 1; } }, true));
-                const FLC = { pc: 'fl_cat', ps: 'fl_stock', pv: 'fl_arch', od: 'fl_date', ost: 'fl_status', cf_subs: 'fl_subs', cf_prod: 'fl_prods', cf_img: 'fl_img', cf_sort: 'fl_sort' };
+                const FLC = { pc: 'fl_cat', ps: 'fl_stock', pv: 'fl_arch', od: 'fl_date', ost: 'fl_status', cs: 'fl_acc', ct: 'fl_ctype', cd: 'fl_reg', cv: 'fl_vfy', co: 'fl_ordn', cp: 'fl_spent', cl: 'fl_login', cf_subs: 'fl_subs', cf_prod: 'fl_prods', cf_img: 'fl_img', cf_sort: 'fl_sort' };
                 function enhanceFilters() {
                     document.querySelectorAll('#view .filters:not(.enh)').forEach(f => {
                         const qs = [...f.querySelectorAll('[data-q]')]; if (!qs.length) return;
@@ -9062,8 +8980,8 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 }
 
                 /* ---------- Router ---------- */
-                const NAV = [['dash', '📊', dash], ['shipping', '🚚', shippingView], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['docs', '📑', () => gView('docs')], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
-                const TBLS = { shipping: () => '', orders: ordersList, products: prodList, cust: custList, cats: catList, msgs: msgList, newsl: newsList, govs: govTable, docs: () => gTable('docs'), articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users') };
+                const NAV = [['dash', '📊', dash], ['shipping', '🚚', shippingView], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['docs', '📑', () => gView('docs')], ['pages', '📄', pagesView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['notiflog', '🧾', notifLogView], ['logs', '📋', logsView], ['coupons', '🎟️', () => gView('coupons')], ['keywords', '🔎', () => gView('keywords')], ['seo', '🌐', () => gView('seo')], ['engines', '🧭', engineView], ['social', '🔗', socialView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
+                const TBLS = { shipping: () => '', orders: ordersList, products: prodList, cust: custList, cats: catList, msgs: msgList, newsl: newsList, govs: govTable, docs: () => gTable('docs'), pages: () => gTable('pages'), articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users'), coupons: () => gTable('coupons'), keywords: () => gTable('keywords'), seo: () => gTable('seo'), logs: logsView, notiflog: notifLogView, engines: engineView };
                 function render() {
                     const k = location.hash.slice(1), vis = NAV.filter(n => can(n[0])), cur = vis.find(n => n[0] === k) || vis[0];
                     const a = orders().filter(o => ['Pending', 'Processing'].includes(o.s)).length, unread = rd(K.msgs, []).filter(m => !m.read).length, oc = rd(K.comp, []).filter(c => c.status === 'open').length;
@@ -9143,7 +9061,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                         file: 'boda-categories', head: ['name', 'icon', 'shop', 'desc', 'long', 'subs'],
                         rows: () => CATS().map(c => [c.name, c.icon || '', c.shop || '', c.desc || '', c.long || '', (c.subs || []).join('|')]),
                         sample: [['Electronics', '💻', 'Shop Electronics', 'Short text', 'Long text', 'Laptops|Monitors']], help: ['# subs: sub-departments separated with |', '# an existing name is updated, a new name is added'],
-                        imp: objs => { const cs = CATS().map(c => ({ ...c })); let n = 0; objs.forEach(o => { if (!o.name) return; const rec = { name: o.name, icon: o.icon || '', shop: o.shop || 'Shop ' + o.name, desc: o.desc || '', long: o.long || o.desc || '', subs: splitL(o.subs) }; const i = cs.findIndex(c => c.name === o.name); if (i > -1) cs[i] = { ...cs[i], ...rec }; else cs.push(rec); n++; }); wr(K.cats, cs); return n; }
+                        imp: objs => { const cs = CATS().map(c => ({ ...c })); let n = 0; objs.forEach(o => { if (!o.name) return; const rec = { name: o.name, icon: o.icon || '', shop: o.shop || 'Shop ' + o.name, desc: o.desc || '', long: o.long || o.desc || '', subs: splitL(o.subs) }; const i = cs.findIndex(c => c.name === o.name); if (i > -1) cs[i] = { ...cs[i], ...rec }; else if (cs.length < 20) cs.push(rec); else return; n++; }); wr(K.cats, cs); return n; }
                     },
                     govs: {
                         file: 'boda-shipping', head: ['id', 'name_en', 'name_ar', 'fee', 'active', 'areas'],
@@ -9165,7 +9083,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     ads: { file: 'boda-ads', head: () => MODS.ads.fields.filter(x => x.ty !== 'img').map(x => x.n), rows: () => rd(K.ads, []).map(r => MODS.ads.fields.filter(x => x.ty !== 'img').map(x => r[x.n])), sample: [], help: ['# place: header | home | sidebar | popup | footer ; dates: YYYY-MM-DD'], imp: genImport('ads') },
                     comp: { file: 'boda-complaints', head: () => MODS.comp.fields.filter(x => x.ty !== 'img').map(x => x.n), rows: () => rd(K.comp, []).map(r => MODS.comp.fields.filter(x => x.ty !== 'img').map(x => r[x.n])), sample: [], help: [], imp: genImport('comp') },
                     docs: { file: 'boda-docs', head: () => MODS.docs.fields.map(x => x.n), rows: () => rd(K.docs, []).map(r => MODS.docs.fields.map(x => r[x.n])), sample: [], help: ['# product: product id', '# doctype: manual | warranty | spec | safety | cert | other'], imp: genImport('docs') },
-                    cust: { file: 'boda-customers', exportOnly: 1, all: () => flat(rd(K.acc, [])) },
+                    cust: { file: 'boda-customers', exportOnly: 1, all: () => flat(Object.keys(rd(K.acc, {})).map(id => ({ id, ...rd(K.acc, {})[id], created: rd(K.acc, {})[id].created ? new Date(rd(K.acc, {})[id].created).toISOString() : '', lastLogin: rd(K.acc, {})[id].lastLogin ? new Date(rd(K.acc, {})[id].lastLogin).toISOString() : '' }))) },
                     users: { file: 'boda-admin-users', exportOnly: 1, all: () => flat(USERS()) }
                 };
                 IO.shipping = IO.govs;
@@ -9213,6 +9131,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     fr.contentDocument.open(); fr.contentDocument.write(html); fr.contentDocument.close();
                     setTimeout(() => { try { fr.contentWindow.focus(); fr.contentWindow.print(); } catch (e) { } setTimeout(() => fr.remove(), 4000); }, 350);
                 }
+                document.addEventListener('change', e => { const x = e.target; if (x.dataset && x.dataset.chg === 'cuvfy') { const u = rd(K.ustat, {}); u[x.dataset.id] = { ...(u[x.dataset.id] || {}), vfy: x.checked }; wr(K.ustat, u); toast(t('saved')); } });
                 document.addEventListener('submit', e => {
                     const f = e.target; if (f.id !== "prtf") return; e.preventDefault(); e.stopImmediatePropagation();
                     const o = orders().find(x => x.id === f.dataset.id); if (!o) return;
@@ -9240,6 +9159,9 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     /* settings */
                     sreset: () => { if (!confirm(t('s_confirm_reset'))) return; localStorage.removeItem(K.site); render(); toast(t('saved')); },
                     lclear: () => { wr(K.log, []); render(); toast(t('deleted')); },
+                    logclear: () => { if (!confirm(t('confirm_del'))) return; wr(K.log, []); render(); toast(t('deleted')); },
+                    logcsv: () => { const rows = rd(K.log, []).map(x => [new Date(x.t).toISOString(), x.u, t(x.k), x.a, x.n]); dl('boda-activity-log.csv', new Blob([csvOf([['date', 'user', 'action', 'section', 'details']].concat(rows))], { type: 'text/csv' })); },
+                    nlogclear: () => { if (!confirm(t('confirm_del'))) return; wr(K.nlog, []); render(); toast(t('deleted')); },
                     /* orders */
                     odetail: d => {
                         const o = orders().find(x => x.id === d.id); if (!o) return;
@@ -9274,6 +9196,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     /* governorates */
                     gvadd: () => open(gvForm()), gvedit: d => open(gvForm(GOVS().find(g => g.id === d.id))),
                     gvdel: d => { if (!confirm(t('confirm_del'))) return; saveGov(GOVS().filter(g => g.id !== d.id)); log('log_del', 'n_govs'); render(); toast(t('deleted')); },
+                    pgreset: () => { if (!confirm(t('pg_confirm_reset'))) return; try { localStorage.setItem(K.pages, JSON.stringify(window.BodaPages ? BodaPages.defaults() : [])); } catch (e) { } render(); toast(t('saved')); },
                     gvreset: () => { if (!confirm(t('g_confirm_reset'))) return; localStorage.removeItem(K.govs); render(); },
                     gvareas: d => open(areasHtml(d.id)), gvdone: () => { $('#dlg').close(); render(); },
                     gvareadel: d => { const gs = GOVS(), g = gs.find(x => x.id === d.g); g.areas.splice(+d.i, 1); saveGov(gs); open(areasHtml(d.g)); },
@@ -9334,9 +9257,19 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                         wr('boda_shipping_settings', { enabled: f.elements.enabled.checked, defaultFee: Math.max(0, +v('defaultFee') || 0), freeFrom: Math.max(0, +v('freeFrom') || 0), eta: v('eta') });
                         log('log_save', 'shipping_settings'); toast(t('s_saved')); render(); return;
                     }
+                    if (f.id === 'enginef') {
+                        wr(ENGINE_KEY, { siteUrl: v('siteUrl').replace(/\/$/, ''), sitemap: v('sitemap'), google: v('google'), bing: v('bing'), robots: v('robots') });
+                        log('log_save', 'n_engines'); toast(t('saved')); render(); return;
+                    }
+                    if (f.id === 'socialf') {
+                        const site = rd(K.site, {});
+                        site.social = { facebook: v('facebook'), instagram: v('instagram'), x: v('x'), whatsapp: v('whatsapp'), telegram: v('telegram') };
+                        site.socialIcons = { facebook: v('i_facebook'), instagram: v('i_instagram'), x: v('i_x'), whatsapp: v('i_whatsapp'), telegram: v('i_telegram') };
+                        wr(K.site, site); log('log_save', 'n_social'); render(); toast(t('saved')); return;
+                    }
                     if (f.id === 'sf') {
                         const c = n => f.elements[n].checked;
-                        wr(K.site, { announce: { show: c('show'), text: v('text'), linkText: v('linkText'), linkHref: v('linkHref') }, contact: { email: v('email'), phone: v('phone'), address: v('address'), hours: v('hours') }, general: { name: v('gname') || 'Boda Store', free: +v('free') || 0, low: +v('low') || 0, tax: +v('tax') || 0, maint: c('maint'), reg: c('reg'), guest: c('guest'), reviews: c('reviews'), mail: c('mail') } });
+                        wr(K.site, { announce: { show: c('show'), text: v('text'), linkText: v('linkText'), linkHref: v('linkHref') }, contact: { email: v('email'), phone: v('phone'), address: v('address'), hours: v('hours'), emailIcon: v('i_email'), phoneIcon: v('i_phone'), addressIcon: v('i_address'), hoursIcon: v('i_hours') }, social: { whatsapp: v('s_wa'), x: v('s_x'), instagram: v('s_ig'), facebook: v('s_fb'), telegram: v('s_tg') }, socialIcons: { whatsapp: v('i_wa'), x: v('i_x'), instagram: v('i_ig'), facebook: v('i_fb'), telegram: v('i_tg') }, general: { name: v('gname') || 'Boda Store', free: +v('free') || 0, low: +v('low') || 0, tax: +v('tax') || 0, maint: c('maint'), reg: c('reg'), guest: c('guest'), reviews: c('reviews'), mail: c('mail') } });
                         log('log_save', 'n_settings'); toast(t('s_saved')); return;
                     }
                     if (f.id === 'pwf') {
@@ -9390,7 +9323,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                         const rec = { name, icon: '', img: v('img'), shop: v('shop') || 'Shop ' + name, desc: v('desc'), long: v('long') || v('desc'), subs: f.elements.subs.value.split(/[\n,،]/).map(s => s.trim()).filter(Boolean) };
                         if (!name) { err.textContent = t('req_err'); return; }
                         if (id) { const i = cs.findIndex(c => c.name === id); cs[i] = { ...cs[i], ...rec, name: id }; }
-                        else { if (cs.some(c => c.name.toLowerCase() === name.toLowerCase())) { err.textContent = t('c_exists'); return; } cs.push(rec); }
+                        else { if (cs.some(c => c.name.toLowerCase() === name.toLowerCase())) { err.textContent = t('c_exists'); return; } if (cs.length >= 20) { err.textContent = LG === 'ar' ? 'الحد الأقصى 20 قسمًا.' : 'You can add up to 20 categories.'; return; } cs.push(rec); }
                         wr(K.cats, cs); $('#dlg').close(); log('log_save', 'm_cats', name); render(); toast(t('saved'));
                     }
                 });
@@ -9399,6 +9332,916 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 if (apiOn()) loadFromApi().then(render).catch(() => { });
             })();
         </script>
+    </template>
+    <template data-page="help" data-title="Help Center | Boda Store" data-class="help-page">
+
+        <div class="announcement-bar">
+            <p>Everything You Need, All in One Place — Free Delivery on Orders Over $500! <a
+                    href="index.html?page=offers">View Special
+                    Offers</a></p>
+        </div>
+
+        <header>
+            <div class="brand-wrap">
+                <a href="index.html?page=home" class="brand-link">
+                    <h1>Boda Store</h1>
+                </a>
+                <span class="brand-tag">All-in-One Store</span>
+            </div>
+            <div class="search-box">
+                <input name="search" type="search" placeholder="Search electronics, home, fashion, books..."
+                    aria-label="Search">
+                <button type="button" onclick="searchProducts()" aria-label="Search"><i
+                        class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="header-actions">
+                <a href="index.html?page=favorites" class="favorites"><span>Favorites</span></a>
+                <a href="index.html?page=cart" class="cart"><span>Cart</span></a>
+            </div>
+            <div class="header-tools">
+                <div class="language-menu-wrap">
+                    <button type="button" class="language-btn" id="language-btn" title="Language"><i
+                            class="fa-solid fa-globe"></i></button>
+                    <div class="language-dropdown" id="language-dropdown">
+                        <button type="button" data-lang="en">🇬🇧 English</button>
+                        <button type="button" data-lang="ar">🇪🇬 العربية</button>
+                    </div>
+                    <div class="settings-menu-wrap">
+                        <button type="button" class="settings-btn" id="settings-menu-btn" title="Settings"
+                            aria-haspopup="true" aria-expanded="false" aria-controls="settings-dropdown">
+                            <i class="fa-solid fa-gear"></i>
+                        </button>
+                        <div class="settings-dropdown" id="settings-dropdown">
+                            <h3 class="sl-group">Preferences</h3>
+                            <div class="sl-list">
+                                <details class="sl-item" open>
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-palette"></i></span>
+                                        <span class="sl-text"><strong>Appearance</strong><small>Dark mode and
+                                                theme</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Dark Mode</h4>
+                                                <p>Switch between light and dark appearance.</p>
+                                            </div>
+                                            <button type="button" id="settings-theme-toggle" class="switch-toggle"
+                                                role="switch" aria-checked="false" aria-label="Dark Mode"><span
+                                                    class="switch-knob"></span></button>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Display Language</h4>
+                                                <p>Select your preferred language.</p>
+                                            </div>
+                                            <select id="language-select"></select>
+                                        </div>
+                                        <p id="language-message"></p>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <h3 class="sl-group">Account &amp; Payments</h3>
+                            <div class="sl-list">
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-user"></i></span>
+                                        <span class="sl-text"><strong>Account</strong><small>Login and
+                                                registration</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Login</h4>
+                                                <p>Access your Boda Store account.</p>
+                                            </div>
+                                            <a href="index.html?page=signin" class="settings-action">Login →</a>
+                                        </div>
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Create Account</h4>
+                                                <p>Register a new Boda Store account.</p>
+                                            </div>
+                                            <a href="index.html?page=signup" class="settings-action">Sign Up →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item" id="orders-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-box"></i></span>
+                                        <span class="sl-text"><strong>My Orders</strong><small>Track, cancel or re-order
+                                                purchases.</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Order History</h4>
+                                                <p>See the status of all your orders.</p>
+                                            </div>
+                                            <a href="index.html?page=orders" class="settings-action">View →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item" id="reviews-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-star"></i></span>
+                                        <span class="sl-text"><strong>My Reviews</strong><small>Edit or remove product
+                                                ratings.</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Product Ratings</h4>
+                                                <p>Manage the products you rated.</p>
+                                            </div>
+                                            <a href="index.html?page=reviews" class="settings-action">View →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-users"></i></span>
+                                        <span class="sl-text"><strong>Switch Account</strong><small>Switch accounts on
+                                                this
+                                                device</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div id="switch-box"></div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-credit-card"></i></span>
+                                        <span class="sl-text"><strong>Payment Methods &amp;
+                                                Gateways</strong><small>Cards,
+                                                Vodafone Cash, InstaPay, PayPal, Fawry</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div id="pay-box"></div>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <h3 class="sl-group">Store</h3>
+                            <div class="sl-list">
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-store"></i></span>
+                                        <span class="sl-text"><strong>Store Information</strong><small>About Boda Store
+                                                and
+                                                support</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>About Us</h4>
+                                                <p>Learn more about our all-in-one store.</p>
+                                            </div>
+                                            <a href="index.html?page=about" class="settings-action">View →</a>
+                                        </div>
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Contact Us</h4>
+                                                <p>Questions about an order? Write to us.</p>
+                                            </div>
+                                            <a href="index.html?page=contact" class="settings-action">Open →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html?page=home">Home</a></li>
+                    <li><a href="index.html?page=categories">Categories</a></li>
+                    <li><a href="index.html?page=products">Products</a></li>
+                    <li><a href="index.html?page=offers">Offers</a></li>
+                    <li><a href="index.html?page=about">About Us</a></li>
+                    <li><a href="index.html?page=contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="legal help-page">
+            <h1 class="page-title">Help Center</h1>
+            <p class="page-intro">Find quick answers about orders, delivery, payment and returns — or contact our support team.</p>
+            <form class="help-search" onsubmit="return false"><input id="help-q" type="search" placeholder="Search for help, e.g. delivery, return, payment..." aria-label="Search help"></form>
+            <h2 class="help-h">What can we help you with?</h2>
+            <div class="help-cards">
+                <a class="help-card" href="index.html?page=orders"><i class="fa-solid fa-box"></i><strong>Your Orders</strong><span>Track, edit or cancel an order</span></a>
+                <a class="help-card" href="#help-delivery"><i class="fa-solid fa-truck-fast"></i><strong>Shipping &amp; Delivery</strong><span>Fees, free delivery and times</span></a>
+                <a class="help-card" href="#help-returns"><i class="fa-solid fa-rotate-left"></i><strong>Returns &amp; Refunds</strong><span>Return an item or get a refund</span></a>
+                <a class="help-card" href="#help-payment"><i class="fa-solid fa-credit-card"></i><strong>Payment</strong><span>Cards, cash on delivery, gateways</span></a>
+                <a class="help-card" href="#help-account"><i class="fa-solid fa-user-gear"></i><strong>Account &amp; Security</strong><span>Sign in, password and privacy</span></a>
+                <a class="help-card" href="#" data-open-chat="1"><i class="fa-solid fa-headset"></i><strong>Talk to support</strong><span>Chat with us now</span></a>
+            </div>
+            <section class="help-sec" id="help-delivery"><h2>Shipping &amp; Delivery</h2>
+                <details class="help-q"><summary>How much does delivery cost?</summary><p>The delivery fee depends on your governorate and is shown at checkout before you confirm the order. Orders above the free-delivery limit are delivered at no charge.</p></details>
+                <details class="help-q"><summary>How long does delivery take?</summary><p>Most orders arrive within 2 to 4 days. The estimated time is shown on the order confirmation page.</p></details>
+                <details class="help-q"><summary>Can I change my shipping address after ordering?</summary><p>Yes, while the order is still Pending you can edit the address, quantities and items from the order confirmation page in My Orders.</p></details>
+            </section>
+            <section class="help-sec" id="help-returns"><h2>Returns &amp; Refunds</h2>
+                <details class="help-q"><summary>What is the return policy?</summary><p>You can return most items within 14 days of delivery if they are unused and in their original packaging. See the <a href="index.html?page=terms">Terms &amp; Conditions</a> for details.</p></details>
+                <details class="help-q"><summary>How do I get a refund?</summary><p>Contact support with your order number. Approved refunds are returned to the original payment method.</p></details>
+            </section>
+            <section class="help-sec" id="help-payment"><h2>Payment</h2>
+                <details class="help-q"><summary>Which payment methods do you accept?</summary><p>Visa, Mastercard, supported payment gateways and Cash on Delivery.</p></details>
+                <details class="help-q"><summary>Is my payment information safe?</summary><p>Yes. We never store your full card number or CVV. Read our <a href="index.html?page=privacy">Privacy Policy</a>.</p></details>
+            </section>
+            <section class="help-sec" id="help-account"><h2>Account &amp; Security</h2>
+                <details class="help-q"><summary>I forgot my password</summary><p>Open Sign In and choose “Forgot password”, then enter your email or phone number to set a new one.</p></details>
+                <details class="help-q"><summary>How do I contact you?</summary><p>Use the chat button, the <a href="index.html?page=contact">Contact page</a>, or email info@bodastore.com. We reply within a day.</p></details>
+            </section>
+            <p class="help-none" id="help-none" hidden>No help topics match your search.</p>
+        </main>
+
+        <section class="trust">
+            <ul>
+                <li><strong>Free delivery</strong><span>On orders over $500</span></li>
+                <li><strong>1-year warranty</strong><span>On electronics &amp; appliances</span></li>
+                <li><strong>Secure payment</strong><span>Pay safely online or on delivery</span></li>
+                <li><strong>Fast support</strong><span>We reply within a day</span></li>
+            </ul>
+        </section>
+
+        <footer>
+            <div class="footer-grid">
+                <div>
+                    <h3>Boda Store</h3>
+                    <p>Your trusted place for everything you need — all in one store.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html?page=home">Home</a></li>
+                        <li><a href="index.html?page=categories">Categories</a></li>
+                        <li><a href="index.html?page=products">Products</a></li>
+                        <li><a href="index.html?page=offers">Offers</a></li>
+                        <li><a href="index.html?page=about">About Us</a></li>
+                        <li><a href="index.html?page=contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><a href="index.html?page=category&cat=Electronics">Electronics</a></li>
+                        <li><a href="index.html?page=category&cat=Home%20%26%20Appliances">Home &amp; Appliances</a>
+                        </li>
+                        <li><a href="index.html?page=category&cat=Fashion">Fashion</a></li>
+                        <li><a href="index.html?page=category&cat=Beauty">Beauty</a></li>
+                        <li><a href="index.html?page=category&cat=Sports">Sports</a></li>
+                        <li><a href="index.html?page=category&cat=Books">Books</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="index.html?page=orders">My Orders</a></li>
+                        <li><a href="index.html?page=cart">Cart</a></li>
+                        <li><a href="index.html?page=favorites">Favorites</a></li>
+                        <li><a href="index.html?page=reviews">My Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Contact</h3>
+                    <ul>
+                        <li class="fc"><span class="ci ci-mail"></span><span>info@bodastore.com</span></li>
+                        <li class="fc"><span class="ci ci-phone"></span><span dir="ltr">+20 100 000 0000</span></li>
+                        <li class="fc"><span class="ci ci-pin"></span><span>Alexandria, Egypt</span></li>
+                        <li class="fc"><span class="ci ci-clock"></span><span>Daily: 10 AM – 9 PM</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Boda Store. All Rights Reserved.</span>
+                <div class="footer-payments">
+                    <span><i class="fa-brands fa-cc-visa"></i> Visa</span>
+                    <span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+                    <span><i class="fa-solid fa-truck"></i> Cash on Delivery</span>
+                </div>
+            </div>
+        </footer>
+        <a href="#top" class="back-to-top" title="Back to Top">↑</a>
+
+    </template>
+    <template data-page="privacy" data-title="Privacy Policy | Boda Store" data-class="legal-page">
+
+        <div class="announcement-bar">
+            <p>Everything You Need, All in One Place — Free Delivery on Orders Over $500! <a
+                    href="index.html?page=offers">View Special
+                    Offers</a></p>
+        </div>
+
+        <header>
+            <div class="brand-wrap">
+                <a href="index.html?page=home" class="brand-link">
+                    <h1>Boda Store</h1>
+                </a>
+                <span class="brand-tag">All-in-One Store</span>
+            </div>
+            <div class="search-box">
+                <input name="search" type="search" placeholder="Search electronics, home, fashion, books..."
+                    aria-label="Search">
+                <button type="button" onclick="searchProducts()" aria-label="Search"><i
+                        class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="header-actions">
+                <a href="index.html?page=favorites" class="favorites"><span>Favorites</span></a>
+                <a href="index.html?page=cart" class="cart"><span>Cart</span></a>
+            </div>
+            <div class="header-tools">
+                <div class="language-menu-wrap">
+                    <button type="button" class="language-btn" id="language-btn" title="Language"><i
+                            class="fa-solid fa-globe"></i></button>
+                    <div class="language-dropdown" id="language-dropdown">
+                        <button type="button" data-lang="en">🇬🇧 English</button>
+                        <button type="button" data-lang="ar">🇪🇬 العربية</button>
+                    </div>
+                    <div class="settings-menu-wrap">
+                        <button type="button" class="settings-btn" id="settings-menu-btn" title="Settings"
+                            aria-haspopup="true" aria-expanded="false" aria-controls="settings-dropdown">
+                            <i class="fa-solid fa-gear"></i>
+                        </button>
+                        <div class="settings-dropdown" id="settings-dropdown">
+                            <h3 class="sl-group">Preferences</h3>
+                            <div class="sl-list">
+                                <details class="sl-item" open>
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-palette"></i></span>
+                                        <span class="sl-text"><strong>Appearance</strong><small>Dark mode and
+                                                theme</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Dark Mode</h4>
+                                                <p>Switch between light and dark appearance.</p>
+                                            </div>
+                                            <button type="button" id="settings-theme-toggle" class="switch-toggle"
+                                                role="switch" aria-checked="false" aria-label="Dark Mode"><span
+                                                    class="switch-knob"></span></button>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Display Language</h4>
+                                                <p>Select your preferred language.</p>
+                                            </div>
+                                            <select id="language-select"></select>
+                                        </div>
+                                        <p id="language-message"></p>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <h3 class="sl-group">Account &amp; Payments</h3>
+                            <div class="sl-list">
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-user"></i></span>
+                                        <span class="sl-text"><strong>Account</strong><small>Login and
+                                                registration</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Login</h4>
+                                                <p>Access your Boda Store account.</p>
+                                            </div>
+                                            <a href="index.html?page=signin" class="settings-action">Login →</a>
+                                        </div>
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Create Account</h4>
+                                                <p>Register a new Boda Store account.</p>
+                                            </div>
+                                            <a href="index.html?page=signup" class="settings-action">Sign Up →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item" id="orders-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-box"></i></span>
+                                        <span class="sl-text"><strong>My Orders</strong><small>Track, cancel or re-order
+                                                purchases.</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Order History</h4>
+                                                <p>See the status of all your orders.</p>
+                                            </div>
+                                            <a href="index.html?page=orders" class="settings-action">View →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item" id="reviews-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-star"></i></span>
+                                        <span class="sl-text"><strong>My Reviews</strong><small>Edit or remove product
+                                                ratings.</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Product Ratings</h4>
+                                                <p>Manage the products you rated.</p>
+                                            </div>
+                                            <a href="index.html?page=reviews" class="settings-action">View →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-users"></i></span>
+                                        <span class="sl-text"><strong>Switch Account</strong><small>Switch accounts on
+                                                this
+                                                device</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div id="switch-box"></div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-credit-card"></i></span>
+                                        <span class="sl-text"><strong>Payment Methods &amp;
+                                                Gateways</strong><small>Cards,
+                                                Vodafone Cash, InstaPay, PayPal, Fawry</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div id="pay-box"></div>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <h3 class="sl-group">Store</h3>
+                            <div class="sl-list">
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-store"></i></span>
+                                        <span class="sl-text"><strong>Store Information</strong><small>About Boda Store
+                                                and
+                                                support</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>About Us</h4>
+                                                <p>Learn more about our all-in-one store.</p>
+                                            </div>
+                                            <a href="index.html?page=about" class="settings-action">View →</a>
+                                        </div>
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Contact Us</h4>
+                                                <p>Questions about an order? Write to us.</p>
+                                            </div>
+                                            <a href="index.html?page=contact" class="settings-action">Open →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html?page=home">Home</a></li>
+                    <li><a href="index.html?page=categories">Categories</a></li>
+                    <li><a href="index.html?page=products">Products</a></li>
+                    <li><a href="index.html?page=offers">Offers</a></li>
+                    <li><a href="index.html?page=about">About Us</a></li>
+                    <li><a href="index.html?page=contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="legal">
+            <h1 class="page-title">Privacy Policy</h1>
+            <p class="page-intro">Last updated: November 2026. This policy explains what information Boda Store collects and how we use it.</p>
+            <section class="legal-sec"><h2>1. Information we collect</h2><p>We collect the details you give us when you create an account, place an order or contact us: name, email or phone number, shipping address, and order history. We also keep basic technical data such as your language and theme preference.</p></section>
+            <section class="legal-sec"><h2>2. How we use your information</h2><p>We use your information to process and deliver orders, provide customer support, send order notifications, improve the store, and prevent fraud.</p></section>
+            <section class="legal-sec"><h2>3. Payment data</h2><p>We never store your full card number or CVV. Only the card brand and last four digits are kept so you can recognise a saved card.</p></section>
+            <section class="legal-sec"><h2>4. Cookies and local storage</h2><p>The store uses your browser’s local storage to remember your cart, favorites, language and sign-in session. You can clear this data at any time from your browser settings.</p></section>
+            <section class="legal-sec"><h2>5. Sharing</h2><p>We do not sell your personal data. We share only what is needed with delivery partners and payment providers to complete your order.</p></section>
+            <section class="legal-sec"><h2>6. Your rights</h2><p>You can view, correct or delete your account information, and unsubscribe from our newsletter at any time. Contact us at info@bodastore.com for any privacy request.</p></section>
+            <section class="legal-sec"><h2>7. Changes to this policy</h2><p>We may update this policy from time to time. The latest version is always available on this page.</p></section>
+        </main>
+
+        <section class="trust">
+            <ul>
+                <li><strong>Free delivery</strong><span>On orders over $500</span></li>
+                <li><strong>1-year warranty</strong><span>On electronics &amp; appliances</span></li>
+                <li><strong>Secure payment</strong><span>Pay safely online or on delivery</span></li>
+                <li><strong>Fast support</strong><span>We reply within a day</span></li>
+            </ul>
+        </section>
+
+        <footer>
+            <div class="footer-grid">
+                <div>
+                    <h3>Boda Store</h3>
+                    <p>Your trusted place for everything you need — all in one store.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html?page=home">Home</a></li>
+                        <li><a href="index.html?page=categories">Categories</a></li>
+                        <li><a href="index.html?page=products">Products</a></li>
+                        <li><a href="index.html?page=offers">Offers</a></li>
+                        <li><a href="index.html?page=about">About Us</a></li>
+                        <li><a href="index.html?page=contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><a href="index.html?page=category&cat=Electronics">Electronics</a></li>
+                        <li><a href="index.html?page=category&cat=Home%20%26%20Appliances">Home &amp; Appliances</a>
+                        </li>
+                        <li><a href="index.html?page=category&cat=Fashion">Fashion</a></li>
+                        <li><a href="index.html?page=category&cat=Beauty">Beauty</a></li>
+                        <li><a href="index.html?page=category&cat=Sports">Sports</a></li>
+                        <li><a href="index.html?page=category&cat=Books">Books</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="index.html?page=orders">My Orders</a></li>
+                        <li><a href="index.html?page=cart">Cart</a></li>
+                        <li><a href="index.html?page=favorites">Favorites</a></li>
+                        <li><a href="index.html?page=reviews">My Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Contact</h3>
+                    <ul>
+                        <li class="fc"><span class="ci ci-mail"></span><span>info@bodastore.com</span></li>
+                        <li class="fc"><span class="ci ci-phone"></span><span dir="ltr">+20 100 000 0000</span></li>
+                        <li class="fc"><span class="ci ci-pin"></span><span>Alexandria, Egypt</span></li>
+                        <li class="fc"><span class="ci ci-clock"></span><span>Daily: 10 AM – 9 PM</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Boda Store. All Rights Reserved.</span>
+                <div class="footer-payments">
+                    <span><i class="fa-brands fa-cc-visa"></i> Visa</span>
+                    <span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+                    <span><i class="fa-solid fa-truck"></i> Cash on Delivery</span>
+                </div>
+            </div>
+        </footer>
+        <a href="#top" class="back-to-top" title="Back to Top">↑</a>
+
+    </template>
+    <template data-page="terms" data-title="Terms & Conditions | Boda Store" data-class="legal-page">
+
+        <div class="announcement-bar">
+            <p>Everything You Need, All in One Place — Free Delivery on Orders Over $500! <a
+                    href="index.html?page=offers">View Special
+                    Offers</a></p>
+        </div>
+
+        <header>
+            <div class="brand-wrap">
+                <a href="index.html?page=home" class="brand-link">
+                    <h1>Boda Store</h1>
+                </a>
+                <span class="brand-tag">All-in-One Store</span>
+            </div>
+            <div class="search-box">
+                <input name="search" type="search" placeholder="Search electronics, home, fashion, books..."
+                    aria-label="Search">
+                <button type="button" onclick="searchProducts()" aria-label="Search"><i
+                        class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="header-actions">
+                <a href="index.html?page=favorites" class="favorites"><span>Favorites</span></a>
+                <a href="index.html?page=cart" class="cart"><span>Cart</span></a>
+            </div>
+            <div class="header-tools">
+                <div class="language-menu-wrap">
+                    <button type="button" class="language-btn" id="language-btn" title="Language"><i
+                            class="fa-solid fa-globe"></i></button>
+                    <div class="language-dropdown" id="language-dropdown">
+                        <button type="button" data-lang="en">🇬🇧 English</button>
+                        <button type="button" data-lang="ar">🇪🇬 العربية</button>
+                    </div>
+                    <div class="settings-menu-wrap">
+                        <button type="button" class="settings-btn" id="settings-menu-btn" title="Settings"
+                            aria-haspopup="true" aria-expanded="false" aria-controls="settings-dropdown">
+                            <i class="fa-solid fa-gear"></i>
+                        </button>
+                        <div class="settings-dropdown" id="settings-dropdown">
+                            <h3 class="sl-group">Preferences</h3>
+                            <div class="sl-list">
+                                <details class="sl-item" open>
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-palette"></i></span>
+                                        <span class="sl-text"><strong>Appearance</strong><small>Dark mode and
+                                                theme</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Dark Mode</h4>
+                                                <p>Switch between light and dark appearance.</p>
+                                            </div>
+                                            <button type="button" id="settings-theme-toggle" class="switch-toggle"
+                                                role="switch" aria-checked="false" aria-label="Dark Mode"><span
+                                                    class="switch-knob"></span></button>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-globe"></i></span>
+                                        <span class="sl-text"><strong>Language</strong><small>English, Arabic, French, German</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Display Language</h4>
+                                                <p>Select your preferred language.</p>
+                                            </div>
+                                            <select id="language-select"></select>
+                                        </div>
+                                        <p id="language-message"></p>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <h3 class="sl-group">Account &amp; Payments</h3>
+                            <div class="sl-list">
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-user"></i></span>
+                                        <span class="sl-text"><strong>Account</strong><small>Login and
+                                                registration</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Login</h4>
+                                                <p>Access your Boda Store account.</p>
+                                            </div>
+                                            <a href="index.html?page=signin" class="settings-action">Login →</a>
+                                        </div>
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Create Account</h4>
+                                                <p>Register a new Boda Store account.</p>
+                                            </div>
+                                            <a href="index.html?page=signup" class="settings-action">Sign Up →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item" id="orders-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-box"></i></span>
+                                        <span class="sl-text"><strong>My Orders</strong><small>Track, cancel or re-order
+                                                purchases.</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Order History</h4>
+                                                <p>See the status of all your orders.</p>
+                                            </div>
+                                            <a href="index.html?page=orders" class="settings-action">View →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item" id="reviews-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-star"></i></span>
+                                        <span class="sl-text"><strong>My Reviews</strong><small>Edit or remove product
+                                                ratings.</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Product Ratings</h4>
+                                                <p>Manage the products you rated.</p>
+                                            </div>
+                                            <a href="index.html?page=reviews" class="settings-action">View →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-users"></i></span>
+                                        <span class="sl-text"><strong>Switch Account</strong><small>Switch accounts on
+                                                this
+                                                device</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div id="switch-box"></div>
+                                    </div>
+                                </details>
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-credit-card"></i></span>
+                                        <span class="sl-text"><strong>Payment Methods &amp;
+                                                Gateways</strong><small>Cards,
+                                                Vodafone Cash, InstaPay, PayPal, Fawry</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div id="pay-box"></div>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <h3 class="sl-group">Store</h3>
+                            <div class="sl-list">
+                                <details class="sl-item">
+                                    <summary>
+                                        <span class="sl-icon"><i class="fa-solid fa-store"></i></span>
+                                        <span class="sl-text"><strong>Store Information</strong><small>About Boda Store
+                                                and
+                                                support</small></span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </summary>
+                                    <div class="sl-body">
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>About Us</h4>
+                                                <p>Learn more about our all-in-one store.</p>
+                                            </div>
+                                            <a href="index.html?page=about" class="settings-action">View →</a>
+                                        </div>
+                                        <div class="settings-option">
+                                            <div>
+                                                <h4>Contact Us</h4>
+                                                <p>Questions about an order? Write to us.</p>
+                                            </div>
+                                            <a href="index.html?page=contact" class="settings-action">Open →</a>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html?page=home">Home</a></li>
+                    <li><a href="index.html?page=categories">Categories</a></li>
+                    <li><a href="index.html?page=products">Products</a></li>
+                    <li><a href="index.html?page=offers">Offers</a></li>
+                    <li><a href="index.html?page=about">About Us</a></li>
+                    <li><a href="index.html?page=contact">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="legal">
+            <h1 class="page-title">Terms &amp; Conditions</h1>
+            <p class="page-intro">Last updated: November 2026. By using Boda Store you agree to the terms below.</p>
+            <section class="legal-sec"><h2>1. Using the store</h2><p>You must provide accurate information when creating an account or placing an order, and keep your password confidential. You are responsible for all activity under your account.</p></section>
+            <section class="legal-sec"><h2>2. Products and prices</h2><p>We work to keep descriptions, images and prices accurate, but errors may occur. We may cancel an order if a product is unavailable or incorrectly priced and will refund any payment made.</p></section>
+            <section class="legal-sec"><h2>3. Orders and payment</h2><p>An order is confirmed once placed and shown in My Orders. Pending orders can be edited or cancelled. Payment is by card, supported gateways or Cash on Delivery.</p></section>
+            <section class="legal-sec"><h2>4. Delivery</h2><p>Delivery fees depend on the governorate and are shown at checkout. Delivery times are estimates and may vary.</p></section>
+            <section class="legal-sec"><h2>5. Returns and refunds</h2><p>Most items can be returned within 14 days of delivery if unused and in original packaging. Refunds are issued to the original payment method after the returned item is checked.</p></section>
+            <section class="legal-sec"><h2>6. Warranty</h2><p>Electronics and appliances include a 1-year warranty against manufacturing defects. Misuse and accidental damage are not covered.</p></section>
+            <section class="legal-sec"><h2>7. Limitation of liability</h2><p>To the extent permitted by law, Boda Store is not liable for indirect or consequential losses arising from the use of the store.</p></section>
+            <section class="legal-sec"><h2>8. Contact</h2><p>Questions about these terms? Email info@bodastore.com or use the <a href="index.html?page=contact">Contact page</a>.</p></section>
+        </main>
+
+        <section class="trust">
+            <ul>
+                <li><strong>Free delivery</strong><span>On orders over $500</span></li>
+                <li><strong>1-year warranty</strong><span>On electronics &amp; appliances</span></li>
+                <li><strong>Secure payment</strong><span>Pay safely online or on delivery</span></li>
+                <li><strong>Fast support</strong><span>We reply within a day</span></li>
+            </ul>
+        </section>
+
+        <footer>
+            <div class="footer-grid">
+                <div>
+                    <h3>Boda Store</h3>
+                    <p>Your trusted place for everything you need — all in one store.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html?page=home">Home</a></li>
+                        <li><a href="index.html?page=categories">Categories</a></li>
+                        <li><a href="index.html?page=products">Products</a></li>
+                        <li><a href="index.html?page=offers">Offers</a></li>
+                        <li><a href="index.html?page=about">About Us</a></li>
+                        <li><a href="index.html?page=contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><a href="index.html?page=category&cat=Electronics">Electronics</a></li>
+                        <li><a href="index.html?page=category&cat=Home%20%26%20Appliances">Home &amp; Appliances</a>
+                        </li>
+                        <li><a href="index.html?page=category&cat=Fashion">Fashion</a></li>
+                        <li><a href="index.html?page=category&cat=Beauty">Beauty</a></li>
+                        <li><a href="index.html?page=category&cat=Sports">Sports</a></li>
+                        <li><a href="index.html?page=category&cat=Books">Books</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="index.html?page=orders">My Orders</a></li>
+                        <li><a href="index.html?page=cart">Cart</a></li>
+                        <li><a href="index.html?page=favorites">Favorites</a></li>
+                        <li><a href="index.html?page=reviews">My Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Contact</h3>
+                    <ul>
+                        <li class="fc"><span class="ci ci-mail"></span><span>info@bodastore.com</span></li>
+                        <li class="fc"><span class="ci ci-phone"></span><span dir="ltr">+20 100 000 0000</span></li>
+                        <li class="fc"><span class="ci ci-pin"></span><span>Alexandria, Egypt</span></li>
+                        <li class="fc"><span class="ci ci-clock"></span><span>Daily: 10 AM – 9 PM</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Boda Store. All Rights Reserved.</span>
+                <div class="footer-payments">
+                    <span><i class="fa-brands fa-cc-visa"></i> Visa</span>
+                    <span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+                    <span><i class="fa-solid fa-truck"></i> Cash on Delivery</span>
+                </div>
+            </div>
+        </footer>
+        <a href="#top" class="back-to-top" title="Back to Top">↑</a>
+
     </template>
     <script>
         (function () {

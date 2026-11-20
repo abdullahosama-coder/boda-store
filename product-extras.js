@@ -60,6 +60,8 @@
         var s = document.createElement('style'); s.id = 'pe-style';
         s.textContent = [
             '.pe-sec{background:var(--surface,#fff);border:1px solid var(--line,#dde3ec);border-radius:12px;padding:22px;margin:26px 0;color:var(--ink,#0f1b2d)}',
+            '.pe-doc{border:1px solid var(--line,#dde3ec);border-radius:10px;padding:10px 14px;margin-bottom:8px}.pe-doc summary{cursor:pointer}.pe-tag{background:rgba(120,130,150,.15);border-radius:999px;padding:1px 9px;font-size:.78rem;margin-inline:6px}',
+            '.pe-sec[hidden]{display:none}',
             '.pe-sec h2{margin:0 0 14px;font-size:1.15rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap}',
             '.pe-avg{font-size:1rem;font-weight:700}.pe-avg small{color:var(--ink-soft,#4a5568);font-weight:400}',
             '.pe-star{color:#f5b301}.pe-empty{color:var(--ink-soft,#4a5568);text-align:center;padding:26px 0}',
@@ -115,11 +117,25 @@
             '<div class="pe-acts"><button type="button" class="pe-link rep" data-pe="report">⚠ ' + t('reportBtn') + '</button>' +
             '<button type="button" class="pe-link rate" data-pe="rate">★ ' + t('rateBtn') + '</button></div>';
     }
+    /* ---------- product documentation (managed from Admin -> Documentation) ---------- */
+    var DOC_TYPES = { manual: 'User manual', warranty: 'Warranty', spec: 'Specifications', safety: 'Safety', cert: 'Certificate', other: 'Other' };
+    function renderDocs(box) {
+        var id = pid(), docs = lsGet('boda_docs', []).filter(function (d) { return d && d.active !== false && String(d.product) === String(id); });
+        if (!docs.length) { box.hidden = true; return; }
+        box.hidden = false;
+        box.innerHTML = '<h2>Product documentation</h2><div class="pe-docs">' + docs.map(function (d) {
+            var link = /^https?:\/\//i.test(d.link || '') ? '<a class="pe-link" href="' + esc(d.link) + '" target="_blank" rel="noopener">Open file</a>' : '';
+            return '<details class="pe-doc"><summary><b>' + esc(d.title) + '</b> <span class="pe-tag">' + (DOC_TYPES[d.doctype] || 'Other') + '</span>' + (d.version ? ' <small>v' + esc(d.version) + '</small>' : '') + '</summary>' +
+                (d.body ? '<p style="white-space:pre-line;margin:10px 0">' + esc(d.body) + '</p>' : '') + link + '</details>';
+        }).join('') + '</div>';
+    }
     function mount() {
         var art = document.querySelector('#product-box .pd'); if (!art || document.getElementById('pe-sec')) return !!document.getElementById('pe-sec');
         addStyles();
+        var docs = document.createElement('section'); docs.id = 'pe-docs'; docs.className = 'pe-sec'; docs.hidden = true;
+        art.insertAdjacentElement('afterend', docs); renderDocs(docs);
         var sec = document.createElement('section'); sec.id = 'pe-sec'; sec.className = 'pe-sec';
-        art.insertAdjacentElement('afterend', sec); renderSection(); return true;
+        docs.insertAdjacentElement('afterend', sec); renderSection(); return true;
     }
 
     /* ---------- popups ---------- */

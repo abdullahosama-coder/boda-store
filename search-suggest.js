@@ -37,6 +37,11 @@
         var t = toks(text).join(' '), qs = toks(q); if (!qs.length) return true;
         return qs.every(function (w) { return t.indexOf(w) !== -1; });
     }
+    function matchProduct(q, id, cat, text) {
+        if (match(q, text || '')) return true;
+        var p = products().find(function (x) { return x.id === id; }) || { id: id, cat: cat };
+        return keywordRows().some(function (r) { return appliesTo(r, p) && keywordTerms(r).some(function (w) { return match(q, w); }); });
+    }
     function osa(a, b) {                            // edit distance incl. swapped letters
         var m = a.length, n = b.length, d = [], i, j;
         for (i = 0; i <= m; i++) { d[i] = [i]; } for (j = 0; j <= n; j++) d[0][j] = j;
@@ -51,11 +56,15 @@
     /* ---------- data ---------- */
     function products() { try { return typeof allProducts === 'function' ? allProducts() : (window.BODA_PRODUCTS || []); } catch (e) { return []; } }
     function cats() { try { return typeof CATEGORIES !== 'undefined' ? CATEGORIES : []; } catch (e) { return []; } }
-    function hay(p) { return [p.name, tr(p.name), p.brand, p.cat, p.sub, p.id].join(' '); }
+    function keywordRows() { var rows = rd('boda_search_keywords', []); return (Array.isArray(rows) ? rows : []).filter(function (x) { return x && x.active !== false; }); }
+    function keywordTerms(r) { return [r.keyword].concat(String(r.aliases || '').split(/[,،;|]/)).map(function (x) { return String(x || '').trim(); }).filter(Boolean); }
+    function appliesTo(r, p) { return r.target === 'all' || (r.target === 'products' && (!r.targetId || r.targetId === p.id)) || (r.target === 'categories' && (!r.targetId || r.targetId === p.cat)); }
+    function hay(p) { var extra = []; keywordRows().forEach(function (r) { if (appliesTo(r, p)) extra = extra.concat(keywordTerms(r)); }); return [p.name, tr(p.name), p.brand, p.cat, p.sub, p.id].concat(extra).join(' '); }
     function vocab() {
         var set = {};
         products().forEach(function (p) { toks([p.name, p.brand, p.cat, p.sub].join(' ')).forEach(function (w) { if (w.length > 2) set[w] = 1; }); });
         cats().forEach(function (c) { toks(c.name).concat((c.subs || []).reduce(function (a, s) { return a.concat(toks(s)); }, [])).forEach(function (w) { if (w.length > 2) set[w] = 1; }); });
+        keywordRows().forEach(function (r) { keywordTerms(r).forEach(function (w) { toks(w).forEach(function (x) { if (x.length > 2) set[x] = 1; }); }); });
         return Object.keys(set);
     }
     function correct(q) {                           // -> corrected phrase or ''
@@ -233,6 +242,6 @@
             var m = document.querySelector('main'), h1 = m && m.querySelector('h1'); if (h1) h1.insertAdjacentElement('afterend', n); else if (m) m.insertBefore(n, m.firstChild);
         }
     }
-    window.BodaSearch = { match: match, correct: correct, find: findProducts };
+    window.BodaSearch = { match: match, matchProduct: matchProduct, correct: correct, find: findProducts };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

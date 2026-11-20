@@ -147,6 +147,7 @@
         var msgs = lsGet('boda_messages', []);
         msgs.unshift({ id: 'm' + Date.now(), name: u ? u.name : (isMail ? contact.split('@')[0] : 'Guest'), email: isMail ? contact : (u ? u.email : ''), phone: isMail ? '' : contact, subject: 'Support chat', message: transcript || st.pending || '(chat)', time: Date.now(), read: false });
         lsSet('boda_messages', msgs); lsSet(CONTACT_KEY, contact);
+        try { if (typeof window.recordStoreEvent === 'function') window.recordStoreEvent('support_chat', 'Support chat'); } catch (e) { }
         /* Also deliver to the FastAPI backend when it is configured:  localStorage.setItem('boda_api','https://your-api.example.com') */
         try {
             var api = (localStorage.getItem('boda_api') || '').replace(/\/$/, '');
@@ -185,11 +186,11 @@
         if (document.getElementById('sc-style')) return;
         var s = document.createElement('style'); s.id = 'sc-style';
         s.textContent = [
-            '#sc-root{position:fixed;bottom:22px;right:22px;left:auto;z-index:9990;font-family:inherit}',
+            '#sc-root{position:fixed;bottom:22px;left:22px;right:auto;z-index:9990;font-family:inherit}',
             '.sc-fab{width:58px;height:58px;border-radius:50%;border:0;background:var(--brand,#d7263d);color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3);display:grid;place-items:center;position:relative;transition:transform .15s}',
             '.sc-fab:hover{transform:scale(1.07)}.sc-fab[aria-expanded="true"]{background:var(--ink,#0f1b2d)}',
             '.sc-dot{position:absolute;top:2px;inset-inline-end:2px;width:14px;height:14px;border-radius:50%;background:#2ecc71;border:2px solid #fff}',
-            '.sc-panel{position:absolute;bottom:72px;right:0;left:auto;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100vh - 120px));background:var(--surface,#fff);color:var(--ink,#0f1b2d);border:1px solid var(--line,#dde3ec);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.35);display:none;flex-direction:column;overflow:hidden}',
+            '.sc-panel{position:absolute;bottom:72px;left:0;right:auto;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100vh - 120px));background:var(--surface,#fff);color:var(--ink,#0f1b2d);border:1px solid var(--line,#dde3ec);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.35);display:none;flex-direction:column;overflow:hidden}',
             '.sc-panel.open{display:flex;animation:scIn .18s ease-out}@keyframes scIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}',
             '.sc-head{background:var(--brand,#d7263d);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}',
             '.sc-av{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:1.2rem}',
@@ -212,7 +213,7 @@
             '.sc-form input{flex:1;min-width:0;padding:10px 12px;border:1.5px solid var(--line,#dde3ec);border-radius:22px;font:inherit;font-size:.9rem;background:var(--surface,#fff);color:var(--ink,#0f1b2d)}',
             '.sc-form input:focus{outline:none;border-color:var(--brand,#d7263d)}',
             '.sc-form button{border:0;background:var(--brand,#d7263d);color:#fff;border-radius:22px;padding:0 16px;font:inherit;font-weight:600;cursor:pointer}',
-            '@media(max-width:520px){#sc-root{bottom:16px;inset-inline-start:14px}.sc-panel{height:min(520px,calc(100vh - 100px))}}'
+            '@media(max-width:520px){#sc-root{bottom:16px;left:14px;right:auto}.sc-panel{height:min(520px,calc(100vh - 100px))}}'
         ].join('\n');
         document.head.appendChild(s);
     }
@@ -237,7 +238,8 @@
             else if (a === 'reset') resetChat(); else if (a === 'chip') chip(b.dataset.k);
         });
         root.querySelector('.sc-form').addEventListener('submit', function (e) { e.preventDefault(); var v = input.value; input.value = ''; handle(v); });
-        if (!window.__scEsc) { window.__scEsc = true; document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && panel && panel.classList.contains('open')) toggle(false); }); }
+        if (!window.__scOut) { window.__scOut = true; document.addEventListener('mousedown', function (e) { var r = document.getElementById('sc-root'); if (panel && panel.classList.contains('open') && r && !r.contains(e.target)) toggle(false); }); }
+    if (!window.__scEsc) { window.__scEsc = true; document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && panel && panel.classList.contains('open')) toggle(false); }); }
         if (log.length) log.forEach(function (m) { draw(m.f, m.t); });
         showChips(ALL_CHIPS);
     }
@@ -269,6 +271,14 @@
             if (text) { input.value = text; input.focus(); }
         }
     };
+
+    // Help Center support card opens the same floating chat widget.
+    document.addEventListener('click', function (e) {
+        var link = e.target.closest && e.target.closest('[data-open-chat]');
+        if (!link) return;
+        e.preventDefault();
+        window.BodaSupport.open();
+    });
 
     /* The store replaces <body> content when the page template loads, so (re)mount whenever the widget goes missing. */
     function ensure() { if (document.body && !document.getElementById('sc-root')) build(); }
