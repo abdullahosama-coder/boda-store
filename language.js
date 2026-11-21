@@ -473,6 +473,10 @@ Min || الأدنى || Min || Min
 Max || الأقصى || Max || Max
 In stock only || المتوفر فقط || En stock uniquement || Nur auf Lager
 On sale || المخفّض || En promotion || Im Angebot
+Verification || التوثيق || Vérification || Verifizierung
+Verified || موثّق || Vérifié || Verifiziert
+Not verified || غير موثّق || Non vérifié || Nicht verifiziert
+Verified product || منتج موثّق || Produit vérifié || Verifiziertes Produkt
 Clear all filters || مسح كل الفلاتر || Effacer tous les filtres || Alle Filter löschen
 All || الكل || Tous || Alle
 No products match your filters. Try clearing some of them. || لا توجد منتجات تطابق الفلاتر. جرّب مسح بعضها. || Aucun produit ne correspond à vos filtres. Essayez d’en retirer quelques-uns. || Keine Produkte entsprechen Ihren Filtern. Versuchen Sie, einige zu entfernen.
