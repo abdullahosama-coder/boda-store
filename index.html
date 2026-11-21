@@ -7708,13 +7708,6 @@ fl_acc || حالة الحساب || Account status || Statut du compte || Kontost
 fl_ctype || نوع التواصل || Contact type || Type de contact || Kontaktart
 fl_reg || تاريخ التسجيل || Registration date || Date d'inscription || Registrierungsdatum
 fl_vfy || التوثيق || Verification || Vérification || Verifizierung
-pv_title || توثيق المنتجات (الشارة الزرقاء) || Product verification (blue badge) || Vérification des produits (badge bleu) || Produktverifizierung (blaues Abzeichen)
-pv_sub || فعّل التوثيق لتظهر الشارة الزرقاء بجانب اسم المنتج في المتجر. || Turn verification on to show the blue badge next to the product name in the store. || Activez la vérification pour afficher le badge bleu à côté du nom du produit. || Aktivieren Sie die Verifizierung, um das blaue Abzeichen neben dem Produktnamen anzuzeigen.
-pv_all || كل المنتجات (موثقة / غير موثقة) || All products (verified / not verified) || Tous les produits (vérifiés / non vérifiés) || Alle Produkte (verifiziert / nicht verifiziert)
-pv_yes || المنتجات الموثّقة || Verified products || Produits vérifiés || Verifizierte Produkte
-pv_no || المنتجات غير الموثّقة || Not verified products || Produits non vérifiés || Nicht verifizierte Produkte
-pv_on || موثّق || Verified || Vérifié || Verifiziert
-pv_off || غير موثّق || Not verified || Non vérifié || Nicht verifiziert
 fl_ordn || عدد الطلبات || Orders count || Nombre de commandes || Anzahl Bestellungen
 fl_spent || إجمالي المشتريات || Total purchases || Total des achats || Gesamtkäufe
 fl_login || آخر تسجيل دخول || Last login || Dernière connexion || Letzte Anmeldung
@@ -8315,7 +8308,7 @@ restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide.
                 function toast(x) { document.querySelectorAll('.toast').forEach(e => e.remove()); const d = document.createElement('div'); d.className = 'toast'; d.textContent = x; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
                 const thumb = (s, id) => s ? `<img class="th" src="${esc(s)}" alt="" referrerpolicy="no-referrer" ${id ? `data-act="pedit" data-id="${esc(id)}" title="${t('edit')}"` : ''} onerror="this.classList.add('bad');this.alt='⚠';this.title='الصورة لا تعمل — اضغط لتعديل الرابط'">` : '';
                 const open = html => { const d = $('#dlg'); d.innerHTML = html; if (!d.open) d.showModal(); };
-                const refresh = k => { const e = $(k === 'pvfy' ? '#vtbl' : '#tbl'); if (e && (k === 'pvfy' ? true : TBLS[k])) e.innerHTML = k === 'pvfy' ? vfyList() : TBLS[k](); };
+                const refresh = k => { const e = $('#tbl'); if (e && TBLS[k]) e.innerHTML = TBLS[k](); };
 
                 /* ---------- Dashboard & analytics ---------- */
                 function periodInfo(per) {
@@ -8657,20 +8650,6 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                     const m = MODS[k];
                     return `${nohead ? '' : `<div class="head"><div><h1>${t(m.ti)}</h1><p class="sub">${t(m.su)}</p></div><button class="btn" data-act="gadd" data-m="${k}">+ ${t(m.nw)}</button></div>`}${gFilters(k)}<div id="tbl">${gTable(k)}</div>`;
                 }
-                /* ---------- Product verification (blue badge) - inside the Documentation section ---------- */
-                function vfyList() {
-                    const q = (S.pvq || '').toLowerCase(), f = S.pvf || '';
-                    const l = catalog().filter(p => (!f || (f === 'yes') === !!p.verified) && (!q || (p.name + ' ' + p.id + ' ' + (p.brand || '')).toLowerCase().includes(q)));
-                    if (!l.length) return `<div class="empty tw">${t('none')}</div>`;
-                    return `<p class="sub" style="margin:0 0 10px"><b>${l.length}</b> ${t('th_prod')}</p><div class="tw" style="max-height:440px;overflow:auto"><table><thead><tr><th></th><th>${t('th_prod')}</th><th>${t('th_cat')}</th><th>${t('fl_vfy')}</th><th></th></tr></thead><tbody>${l.map(p => `<tr><td>${thumb(p.img)}</td><td class="wrap"><b>${esc(p.name)}</b><br><small>${esc(p.id)}${p.brand ? ' · ' + esc(p.brand) : ''}</small></td><td>${esc(cn(p.cat))}</td><td><span class="pill ${p.verified ? 'info' : 'warn'}">${t(p.verified ? 'pv_on' : 'pv_off')}</span></td><td>${sw('pvfy', { id: p.id }, !!p.verified)}</td></tr>`).join('')}</tbody></table></div>`;
-                }
-                function vfyBox() {
-                    return `<div class="box" style="margin-bottom:14px"><h2>${t('pv_title')}</h2><p class="sub">${t('pv_sub')}</p><div class="filters"><input type="search" placeholder="${t('p_search')}" value="${esc(S.pvq || '')}" data-q="pvq" data-v="pvfy"><select data-q="pvf" data-v="pvfy"><option value="">${t('pv_all')}</option>${[['yes', 'pv_yes'], ['no', 'pv_no']].map(o => `<option value="${o[0]}" ${S.pvf === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select></div><div id="vtbl">${vfyList()}</div></div>`;
-                }
-                function docsView() {
-                    const m = MODS.docs;
-                    return `<div class="head"><div><h1>${t(m.ti)}</h1><p class="sub">${t(m.su)}</p></div><button class="btn" data-act="gadd" data-m="docs">+ ${t(m.nw)}</button></div>${vfyBox()}${gFilters('docs')}<div id="tbl">${gTable('docs')}</div>`;
-                }
                 function usersView() {
                     return `<div class="head"><div><h1>${t('n_users')}</h1><p class="sub">${t('u_sub')}</p></div><button class="btn" data-act="gadd" data-m="users">+ ${t('u_new')}</button></div>
 <div class="box slim"><b>${esc(ADMIN.user)}</b> <span class="pill ok">${t('role_super')}</span> <span class="pill info">${t('u_builtin')}</span></div>${gFilters('users')}<div id="tbl">${gTable('users')}</div>`;
@@ -8925,7 +8904,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     jobs.forEach(setupList);
                 }
                 ['input', 'change'].forEach(ev => document.addEventListener(ev, e => { const x = e.target; if (x.dataset && (x.dataset.q || x.dataset.rp)) { const k = pgKey(null) + (x.dataset.rp ? ':rep' : ''); if (PG[pgKey(null)]) PG[pgKey(null)].p = 1; if (PG[k]) PG[k].p = 1; } }, true));
-                const FLC = { pc: 'fl_cat', ps: 'fl_stock', pv: 'fl_arch', od: 'fl_date', ost: 'fl_status', cs: 'fl_acc', ct: 'fl_ctype', cd: 'fl_reg', cv: 'fl_vfy', pvf: 'fl_vfy', co: 'fl_ordn', cp: 'fl_spent', cl: 'fl_login', cf_subs: 'fl_subs', cf_prod: 'fl_prods', cf_img: 'fl_img', cf_sort: 'fl_sort' };
+                const FLC = { pc: 'fl_cat', ps: 'fl_stock', pv: 'fl_arch', od: 'fl_date', ost: 'fl_status', cs: 'fl_acc', ct: 'fl_ctype', cd: 'fl_reg', cv: 'fl_vfy', co: 'fl_ordn', cp: 'fl_spent', cl: 'fl_login', cf_subs: 'fl_subs', cf_prod: 'fl_prods', cf_img: 'fl_img', cf_sort: 'fl_sort' };
                 function enhanceFilters() {
                     document.querySelectorAll('#view .filters:not(.enh)').forEach(f => {
                         const qs = [...f.querySelectorAll('[data-q]')]; if (!qs.length) return;
@@ -9011,7 +8990,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 }
 
                 /* ---------- Router ---------- */
-                const NAV = [['dash', '📊', dash], ['shipping', '🚚', shippingView], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['docs', '📑', docsView], ['pages', '📄', pagesView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['notiflog', '🧾', notifLogView], ['logs', '📋', logsView], ['coupons', '🎟️', () => gView('coupons')], ['keywords', '🔎', () => gView('keywords')], ['seo', '🌐', () => gView('seo')], ['engines', '🧭', engineView], ['social', '🔗', socialView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
+                const NAV = [['dash', '📊', dash], ['shipping', '🚚', shippingView], ['orders', '📦', ordersView], ['products', '🛍️', productsView], ['cats', '🗂️', catsView], ['docs', '📑', () => gView('docs')], ['pages', '📄', pagesView], ['cust', '👥', custView], ['users', '🛡️', usersView], ['govs', '📍', govsView], ['news', '📰', () => gView('articles')], ['offers', '🏷️', () => gView('offers')], ['ads', '📢', () => gView('ads')], ['comp', '⚠️', compView], ['reports', '📈', reportsView], ['notifs', '🔔', notifView], ['notiflog', '🧾', notifLogView], ['logs', '📋', logsView], ['coupons', '🎟️', () => gView('coupons')], ['keywords', '🔎', () => gView('keywords')], ['seo', '🌐', () => gView('seo')], ['engines', '🧭', engineView], ['social', '🔗', socialView], ['msgs', '✉️', msgsView], ['hero', '🖼️', heroView], ['newsl', '📧', newsView], ['settings', '⚙️', settingsView]];
                 const TBLS = { shipping: () => '', orders: ordersList, products: prodList, cust: custList, cats: catList, msgs: msgList, newsl: newsList, govs: govTable, docs: () => gTable('docs'), pages: () => gTable('pages'), articles: () => gTable('articles'), offers: () => gTable('offers'), ads: () => gTable('ads'), comp: () => gTable('comp'), warn: () => gTable('warn'), users: () => gTable('users'), coupons: () => gTable('coupons'), keywords: () => gTable('keywords'), seo: () => gTable('seo'), logs: logsView, notiflog: notifLogView, engines: engineView };
                 function render() {
                     const k = location.hash.slice(1), vis = NAV.filter(n => can(n[0])), cur = vis.find(n => n[0] === k) || vis[0];
@@ -9266,7 +9245,6 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     }
                     if (d.chg === 'pstock') { patchProduct(d.id, { stock: x.checked }); toast(t('saved')); return; }
                     if (d.chg === 'pvis') { patchProduct(d.id, { hidden: !x.checked }); toast(t('saved')); return; }
-                    if (d.chg === 'pvfy') { patchProduct(d.id, { verified: x.checked }); log('log_save', 'n_docs', d.id); refresh('pvfy'); toast(t('saved')); return; }
                     if (d.chg === 'tog') { const l = GL(d.m), r = l.find(y => y.id === d.id); if (r) { r[d.f] = x.checked; wr(MODS[d.m].k, l); } if (d.m === 'comp' || d.m === 'warn') render(); else toast(t('saved')); return; }
                     if (d.chg === 'cublock') { const u = rd(K.ustat, {}); u[d.id] = { ...(u[d.id] || {}), blocked: !x.checked }; wr(K.ustat, u); toast(t('saved')); return; }
                     if (d.chg === 'govact') { const gs = GOVS(), g = gs.find(y => y.id === d.id); g.active = x.checked; saveGov(gs); toast(t('saved')); return; }
