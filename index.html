@@ -6008,7 +6008,10 @@
                 background: var(--paper);
                 color: var(--ink);
                 font-size: 15px;
-                line-height: 1.55
+                line-height: 1.7;
+                letter-spacing: normal;
+                font-kerning: normal;
+                font-feature-settings: "kern", "liga";
             }
 
             button,
@@ -7638,7 +7641,7 @@
 
         <script>
             (function () {
-                // ⚠ بيانات الدخول الافتراضية مكتوبة هنا (حماية أولية فقط). غيّر كلمة المرور من الإعدادات، ولما تنشر الموقع فعليًا لازم تحمي اللوحة من السيرفر.
+                // بيانات الدخول الافتراضية مُعرّفة هنا للحماية الأولية فقط. غيّر كلمة المرور من الإعدادات، واحمِ لوحة الإدارة من خلال الخادم عند نشر الموقع. 
                 const ADMIN = { user: 'admin', pass: '' };
                 const K = {
                     orders: 'boda_orders', acc: 'boda_accounts', msgs: 'boda_messages', news: 'boda_newsletter', cats: 'boda_categories', pa: 'boda_admin_products', notifs: 'boda_notifs', hero: 'boda_hero', site: 'boda_site',
@@ -7659,13 +7662,13 @@
                 let THEME = localStorage.getItem(K.theme) === 'dark' ? 'dark' : 'light';
                 const T = {};
                 `
-title || لوحة تحكم بودا ستور || Boda Store Admin || Administration Boda Store || Boda Store Verwaltung
+title || لوحة إدارة بودا ستور || Boda Store Admin || Administration Boda Store || Boda Store Verwaltung
 panel || لوحة التحكم || Control panel || Panneau de contrôle || Kontrollzentrum
-login_t || تسجيل دخول الأدمن || Admin sign in || Connexion administrateur || Admin-Anmeldung
+login_t || تسجيل دخول المدير || Admin sign in || Connexion administrateur || Admin-Anmeldung
 user || اسم المستخدم || Username || Nom d’utilisateur || Benutzername
 pass || كلمة المرور || Password || Mot de passe || Passwort
 login || دخول || Sign in || Se connecter || Anmelden
-login_err || اسم المستخدم أو كلمة المرور غلط. || Wrong username or password. || Identifiants incorrects. || Benutzername oder Passwort falsch.
+login_err || اسم المستخدم أو كلمة المرور غير صحيح. || Wrong username or password. || Identifiants incorrects. || Benutzername oder Passwort falsch.
 dark || الوضع الداكن || Dark mode || Mode sombre || Dunkelmodus
 hello || أهلًا || Hello || Bonjour || Hallo
 role_super || مدير عام || Super admin || Super admin || Super-Admin
@@ -7686,7 +7689,7 @@ n_comp || الشكاوى والتحذيرات || Complaints & warnings || Plaint
 n_reports || إدارة التقارير || Reports || Rapports || Berichte
 n_notifs || إدارة الإشعارات || Notifications || Notifications || Benachrichtigungen
 n_msgs || الرسائل || Messages || Messages || Nachrichten
-n_hero || إدارة الهيرو || Hero banner || Bannière principale || Hero-Banner
+n_hero || إدارة الشريحة الرئيسية || Hero banner || Bannière principale || Hero-Banner
 n_newsl || النشرة البريدية || Newsletter || Newsletter || Newsletter
 n_settings || الإعدادات || Settings || Paramètres || Einstellungen
 open_store || ↗ فتح المتجر || ↗ Open store || ↗ Ouvrir la boutique || ↗ Shop öffnen
@@ -7755,18 +7758,18 @@ od_month || هذا الشهر || This month || Ce mois-ci || Dieser Monat
 od_lastmonth || الشهر الماضي || Last month || Mois dernier || Letzter Monat
 io_exp || تصدير CSV || Export CSV || Exporter CSV || CSV exportieren
 io_imp || استيراد CSV || Import CSV || Importer CSV || CSV importieren
-io_tpl || ملف نموذجي (إرشادات) || Template (cheat sheet) || Modèle (aide-mémoire) || Vorlage (Hilfeblatt)
+io_tpl || ملف نموذجي (للاسترشاد) || Template (cheat sheet) || Modèle (aide-mémoire) || Vorlage (Hilfeblatt)
 io_done || تم الاستيراد بنجاح — عدد السجلات: || Imported successfully — records: || Importé — enregistrements : || Importiert — Datensätze:
 io_bad || الملف غير صالح أو لا يحتوي على بيانات. || Invalid file or no data found. || Fichier invalide ou vide. || Ungültige oder leere Datei.
 n_docs || إدارة التوثيق || Documentation || Documentation || Dokumentation
-m_docs || توثيق المنتجات || Product documentation || Documentation produit || Produktdokumentation
+m_docs || وثائق المنتجات || Product documentation || Documentation produit || Produktdokumentation
 docs_sub || أدلة الاستخدام والضمان والمواصفات والشهادات الخاصة بكل منتج. || Manuals, warranties, specifications and certificates for each product. || Manuels, garanties, spécifications et certificats par produit. || Anleitungen, Garantien, Spezifikationen und Zertifikate je Produkt.
 docs_new || مستند جديد || New document || Nouveau document || Neues Dokument
 n_pages || الصفحات (المساعدة والسياسات) || Pages (Help & Policies) || Pages (Aide et politiques) || Seiten (Hilfe & Richtlinien)
 m_pages || محتوى صفحات المساعدة والخصوصية والشروط || Help, Privacy & Terms content || Contenu Aide, Confidentialité et Conditions || Inhalt Hilfe, Datenschutz & AGB
 pages_sub || عدّل أو أضف أو احذف أقسام صفحات مركز المساعدة وسياسة الخصوصية والشروط والأحكام بالأربع لغات. || Edit, add or delete sections of the Help Center, Privacy Policy and Terms pages in all four languages. || Modifiez, ajoutez ou supprimez les sections du Centre d’aide, de la Politique de confidentialité et des Conditions dans les quatre langues. || Bearbeiten, ergänzen oder löschen Sie Abschnitte von Hilfe, Datenschutz und AGB in allen vier Sprachen.
 pages_new || قسم جديد || New section || Nouvelle section || Neuer Abschnitt
-pg_page || الصفحة || Page || Page || Seite
+pg_page || اسم الصفحة || Page || Page || Seite
 pg_help || مركز المساعدة || Help Center || Centre d’aide || Hilfe-Center
 pg_privacy || سياسة الخصوصية || Privacy Policy || Politique de confidentialité || Datenschutzerklärung
 pg_terms || الشروط والأحكام || Terms & Conditions || Conditions générales || AGB
@@ -7779,19 +7782,19 @@ pg_g_payment || المساعدة: الدفع || Help: Payment || Aide : Paiement
 pg_g_account || المساعدة: الحساب والأمان || Help: Account & Security || Aide : Compte et sécurité || Hilfe: Konto & Sicherheit
 pg_order || الترتيب || Order || Ordre || Reihenfolge
 pg_shown || ظاهر في الموقع || Shown on the site || Affiché sur le site || Auf der Seite sichtbar
-pg_t_ar || العنوان (عربي) || Title (Arabic) || Titre (arabe) || Titel (Arabisch)
+pg_t_ar || العنوان (باللغة العربية) || Title (Arabic) || Titre (arabe) || Titel (Arabisch)
 pg_t_en || العنوان (إنجليزي) || Title (English) || Titre (anglais) || Titel (Englisch)
 pg_t_fr || العنوان (فرنسي) || Title (French) || Titre (français) || Titel (Französisch)
 pg_t_de || العنوان (ألماني) || Title (German) || Titre (allemand) || Titel (Deutsch)
-pg_b_ar || النص (عربي) || Text (Arabic) || Texte (arabe) || Text (Arabisch)
+pg_b_ar || النص (باللغة العربية) || Text (Arabic) || Texte (arabe) || Text (Arabisch)
 pg_b_en || النص (إنجليزي) || Text (English) || Texte (anglais) || Text (Englisch)
 pg_b_fr || النص (فرنسي) || Text (French) || Texte (français) || Text (Französisch)
 pg_b_de || النص (ألماني) || Text (German) || Texte (allemand) || Text (Deutsch)
 pg_reset || استرجاع المحتوى الافتراضي || Restore default content || Restaurer le contenu par défaut || Standardinhalt wiederherstellen
-pg_confirm_reset || سيتم استبدال كل التعديلات بالمحتوى الافتراضي. متأكد؟ || All your edits will be replaced by the default content. Continue? || Toutes vos modifications seront remplacées par le contenu par défaut. Continuer ? || Alle Änderungen werden durch den Standardinhalt ersetzt. Fortfahren?
-pg_hint || سطر فارغ = فقرة جديدة. للرابط اكتب: [النص](index.html?page=terms) || Blank line = new paragraph. For a link write: [text](index.html?page=terms) || Ligne vide = nouveau paragraphe. Pour un lien : [texte](index.html?page=terms) || Leerzeile = neuer Absatz. Link: [Text](index.html?page=terms)
+pg_confirm_reset || سيؤدي ذلك إلى استبدال جميع التعديلات بالمحتوى الافتراضي. هل تريد المتابعة؟ || All your edits will be replaced by the default content. Continue? || Toutes vos modifications seront remplacées par le contenu par défaut. Continuer ? || Alle Änderungen werden durch den Standardinhalt ersetzt. Fortfahren?
+pg_hint || يُنشأ مقطع جديد عند ترك سطر فارغ. لإضافة رابط، اكتب: [النص](index.html?page=terms) || Blank line = new paragraph. For a link write: [text](index.html?page=terms) || Ligne vide = nouveau paragraphe. Pour un lien : [texte](index.html?page=terms) || Leerzeile = neuer Absatz. Link: [Text](index.html?page=terms)
 f_prodref || المنتج || Product || Produit || Produkt
-f_doctype || نوع المستند || Document type || Type de document || Dokumenttyp
+f_doctype || نوع الوثيقة || Document type || Type de document || Dokumenttyp
 f_version || الإصدار || Version || Version || Version
 f_dlink || رابط الملف || File link || Lien du fichier || Dateilink
 none_sel || — بدون — || — none — || — aucun — || — keins —
@@ -7809,7 +7812,7 @@ ad_off || موقوف || Disabled || Désactivée || Deaktiviert
 d_size || المقاس || Size || Taille || Größe
 d_color || اللون || Color || Couleur || Farbe
 d_brand || الماركة || Brand || Marque || Marke
-d_sku || الكود || SKU || Code || Artikelnr.
+d_sku || رمز المنتج || SKU || Code || Artikelnr.
 d_qty || الكمية || Qty || Qté || Menge
 o_delivery || حالة التوصيل || Delivery status || Statut de livraison || Lieferstatus
 o_shipfee || رسوم الشحن || Shipping fee || Frais de livraison || Versandkosten
@@ -7827,9 +7830,9 @@ pr_copies || عدد النسخ || Copies || Copies || Kopien
 pr_go || طباعة الآن || Print now || Imprimer || Jetzt drucken
 saved || تم الحفظ || Saved || Enregistré || Gespeichert
 deleted || تم الحذف || Deleted || Supprimé || Gelöscht
-confirm_del || متأكد من الحذف؟ || Delete this item? || Supprimer cet élément ? || Wirklich löschen?
-req_err || كمّل الحقول المطلوبة. || Fill in the required fields. || Remplissez les champs obligatoires. || Pflichtfelder ausfüllen.
-quota || مساحة التخزين امتلأت — صغّر الصور أو احذف بيانات قديمة. || Storage is full — use smaller images or delete old data. || Stockage plein. || Speicher voll.
+confirm_del || هل تريد تأكيد الحذف؟ || Delete this item? || Supprimer cet élément ? || Wirklich löschen?
+req_err || يُرجى استكمال الحقول المطلوبة. || Fill in the required fields. || Remplissez les champs obligatoires. || Pflichtfelder ausfüllen.
+quota || امتلأت مساحة التخزين — استخدم صورًا أصغر أو احذف بيانات قديمة. || Storage is full — use smaller images or delete old data. || Stockage plein. || Speicher voll.
 active || مفعّل || Active || Actif || Aktiv
 upload || رفع صورة || Upload image || Téléverser une image || Bild hochladen
 fl_title || الفلاتر الأساسية || Basic filters || Filtres de base || Basisfilter
@@ -7857,7 +7860,7 @@ m_st_new || غير مقروءة || Unread || Non lus || Ungelesen
 m_st_read || مقروءة || Read || Lus || Gelesen
 c_search || ابحث عن قسم أو قسم فرعي || Search a category or sub-category || Rechercher une catégorie || Kategorie suchen
 nl_search || ابحث عن بريد إلكتروني || Search an email || Rechercher un e-mail || E-Mail suchen
-multi_hint || اضغط Ctrl للاختيار المتعدد. || Hold Ctrl to select several. || Ctrl pour en choisir plusieurs. || Strg für Mehrfachauswahl.
+multi_hint || اضغط على Ctrl لتحديد عدة عناصر. || Hold Ctrl to select several. || Ctrl pour en choisir plusieurs. || Strg für Mehrfachauswahl.
 alerts || التنبيهات || Alerts || Alertes || Hinweise
 no_alerts || لا توجد تنبيهات حاليًا ✅ || No alerts right now ✅ || Aucune alerte ✅ || Keine Hinweise ✅
 al_pend || طلبات قيد الانتظار || Pending orders || Commandes en attente || Offene Bestellungen
@@ -7873,12 +7876,12 @@ p_month || الشهر || Month || Mois || Monat
 p_year || السنة || Year || Année || Jahr
 k_rev || المبيعات || Sales || Ventes || Umsatz
 k_orders || الطلبات || Orders || Commandes || Bestellungen
-k_avg || متوسط الطلب || Avg. order || Panier moyen || Ø Bestellwert
+k_avg || متوسط قيمة الطلب || Avg. order || Panier moyen || Ø Bestellwert
 k_items || القطع المباعة || Items sold || Articles vendus || Verkaufte Artikel
 k_cust || العملاء || Customers || Clients || Kunden
 k_prod || المنتجات || Products || Produits || Produkte
 k_vsprev || مقارنة بالفترة السابقة || vs previous period || vs période précédente || ggü. Vorperiode
-k_subs || مشترك في النشرة || newsletter subscribers || abonnés newsletter || Newsletter-Abonnenten
+k_subs || مشتركون في النشرة البريدية || newsletter subscribers || abonnés newsletter || Newsletter-Abonnenten
 k_outstock || غير متوفر || out of stock || en rupture || nicht verfügbar
 c_rev || المبيعات خلال الفترة || Revenue over time || Ventes sur la période || Umsatz im Zeitraum
 c_cnt || عدد الطلبات خلال الفترة || Orders over time || Commandes sur la période || Bestellungen im Zeitraum
@@ -7918,8 +7921,8 @@ st_Processing || قيد التجهيز || Processing || En préparation || In Be
 st_Shipped || تم الشحن || Shipped || Expédiée || Versendet
 st_Delivered || تم التسليم || Delivered || Livrée || Geliefert
 st_Cancelled || ملغي || Cancelled || Annulée || Storniert
-o_sub || غيّر حالة الطلب والعميل هيوصله إشعار في المتجر. || Change an order’s status and the customer gets a notification. || Changez le statut, le client est notifié. || Status ändern – der Kunde wird benachrichtigt.
-o_search || بحث برقم الطلب أو الاسم أو التليفون || Search by order no., name or phone || Rechercher par n°, nom ou téléphone || Suche nach Nr., Name oder Telefon
+o_sub || غيّر حالة الطلب، وسيصل إلى العميل إشعار في المتجر. || Change an order’s status and the customer gets a notification. || Changez le statut, le client est notifié. || Status ändern – der Kunde wird benachrichtigt.
+o_search || البحث برقم الطلب أو الاسم أو رقم الهاتف || Search by order no., name or phone || Rechercher par n°, nom ou téléphone || Suche nach Nr., Name oder Telefon
 o_all || كل الحالات || All statuses || Tous les statuts || Alle Status
 exp_csv || تصدير CSV || Export CSV || Exporter CSV || CSV exportieren
 th_order || الطلب || Order || Commande || Bestellung
@@ -7934,11 +7937,11 @@ o_ship || الشحن || Shipping || Livraison || Versand
 o_confirm_del || حذف الطلب نهائيًا؟ || Delete this order permanently? || Supprimer définitivement ? || Bestellung endgültig löschen?
 o_updated || تم تحديث حالة الطلب || Order status updated || Statut mis à jour || Status aktualisiert
 m_products || المنتجات || Products || Produits || Produkte
-p_sub || أضف وعدّل التفاصيل والصور والأسعار والمخزون. التعديل بيظهر في المتجر فورًا. || Add and edit details, images, prices and stock. || Gérez détails, images, prix et stock. || Details, Bilder, Preise und Bestand verwalten.
+p_sub || أضف تفاصيل المنتجات وصورها وأسعارها ومخزونها أو عدّلها. ستظهر التغييرات في المتجر فورًا. || Add and edit details, images, prices and stock. || Gérez détails, images, prix et stock. || Details, Bilder, Preise und Bestand verwalten.
 p_new || منتج جديد || New product || Nouveau produit || Neues Produkt
 p_edit || تعديل منتج || Edit product || Modifier le produit || Produkt bearbeiten
 p_restore || استرجاع المحذوف || Restore deleted || Restaurer les supprimés || Gelöschte wiederherstellen
-p_search || ابحث بالاسم أو الكود || Search by name or code || Nom ou code || Name oder Code
+p_search || البحث بالاسم أو الرمز || Search by name or code || Nom ou code || Name oder Code
 p_allcats || كل الأقسام || All categories || Toutes catégories || Alle Kategorien
 th_prod || المنتج || Product || Produit || Produkt
 th_cat || القسم || Category || Catégorie || Kategorie
@@ -7946,26 +7949,26 @@ th_price || السعر || Price || Prix || Preis
 th_stock || المخزون || Stock || Stock || Bestand
 th_vis || الظهور || Visible || Visible || Sichtbar
 f_name || اسم المنتج || Product name || Nom du produit || Produktname
-f_code || كود المنتج (اختياري) || Product code (optional) || Code produit (facultatif) || Produktcode (optional)
+f_code || رمز المنتج (اختياري) || Product code (optional) || Code produit (facultatif) || Produktcode (optional)
 f_cat || القسم الرئيسي || Main category || Catégorie principale || Hauptkategorie
 f_sub || القسم الفرعي || Sub-category || Sous-catégorie || Unterkategorie
 f_price || السعر ($) || Price ($) || Prix ($) || Preis ($)
 f_old || السعر قبل الخصم ($) || Price before discount ($) || Prix avant remise ($) || Preis vor Rabatt ($)
-f_qty || الكمية في المخزون || Stock quantity || Quantité en stock || Lagerbestand
-f_brand || الماركة || Brand || Marque || Marke
+f_qty || كمية المخزون || Stock quantity || Quantité en stock || Lagerbestand
+f_brand || العلامة التجارية || Brand || Marque || Marke
 f_condition || حالة المنتج || Product condition || État du produit || Produktzustand
 f_cond_new || جديد || New || Neuf || Neu
 f_cond_used || مستعمل || Used || Occasion || Gebraucht
-f_colors || الألوان (افصل بينها بفاصلة) || Colors (comma separated) || Couleurs (séparées par des virgules) || Farben (kommagetrennt)
-f_sizes || المقاسات (افصل بينها بفاصلة) || Sizes (comma separated) || Tailles (séparées par des virgules) || Größen (kommagetrennt)
+f_colors || الألوان (افصل بينها بفواصل) || Colors (comma separated) || Couleurs (séparées par des virgules) || Farben (kommagetrennt)
+f_sizes || المقاسات (افصل بينها بفواصل) || Sizes (comma separated) || Tailles (séparées par des virgules) || Größen (kommagetrennt)
 f_components || المكونات / المواصفات || Components / specifications || Composants / spécifications || Komponenten / Spezifikationen
 f_warranty || الضمان || Warranty || Garantie || Garantie
-f_options || خيارات إضافية (فاصلة بينهم) || Extra options (comma separated) || Options supplémentaires || Zusätzliche Optionen
+f_options || خيارات إضافية (افصل بينها بفواصل) || Extra options (comma separated) || Options supplémentaires || Zusätzliche Optionen
 f_imgmain || الصورة الرئيسية (رابط) || Main image (URL) || Image principale (URL) || Hauptbild (URL)
-f_gallery || صور إضافية (رابط في كل سطر) || Extra images (one URL per line) || Images supplémentaires || Weitere Bilder
+f_gallery || صور إضافية (ضع رابطًا في كل سطر) || Extra images (one URL per line) || Images supplémentaires || Weitere Bilder
 f_desc || وصف قصير || Short description || Description courte || Kurzbeschreibung
 f_long || التفاصيل الكاملة || Full details || Détails complets || Vollständige Details
-f_features || المميزات (ميزة في كل سطر) || Features (one per line) || Caractéristiques (une par ligne) || Merkmale (je Zeile)
+f_features || المزايا (ميزة واحدة في كل سطر) || Features (one per line) || Caractéristiques (une par ligne) || Merkmale (je Zeile)
 f_badge || الشارة || Badge || Badge || Badge
 b_none || بدون || None || Aucun || Keines
 b_new || جديد || New || Nouveau || Neu
@@ -7976,7 +7979,7 @@ f_instock || متوفر || In stock || En stock || Auf Lager
 f_visible || ظاهر في المتجر || Visible in store || Visible en boutique || Im Shop sichtbar
 p_dup || نسخ || Duplicate || Dupliquer || Duplizieren
 p_confirm_del || حذف المنتج من المتجر؟ (يمكنك استرجاعه لاحقًا) || Delete product from store? (can be restored) || Supprimer le produit ? || Produkt löschen? (wiederherstellbar)
-p_err || اكتب اسم المنتج وسعر صحيح. || Enter a name and a valid price. || Nom et prix valides requis. || Name und gültigen Preis eingeben.
+p_err || أدخل اسم المنتج وسعرًا صحيحًا. || Enter a name and a valid price. || Nom et prix valides requis. || Name und gültigen Preis eingeben.
 p_dupcode || هذا الكود مستخدم من قبل. || This code is already used. || Code déjà utilisé. || Code bereits vergeben.
 low || قليل || Low || Faible || Niedrig
 m_cats || الأقسام || Categories || Catégories || Kategorien
@@ -7992,17 +7995,17 @@ c_desc || وصف قصير (الصفحة الرئيسية) || Short description (
 c_long || وصف طويل (صفحة الأقسام) || Long description || Description longue || Langbeschreibung
 c_subs || الأقسام الفرعية (واحد في كل سطر أو بفاصلة) || Sub-categories (one per line or comma separated) || Sous-catégories || Unterkategorien
 c_exists || هذا القسم موجود بالفعل. || This category already exists. || Catégorie existante. || Kategorie existiert bereits.
-c_last || لازم يفضل قسم واحد على الأقل في المتجر. || At least one category must remain. || Au moins une catégorie doit rester. || Mindestens eine Kategorie muss bleiben.
+c_last || يجب الإبقاء على قسم واحد على الأقل في المتجر. || At least one category must remain. || Au moins une catégorie doit rester. || Mindestens eine Kategorie muss bleiben.
 c_hasprod || يحتوي هذا القسم على منتجات. انقل المنتجات أو احذفها أولًا. || This category has products. Move or delete them first. || Cette catégorie contient des produits. || Kategorie enthält Produkte.
-c_note || عند تغيير اسم قسم فرعي، ستبقى المنتجات القديمة على الاسم القديم إلى أن تقوم بتعديلها. || If you rename a sub-category, existing products keep the old name until edited. || Renommer une sous-catégorie ne modifie pas les produits existants. || Beim Umbenennen behalten Produkte den alten Namen.
+c_note || عند تغيير اسم قسم فرعي، ستظل المنتجات الحالية مرتبطة بالاسم السابق حتى تعدّلها. || If you rename a sub-category, existing products keep the old name until edited. || Renommer une sous-catégorie ne modifie pas les produits existants. || Beim Umbenennen behalten Produkte den alten Namen.
 n_cust_sub || الحسابات المسجلة من المتجر. || Accounts registered from the store. || Comptes créés depuis la boutique. || Im Shop registrierte Konten.
 th_name || الاسم || Name || Nom || Name
-th_contact || الإيميل / التليفون || Email / phone || E-mail / téléphone || E-Mail / Telefon
+th_contact || البريد الإلكتروني أو رقم الهاتف || Email / phone || E-mail / téléphone || E-Mail / Telefon
 th_spent || إجمالي الشراء || Total spent || Total dépensé || Gesamtausgaben
 th_orders || الطلبات || Orders || Commandes || Bestellungen
 cu_active || نشط || Active || Actif || Aktiv
 cu_note || ملاحظات داخلية || Internal notes || Notes internes || Interne Notizen
-cu_hint || حالة الحظر والملاحظات محفوظة في اللوحة، وتطبيقها على تسجيل الدخول في المتجر محتاج ربط في app.js. || Block status & notes are stored here; enforcing them at store login needs a hook in app.js. || Le blocage doit être appliqué dans app.js. || Sperre muss in app.js umgesetzt werden.
+cu_hint || تُحفظ حالة الحظر والملاحظات في لوحة الإدارة. ويتطلب تطبيق الحظر عند تسجيل الدخول إلى المتجر ربطًا بملف app.js. || Block status & notes are stored here; enforcing them at store login needs a hook in app.js. || Le blocage doit être appliqué dans app.js. || Sperre muss in app.js umgesetzt werden.
 cu_none || لا توجد حسابات حتى الآن. || No accounts yet. || Aucun compte. || Noch keine Konten.
 cu_delconf || هل تريد حذف هذا الحساب؟ || Delete this account? || Supprimer ce compte ? || Konto löschen?
 subscribers || مشتركو النشرة || Newsletter subscribers || Abonnés newsletter || Newsletter-Abonnenten
@@ -8015,25 +8018,25 @@ u_user || اسم المستخدم || Username || Identifiant || Benutzername
 u_pass || كلمة المرور (اتركها فارغة إذا لم ترغب في تغييرها) || Password (leave blank to keep) || Mot de passe (vide = inchangé) || Passwort (leer = unverändert)
 u_role || الصلاحية || Role || Rôle || Rolle
 u_builtin || الحساب الأساسي || Built-in account || Compte principal || Hauptkonto
-u_err_pass || كلمة المرور لازم تكون 6 حروف على الأقل. || Password must be at least 6 characters. || 6 caractères minimum. || Mindestens 6 Zeichen.
+u_err_pass || يجب ألا تقل كلمة المرور عن 6 أحرف. || Password must be at least 6 characters. || 6 caractères minimum. || Mindestens 6 Zeichen.
 u_err_dup || اسم المستخدم مستخدم من قبل. || Username already taken. || Identifiant déjà pris. || Benutzername vergeben.
 m_govs || المحافظات والمناطق || Governorates & areas || Gouvernorats et zones || Gouvernorate & Gebiete
-g_sub || كل محافظة وفيها مناطقها ومصاريف الشحن. || Each governorate with its areas and shipping fees. || Chaque gouvernorat avec ses zones et frais. || Gouvernorate mit Gebieten und Versandkosten.
+g_sub || تشمل كل محافظة مناطقها ورسوم الشحن الخاصة بها. || Each governorate with its areas and shipping fees. || Chaque gouvernorat avec ses zones et frais. || Gouvernorate mit Gebieten und Versandkosten.
 g_new || محافظة جديدة || New governorate || Nouveau gouvernorat || Neues Gouvernorat
 g_edit || تعديل محافظة || Edit governorate || Modifier le gouvernorat || Gouvernorat bearbeiten
 g_name || الاسم (عربي) || Name (Arabic) || Nom (arabe) || Name (Arabisch)
 g_en || الاسم (إنجليزي) || Name (English) || Nom (anglais) || Name (Englisch)
-g_fee || مصاريف الشحن ($) || Shipping fee ($) || Frais de livraison ($) || Versandkosten ($)
+g_fee || رسوم الشحن ($) || Shipping fee ($) || Frais de livraison ($) || Versandkosten ($)
 g_areas || المناطق || Areas || Zones || Gebiete
 g_manage || المناطق || Areas || Zones || Gebiete
 g_addarea || إضافة منطقة || Add area || Ajouter une zone || Gebiet hinzufügen
 g_areaname || اسم المنطقة || Area name || Nom de la zone || Gebietsname
-g_areafee || شحن خاص (اختياري) || Own fee (optional) || Frais propres (facultatif) || Eigene Kosten (optional)
+g_areafee || رسوم شحن خاصة (اختياري) || Own fee (optional) || Frais propres (facultatif) || Eigene Kosten (optional)
 g_noareas || لا توجد مناطق حتى الآن. || No areas yet. || Aucune zone. || Noch keine Gebiete.
-g_reset || استرجاع الافتراضي || Reset to default || Réinitialiser || Zurücksetzen
+g_reset || استعادة الإعدادات الافتراضية || Reset to default || Réinitialiser || Zurücksetzen
 g_confirm_reset || الرجوع لقائمة المحافظات الافتراضية؟ || Reset to the default list? || Réinitialiser la liste ? || Standardliste wiederherstellen?
 m_news || الأخبار || News || Actualités || Nachrichten
-news_sub || اكتب الأخبار والمقالات وانشرها أو احفظها كمسودة. || Write news articles; publish or keep as draft. || Rédigez des actualités. || Artikel schreiben und veröffentlichen.
+news_sub || أضف الأخبار والمقالات، ثم انشرها أو احفظها كمسودات. || Write news articles; publish or keep as draft. || Rédigez des actualités. || Artikel schreiben und veröffentlichen.
 news_new || خبر جديد || New article || Nouvel article || Neuer Artikel
 f_title || العنوان || Title || Titre || Titel
 f_tag || التصنيف || Tag || Étiquette || Kategorie
@@ -8051,7 +8054,7 @@ f_start || تاريخ البداية || Start date || Début || Beginn
 f_end || تاريخ النهاية || End date || Fin || Ende
 f_products || المنتجات المشمولة || Included products || Produits inclus || Enthaltene Produkte
 th_period || الفترة || Period || Période || Zeitraum
-rs_running || شغال || Running || En cours || Läuft
+rs_running || سارٍ || Running || En cours || Läuft
 rs_scheduled || مجدول || Scheduled || Planifiée || Geplant
 rs_expired || منتهي || Expired || Expirée || Abgelaufen
 rs_off || متوقف || Off || Désactivée || Aus
@@ -8072,7 +8075,7 @@ tab_warn || التحذيرات || Warnings || Alertes || Warnungen
 comp_new || شكوى جديدة || New complaint || Nouvelle plainte || Neue Beschwerde
 warn_new || تحذير جديد || New warning || Nouvelle alerte || Neue Warnung
 f_cname || اسم العميل || Customer name || Nom du client || Kundenname
-f_contact || إيميل / تليفون || Email / phone || E-mail / téléphone || E-Mail / Telefon
+f_contact || البريد الإلكتروني أو رقم الهاتف || Email / phone || E-mail / téléphone || E-Mail / Telefon
 f_orderno || رقم الطلب (اختياري) || Order no. (optional) || N° de commande || Bestellnr.
 f_subject || الموضوع || Subject || Objet || Betreff
 f_msg || التفاصيل || Details || Détails || Details
@@ -8110,12 +8113,12 @@ r_print || طباعة || Print || Imprimer || Drucken
 r_orders || عدد الطلبات || Orders || Commandes || Bestellungen
 r_rev || إجمالي المبيعات || Total sales || Ventes totales || Gesamtumsatz
 r_cancel || الطلبات الملغية || Cancelled || Annulées || Storniert
-r_avg || متوسط الطلب || Average order || Panier moyen || Ø Bestellwert
+r_avg || متوسط قيمة الطلب || Average order || Panier moyen || Ø Bestellwert
 r_units || المباع || Units sold || Vendus || Verkauft
 r_revenue || الإيراد || Revenue || Revenu || Umsatz
-r_code || الكود || Code || Code || Code
+r_code || الرمز || Code || Code || Code
 r_city || المحافظة || Governorate || Gouvernorat || Gouvernorat
-r_phone || التليفون || Phone || Téléphone || Telefon
+r_phone || الهاتف || Phone || Téléphone || Telefon
 r_avail || متوفر || In stock || En stock || Verfügbar
 r_unavail || غير متوفر || Out of stock || Rupture || Nicht verfügbar
 m_notifs || الإشعارات || Notifications || Notifications || Benachrichtigungen
@@ -8126,7 +8129,7 @@ n_keywords || كلمات البحث || Search keywords || Mots-clés de recherch
 n_seo || تهيئة صفحات SEO || Page SEO || SEO des pages || Seiten-SEO
 n_engines || إعدادات محركات البحث || Search engine settings || Réglages des moteurs || Suchmaschineneinstellungen
 n_social || روابط التواصل والأيقونات || Social links & icons || Liens sociaux et icônes || Social-Links & Symbole
-social_sub || حدّث الروابط واختَر إيموجي أو رمزًا كرتونيًا لكل منصة. || Update social URLs and choose a cartoon emoji or symbol for each platform. || Modifiez les liens et choisissez une icône. || Links und Symbole jeder Plattform bearbeiten.
+social_sub || حدّث الروابط واختر رمزًا تعبيريًا أو رمزًا نصيًا لكل منصة. || Update social URLs and choose a cartoon emoji or symbol for each platform. || Modifiez les liens et choisissez une icône. || Links und Symbole jeder Plattform bearbeiten.
 th_details || التفاصيل || Details || Détails || Details
 m_coupons || كوبونات المنتجات || Product coupons || Coupons produits || Produktcoupons
 page_home || الرئيسية || Home || Accueil || Startseite
@@ -8184,39 +8187,39 @@ nt_sent || تم إرسال الإشعار || Notification sent || Notification e
 nt_history || الإشعارات المرسلة || Sent notifications || Historique || Gesendet
 nt_none || لا توجد إشعارات مرسلة حتى الآن. || No notifications sent yet. || Aucune notification. || Noch keine.
 nt_clear || مسح إشعارات المتجر || Clear store notifications || Vider les notifications || Shop-Benachrichtigungen löschen
-nt_note || الإشعار بيوصل لنفس متصفح المتجر (نفس localStorage). || Delivered to the store running in this browser (same localStorage). || Livrée dans ce navigateur. || Wird in diesem Browser zugestellt.
+nt_note || يظهر الإشعار في المتصفح نفسه الذي فُتح فيه المتجر (باستخدام localStorage نفسه). || Delivered to the store running in this browser (same localStorage). || Livrée dans ce navigateur. || Wird in diesem Browser zugestellt.
 m_msgs || الرسائل || Messages || Messages || Nachrichten
 msg_sub || الرسائل الواردة من صفحة «اتصل بنا». || Messages from the Contact page. || Messages du formulaire de contact. || Nachrichten aus dem Kontaktformular.
 msg_none || لا توجد رسائل. || No messages. || Aucun message. || Keine Nachrichten.
-msg_reply || رد بالإيميل || Reply by email || Répondre || Antworten
+msg_reply || الرد عبر البريد الإلكتروني || Reply by email || Répondre || Antworten
 msg_read || تمت القراءة || Mark read || Marquer lu || Gelesen
 msg_unread || اعتبرها غير مقروءة || Mark unread || Marquer non lu || Ungelesen
-h_title_page || الهيرو (البانر الرئيسي) || Hero banner || Bannière principale || Hero-Banner
-h_sub || السلايدر الذي يظهر أولًا في الصفحة الرئيسية. تظهر التغييرات في المتجر فورًا. || The first slider on the home page. || Le slider de la page d’accueil. || Der erste Slider der Startseite.
-h_add || سلايد جديد || New slide || Nouveau slide || Neuer Slide
-h_edit || تعديل سلايد || Edit slide || Modifier le slide || Slide bearbeiten
-h_reset || استرجاع الافتراضي || Reset to default || Par défaut || Zurücksetzen
-h_custom || تم تعديل الهيرو من هنا. || Hero customised here. || Hero personnalisé. || Hero angepasst.
-h_default || الهيرو الحالي هو الافتراضي. أي تعديل هيحوّله لنسخة معدّلة. || Currently the default hero. || Hero par défaut. || Standard-Hero.
+h_title_page || الشريحة الرئيسية || Hero banner || Bannière principale || Hero-Banner
+h_sub || الشريحة التي تظهر أولًا في الصفحة الرئيسية. تظهر التغييرات في المتجر فورًا. || The first slider on the home page. || Le slider de la page d’accueil. || Der erste Slider der Startseite.
+h_add || شريحة جديدة || New slide || Nouveau slide || Neuer Slide
+h_edit || تعديل الشريحة || Edit slide || Modifier le slide || Slide bearbeiten
+h_reset || استعادة الإعدادات الافتراضية || Reset to default || Par défaut || Zurücksetzen
+h_custom || عُدّلت الشريحة الرئيسية من هذه الصفحة. || Hero customised here. || Hero personnalisé. || Hero angepasst.
+h_default || الشريحة الرئيسية الحالية هي الافتراضية. سيؤدي تعديلها إلى إنشاء نسخة مخصّصة. || Currently the default hero. || Hero par défaut. || Standard-Hero.
 h_badge || الشارة الصغيرة || Small badge || Badge || Badge
 h_title || العنوان الرئيسي || Main title || Titre || Titel
 h_text || الوصف || Description || Description || Beschreibung
 h_b1 || نص الزر الأول || Button 1 text || Texte bouton 1 || Button 1 Text
 h_l1 || رابط الزر الأول || Button 1 link || Lien bouton 1 || Button 1 Link
-h_b2 || نص الزر التاني (اختياري) || Button 2 text (optional) || Texte bouton 2 || Button 2 Text
-h_l2 || رابط الزر التاني || Button 2 link || Lien bouton 2 || Button 2 Link
+h_b2 || نص الزر الثاني (اختياري) || Button 2 text (optional) || Texte bouton 2 || Button 2 Text
+h_l2 || رابط الزر الثاني || Button 2 link || Lien bouton 2 || Button 2 Link
 h_img || صورة (رابط أو رفع) — اختياري || Image (URL or upload) — optional || Image — facultatif || Bild — optional
-h_emoji || أو إيموجي (مسافة بينهم، لحد 6) || Or emojis (space separated, up to 6) || Ou emojis || Oder Emojis
-h_err || اكتب العنوان الرئيسي. || Enter the main title. || Titre requis. || Titel erforderlich.
+h_emoji || أو رموز تعبيرية (افصل بينها بمسافة، بحد أقصى 6 رموز) || Or emojis (space separated, up to 6) || Ou emojis || Oder Emojis
+h_err || أدخل العنوان الرئيسي. || Enter the main title. || Titre requis. || Titel erforderlich.
 h_confirm_del || هل تريد حذف هذه الشريحة؟ || Delete this slide? || Supprimer ce slide ? || Slide löschen?
 h_confirm_reset || الرجوع للهيرو الافتراضي؟ || Reset to default hero? || Revenir au hero par défaut ? || Auf Standard zurücksetzen?
 nl_sub || البريد الإلكتروني للمشتركين من الصفحة الرئيسية. || Emails subscribed from the home page. || E-mails abonnés. || Abonnierte E-Mails.
 nl_copy || نسخ الكل || Copy all || Tout copier || Alle kopieren
 nl_copied || تم النسخ || Copied || Copié || Kopiert
-nl_email || الإيميل || Email || E-mail || E-Mail
+nl_email || البريد الإلكتروني || Email || E-mail || E-Mail
 nl_write || مراسلة || Email || Écrire || Schreiben
 nl_none || لا يوجد مشتركون حتى الآن. || No subscribers yet. || Aucun abonné. || Noch keine Abonnenten.
-s_sub || إعدادات حسابك والمتجر والواجهة. || Your account, store and interface settings. || Compte, boutique et interface. || Konto, Shop und Oberfläche.
+s_sub || إعدادات المتجر وبيانات التواصل والواجهة. || Your account, store and interface settings. || Compte, boutique et interface. || Konto, Shop und Oberfläche.
 s_ui || الواجهة والحساب || Interface & account || Interface et compte || Oberfläche & Konto
 s_lang || لغة اللوحة || Panel language || Langue || Sprache
 s_theme || الوضع الداكن || Dark mode || Mode sombre || Dunkelmodus
@@ -8224,21 +8227,21 @@ s_pw || تغيير كلمة المرور || Change password || Changer le mot de
 s_curpw || كلمة المرور الحالية || Current password || Mot de passe actuel || Aktuelles Passwort
 s_newpw || كلمة المرور الجديدة || New password || Nouveau mot de passe || Neues Passwort
 s_pwok || تم تغيير كلمة المرور || Password changed || Mot de passe modifié || Passwort geändert
-s_pwbad || كلمة المرور الحالية غلط. || Current password is wrong. || Mot de passe actuel incorrect. || Aktuelles Passwort falsch.
+s_pwbad || كلمة المرور الحالية غير صحيحة. || Current password is wrong. || Mot de passe actuel incorrect. || Aktuelles Passwort falsch.
 s_announce || شريط الإعلان (أعلى الصفحة) || Announcement bar || Bandeau d’annonce || Ankündigungsleiste
 s_showbar || إظهار الشريط || Show the bar || Afficher || Anzeigen
 s_atext || نص الإعلان || Announcement text || Texte || Text
 s_alink || نص الرابط || Link text || Texte du lien || Linktext
 s_ahref || الرابط || Link || Lien || Link
-s_contact || بيانات التواصل (الفوتر) || Contact details (footer) || Coordonnées || Kontaktdaten
-s_email || الإيميل || Email || E-mail || E-Mail
-s_phone || التليفون || Phone || Téléphone || Telefon
+s_contact || بيانات التواصل (تذييل الصفحة) || Contact details (footer) || Coordonnées || Kontaktdaten
+s_email || البريد الإلكتروني || Email || E-mail || E-Mail
+s_phone || الهاتف || Phone || Téléphone || Telefon
 s_addr || العنوان || Address || Adresse || Adresse
 s_hours || مواعيد العمل || Working hours || Horaires || Öffnungszeiten
-s_general || إعدادات المتجر العامة || General store settings || Paramètres généraux || Allgemeine Shop-Einstellungen
+s_general || الإعدادات العامة للمتجر || General store settings || Paramètres généraux || Allgemeine Shop-Einstellungen
 s_sname || اسم المتجر || Store name || Nom de la boutique || Shopname
 s_free || حد الشحن المجاني ($) || Free shipping from ($) || Livraison gratuite dès ($) || Gratisversand ab ($)
-s_lowstock || حد تنبيه المخزون القليل || Low-stock threshold || Seuil de stock faible || Mindestbestand
+s_lowstock || الحد الأدنى للمخزون لإظهار التنبيه || Low-stock threshold || Seuil de stock faible || Mindestbestand
 s_tax || الضريبة % || Tax % || TVA % || Steuer %
 s_maint || وضع الصيانة || Maintenance mode || Mode maintenance || Wartungsmodus
 s_reg || السماح بتسجيل حسابات جديدة || Allow new registrations || Autoriser les inscriptions || Neue Registrierungen erlauben
@@ -8248,11 +8251,11 @@ s_mail || تنبيهات الطلبات الجديدة || New-order alerts || Al
 s_data || البيانات || Data || Données || Daten
 s_clearlog || مسح سجل النشاطات || Clear activity log || Vider le journal || Aktivitätsprotokoll löschen
 s_save || حفظ الإعدادات || Save settings || Enregistrer || Einstellungen speichern
-s_reset || استرجاع الافتراضي || Reset to default || Par défaut || Zurücksetzen
+s_reset || استعادة الإعدادات الافتراضية || Reset to default || Par défaut || Zurücksetzen
 s_confirm_reset || الرجوع للإعدادات الافتراضية؟ || Reset to default settings? || Réinitialiser ? || Zurücksetzen?
 s_saved || تم حفظ الإعدادات || Settings saved || Paramètres enregistrés || Gespeichert
-s_note || ملحوظة: كل بيانات اللوحة محفوظة في متصفح الأدمن بس. استخدم "نسخة احتياطية" بشكل دوري. || Note: all panel data lives in this browser only. Back up regularly. || Les données sont locales à ce navigateur. || Daten liegen nur in diesem Browser.
-s_store_note || تُحفَظ الأقسام الجديدة (أخبار، عروض، إعلانات، محافظات...) في localStorage وهي جاهزة للربط بالمتجر. || New sections are stored in localStorage, ready to be wired into the store. || Données prêtes à être reliées à la boutique. || Daten sind bereit für die Shop-Anbindung.
+s_note || ملاحظة: تُحفظ بيانات لوحة الإدارة في هذا المتصفح فقط. يُرجى إنشاء نسخة احتياطية بانتظام. || Note: all panel data lives in this browser only. Back up regularly. || Les données sont locales à ce navigateur. || Daten liegen nur in diesem Browser.
+s_store_note || تُحفظ الأقسام الجديدة (الأخبار والعروض والإعلانات والمحافظات وغيرها) في localStorage، وهي جاهزة للربط بالمتجر. || New sections are stored in localStorage, ready to be wired into the store. || Données prêtes à être reliées à la boutique. || Daten sind bereit für die Shop-Anbindung.
 restore_conf || سيتم استبدال بيانات المتجر الحالية بهذه النسخة. هل أنت متأكد؟ || This will replace the current data. Continue? || Remplacer les données actuelles ? || Aktuelle Daten ersetzen?
 restore_ok || تم الاسترجاع || Restored || Restauré || Wiederhergestellt
 restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide. || Ungültige Datei.
@@ -8307,7 +8310,7 @@ restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide.
                 }
                 const log = (k, a, n) => { const l = rd(K.log, []); l.unshift({ t: Date.now(), u: me(), k, a: a || '', n: n || '' }); wr(K.log, l.slice(0, 60)); };
                 function toast(x) { document.querySelectorAll('.toast').forEach(e => e.remove()); const d = document.createElement('div'); d.className = 'toast'; d.textContent = x; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
-                const thumb = (s, id) => s ? `<img class="th" src="${esc(s)}" alt="" referrerpolicy="no-referrer" ${id ? `data-act="pedit" data-id="${esc(id)}" title="${t('edit')}"` : ''} onerror="this.classList.add('bad');this.alt='⚠';this.title='الصورة لا تعمل — اضغط لتعديل الرابط'">` : '';
+                const thumb = (s, id) => s ? `<img class="th" src="${esc(s)}" alt="" referrerpolicy="no-referrer" ${id ? `data-act="pedit" data-id="${esc(id)}" title="${t('edit')}"` : ''} onerror="this.classList.add('bad');this.alt='⚠';this.title='تعذّر تحميل الصورة — اضغط لتعديل الرابط'">` : '';
                 const open = html => { const d = $('#dlg'); d.innerHTML = html; if (!d.open) d.showModal(); };
                 const refresh = k => { const e = $('#tbl'); if (e && TBLS[k]) e.innerHTML = TBLS[k](); };
 
@@ -8674,7 +8677,7 @@ ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2
                     <label>${LG === 'ar' ? 'حد الطلب للشحن المجاني' : 'Free delivery threshold'}<input name="freeFrom" type="number" min="0" step="0.01" value="${esc(c.freeFrom)}"></label>
                     <label>${LG === 'ar' ? 'مدة التوصيل المتوقعة' : 'Estimated delivery time'}<input name="eta" value="${esc(c.eta)}"></label></div>
                     <div class="bar"><button class="btn">${t('save')}</button><a class="btn ghost" href="#govs">${LG === 'ar' ? 'إدارة المحافظات ومناطقها ورسومها' : 'Manage governorates, areas and fees'} →</a></div></form>
-                    <div class="box slim"><h2>${LG === 'ar' ? 'مناطق التوصيل' : 'Delivery zones'}</h2><p>${LG === 'ar' ? 'استخدم إدارة المحافظات لتحديد رسوم كل محافظة وكل منطقة، ويمكن تحديد رسوم خاصة للمنطقة.' : 'Use Governorates to configure fees per governorate and area.'}</p><p><b>${LG === 'ar' ? 'عدد المحافظات المسجلة' : 'Configured governorates'}:</b> ${GOVS().length}</p></div>`;
+                    <div class="box slim"><h2>${LG === 'ar' ? 'مناطق التوصيل' : 'Delivery zones'}</h2><p>${LG === 'ar' ? 'استخدم إدارة المحافظات لتحديد رسوم الشحن لكل محافظة ومنطقة، مع إمكانية تخصيص رسوم لكل منطقة.' : 'Use Governorates to configure fees per governorate and area.'}</p><p><b>${LG === 'ar' ? 'عدد المحافظات المسجلة' : 'Configured governorates'}:</b> ${GOVS().length}</p></div>`;
                 }
 
                 /* ---------- Governorates ---------- */
@@ -8748,7 +8751,7 @@ ${k === 'warn' && sys.length ? `<div class="box slim"><h2>${t('sys_alerts')}</h2
                 const ENGINE_KEY = K.engines;
                 function engineView() {
                     const c = { siteUrl: '', google: '', bing: '', sitemap: '', robots: 'index,follow', ...(rd(ENGINE_KEY, {}) || {}) };
-                    return `<div class="head"><div><h1>${t('n_engines')}</h1><p class="sub">${t('engine_sub')}</p></div></div><form id="enginef" class="box"><div class="g2"><label>${t('engine_site')}<input name="siteUrl" type="url" placeholder="https://example.com" value="${esc(c.siteUrl)}"></label><label>${t('engine_sitemap')}<input name="sitemap" type="url" placeholder="https://example.com/sitemap.xml" value="${esc(c.sitemap)}"></label><label>${t('engine_google')}<input name="google" value="${esc(c.google)}"></label><label>${t('engine_bing')}<input name="bing" value="${esc(c.bing)}"></label><label>${t('engine_robots')}<select name="robots"><option value="index,follow" ${c.robots === 'index,follow' ? 'selected' : ''}>index, follow</option><option value="noindex,nofollow" ${c.robots === 'noindex,nofollow' ? 'selected' : ''}>noindex, nofollow</option><option value="noindex,follow" ${c.robots === 'noindex,follow' ? 'selected' : ''}>noindex, follow</option></select></label></div><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div><p class="sub">${LG === 'ar' ? 'تحفظ هذه القيم محليًا الآن، ويمكن ربطها بالباك إند لاحقًا.' : 'These values are stored locally for now and can be connected to the backend later.'}</p></form>`;
+                    return `<div class="head"><div><h1>${t('n_engines')}</h1><p class="sub">${t('engine_sub')}</p></div></div><form id="enginef" class="box"><div class="g2"><label>${t('engine_site')}<input name="siteUrl" type="url" placeholder="https://example.com" value="${esc(c.siteUrl)}"></label><label>${t('engine_sitemap')}<input name="sitemap" type="url" placeholder="https://example.com/sitemap.xml" value="${esc(c.sitemap)}"></label><label>${t('engine_google')}<input name="google" value="${esc(c.google)}"></label><label>${t('engine_bing')}<input name="bing" value="${esc(c.bing)}"></label><label>${t('engine_robots')}<select name="robots"><option value="index,follow" ${c.robots === 'index,follow' ? 'selected' : ''}>index, follow</option><option value="noindex,nofollow" ${c.robots === 'noindex,nofollow' ? 'selected' : ''}>noindex, nofollow</option><option value="noindex,follow" ${c.robots === 'noindex,follow' ? 'selected' : ''}>noindex, follow</option></select></label></div><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div><p class="sub">${LG === 'ar' ? 'تُحفظ هذه القيم محليًا حاليًا، ويمكن ربطها بالخادم لاحقًا.' : 'These values are stored locally for now and can be connected to the backend later.'}</p></form>`;
                 }
 
                 /* ---------- Messages / Hero / Newsletter ---------- */
@@ -8797,13 +8800,11 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 function settingsView() {
                     const s = SITE(), g = s.general, sc = (n, l, on) => `<label class="swl"><span class="sw"><input type="checkbox" name="${n}" ${on ? 'checked' : ''}><i></i></span> ${t(l)}</label>`;
                     return `<h1>${t('n_settings')}</h1><p class="sub">${t('s_sub')}</p>
-<div class="set-grid"><div class="box"><h2>${t('s_ui')}</h2><label>${t('s_lang')}</label><div class="langs">${LK.map(k => `<button type="button" class="lchip ${k === LG ? 'on' : ''}" data-act="lang" data-l="${k}">${fl(k)} ${lname(k)}</button>`).join('')}</div>
-<label class="swl" style="margin-top:14px">${sw('theme', {}, THEME === 'dark')} ${t('s_theme')}</label></div>
-<form id="pwf" class="box"><h2>${t('s_pw')}</h2><label>${t('s_curpw')}<input name="cur" type="password" autocomplete="current-password" required></label><label>${t('s_newpw')}<input name="nw" type="password" autocomplete="new-password" minlength="6" required></label><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div></form></div>
+<div class="set-grid"><form id="pwf" class="box"><h2>${t('s_pw')}</h2><label>${t('s_curpw')}<input name="cur" type="password" autocomplete="current-password" required></label><label>${t('s_newpw')}<input name="nw" type="password" autocomplete="new-password" minlength="6" required></label><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div></form></div>
 <form id="sf"><div class="set-grid">
 <div class="box"><h2>${t('s_announce')}</h2><div class="chks">${sc('show', 's_showbar', s.announce.show)}</div><label>${t('s_atext')}<input name="text" value="${esc(s.announce.text)}"></label><label>${t('s_alink')}<input name="linkText" value="${esc(s.announce.linkText)}"></label><label>${t('s_ahref')}<input name="linkHref" value="${esc(s.announce.linkHref)}"></label></div>
 <div class="box"><h2>${t('s_contact')}</h2><label>${t('s_email')}<input name="email" type="email" value="${esc(s.contact.email)}"></label><label>${t('s_phone')}<input name="phone" value="${esc(s.contact.phone)}"></label><label>${t('s_addr')}<input name="address" value="${esc(s.contact.address)}"></label><label>${t('s_hours')}<input name="hours" value="${esc(s.contact.hours)}"></label><div class="g2"><label>📧 ${LG === 'ar' ? 'أيقونة البريد' : 'Email icon'}<input name="i_email" maxlength="8" value="${esc(s.contact.emailIcon)}"></label><label>📞 ${LG === 'ar' ? 'أيقونة الهاتف' : 'Phone icon'}<input name="i_phone" maxlength="8" value="${esc(s.contact.phoneIcon)}"></label><label>📍 ${LG === 'ar' ? 'أيقونة العنوان' : 'Address icon'}<input name="i_address" maxlength="8" value="${esc(s.contact.addressIcon)}"></label><label>🕒 ${LG === 'ar' ? 'أيقونة المواعيد' : 'Hours icon'}<input name="i_hours" maxlength="8" value="${esc(s.contact.hoursIcon)}"></label></div></div>
-<div class="box"><h2>🔗 ${t('s_social')}</h2><p class="sub" style="margin:0 0 8px">${t('s_social_h')}</p><div class="g2"><label>WhatsApp<input name="s_wa" dir="ltr" placeholder="201000000000" value="${esc(s.social.whatsapp)}"></label><label>${LG === 'ar' ? 'أيقونة WhatsApp' : 'WhatsApp icon'}<input name="i_wa" maxlength="8" value="${esc(s.socialIcons.whatsapp)}"></label><label>X (Twitter)<input name="s_x" dir="ltr" placeholder="https://x.com/..." value="${esc(s.social.x)}"></label><label>${LG === 'ar' ? 'أيقونة X' : 'X icon'}<input name="i_x" maxlength="8" value="${esc(s.socialIcons.x)}"></label><label>Instagram<input name="s_ig" dir="ltr" placeholder="https://instagram.com/..." value="${esc(s.social.instagram)}"></label><label>${LG === 'ar' ? 'أيقونة Instagram' : 'Instagram icon'}<input name="i_ig" maxlength="8" value="${esc(s.socialIcons.instagram)}"></label><label>Facebook<input name="s_fb" dir="ltr" placeholder="https://facebook.com/..." value="${esc(s.social.facebook)}"></label><label>${LG === 'ar' ? 'أيقونة Facebook' : 'Facebook icon'}<input name="i_fb" maxlength="8" value="${esc(s.socialIcons.facebook)}"></label><label>Telegram<input name="s_tg" dir="ltr" placeholder="https://t.me/..." value="${esc(s.social.telegram)}"></label><label>${LG === 'ar' ? 'أيقونة Telegram' : 'Telegram icon'}<input name="i_tg" maxlength="8" value="${esc(s.socialIcons.telegram)}"></label></div><small>${LG === 'ar' ? 'يمكن إدخال إيموجي كرتوني أو رمز نصي.' : 'Enter a cartoon emoji or text symbol.'}</small></div>
+<div class="box"><h2>🔗 ${t('s_social')}</h2><p class="sub" style="margin:0 0 8px">${t('s_social_h')}</p><div class="g2"><label>WhatsApp<input name="s_wa" dir="ltr" placeholder="201000000000" value="${esc(s.social.whatsapp)}"></label><label>${LG === 'ar' ? 'أيقونة WhatsApp' : 'WhatsApp icon'}<input name="i_wa" maxlength="8" value="${esc(s.socialIcons.whatsapp)}"></label><label>X (Twitter)<input name="s_x" dir="ltr" placeholder="https://x.com/..." value="${esc(s.social.x)}"></label><label>${LG === 'ar' ? 'أيقونة X' : 'X icon'}<input name="i_x" maxlength="8" value="${esc(s.socialIcons.x)}"></label><label>Instagram<input name="s_ig" dir="ltr" placeholder="https://instagram.com/..." value="${esc(s.social.instagram)}"></label><label>${LG === 'ar' ? 'أيقونة Instagram' : 'Instagram icon'}<input name="i_ig" maxlength="8" value="${esc(s.socialIcons.instagram)}"></label><label>Facebook<input name="s_fb" dir="ltr" placeholder="https://facebook.com/..." value="${esc(s.social.facebook)}"></label><label>${LG === 'ar' ? 'أيقونة Facebook' : 'Facebook icon'}<input name="i_fb" maxlength="8" value="${esc(s.socialIcons.facebook)}"></label><label>Telegram<input name="s_tg" dir="ltr" placeholder="https://t.me/..." value="${esc(s.social.telegram)}"></label><label>${LG === 'ar' ? 'أيقونة Telegram' : 'Telegram icon'}<input name="i_tg" maxlength="8" value="${esc(s.socialIcons.telegram)}"></label></div><small>${LG === 'ar' ? 'يمكن إدخال رمز تعبيري أو رمز نصي.' : 'Enter a cartoon emoji or text symbol.'}</small></div>
 <div class="box"><h2>${t('s_general')}</h2><label>${t('s_sname')}<input name="gname" value="${esc(g.name)}"></label><div class="g2"><label>${t('s_free')}<input name="free" type="number" min="0" value="${g.free}"></label><label>${t('s_lowstock')}<input name="low" type="number" min="0" value="${g.low}"></label><label>${t('s_tax')}<input name="tax" type="number" min="0" step="any" value="${g.tax}"></label></div>
 <div class="chks col">${sc('maint', 's_maint', g.maint)}${sc('reg', 's_reg', g.reg)}${sc('guest', 's_guest', g.guest)}${sc('reviews', 's_reviews', g.reviews)}${sc('mail', 's_mail', g.mail)}</div></div></div>
 <div class="bar"><button class="btn">${t('s_save')}</button><button type="button" class="btn ghost" data-act="sreset">${t('s_reset')}</button><button type="button" class="btn ghost" data-act="lclear">${t('s_clearlog')}</button></div></form>
@@ -8985,7 +8986,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 function queueSync() {
                     syncChain = syncChain.then(syncAll).then(() => toast(t('saved'))).catch(async e => {
                         if (e.message === 'SESSION') return;
-                        toast('⚠ ' + (e.message === 'NETWORK' ? 'السيرفر مش متاح — التعديل ماتحفظش' : e.message));
+                        toast('⚠ ' + (e.message === 'NETWORK' ? 'الخادم غير متاح — لم يُحفظ التعديل' : e.message));
                         try { await loadFromApi(); render(); } catch (_) { }
                     });
                 }
@@ -9258,7 +9259,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 });
                 document.addEventListener('submit', e => {
                     const f = e.target; e.preventDefault(); const err = f.querySelector('.err'), v = n => f.elements[n].value.trim();
-                    if (f.id === 'lf') { const lb = f.querySelector('button'); lb.disabled = true; apiLogin(v('u'), f.elements.p.value).catch(e => { sessionStorage.removeItem('boda_token'); $('#lerr').textContent = e.message === 'NETWORK' ? 'مش قادر أوصل للسيرفر: ' + API_BASE : t('login_err'); }).finally(() => { lb.disabled = false; }); return; }
+                    if (f.id === 'lf') { const lb = f.querySelector('button'); lb.disabled = true; apiLogin(v('u'), f.elements.p.value).catch(e => { sessionStorage.removeItem('boda_token'); $('#lerr').textContent = e.message === 'NETWORK' ? 'تعذّر الاتصال بالخادم: ' + API_BASE : t('login_err'); }).finally(() => { lb.disabled = false; }); return; }
                     if (f.id === 'hf') {
                         const i = +f.dataset.i; if (!v('title')) { err.textContent = t('h_err'); return; }
                         const rec = { badge: v('badge'), title: v('title'), text: v('text'), b1: v('b1'), l1: v('l1'), b2: v('b2'), l2: v('l2'), emojis: v('emojis'), img: v('img') };
@@ -9334,7 +9335,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                         const rec = { name, icon: '', img: v('img'), shop: v('shop') || 'Shop ' + name, desc: v('desc'), long: v('long') || v('desc'), subs: f.elements.subs.value.split(/[\n,،]/).map(s => s.trim()).filter(Boolean) };
                         if (!name) { err.textContent = t('req_err'); return; }
                         if (id) { const i = cs.findIndex(c => c.name === id); cs[i] = { ...cs[i], ...rec, name: id }; }
-                        else { if (cs.some(c => c.name.toLowerCase() === name.toLowerCase())) { err.textContent = t('c_exists'); return; } if (cs.length >= 20) { err.textContent = LG === 'ar' ? 'الحد الأقصى 20 قسمًا.' : 'You can add up to 20 categories.'; return; } cs.push(rec); }
+                        else { if (cs.some(c => c.name.toLowerCase() === name.toLowerCase())) { err.textContent = t('c_exists'); return; } if (cs.length >= 20) { err.textContent = LG === 'ar' ? 'يمكن إضافة 20 قسمًا كحد أقصى.' : 'You can add up to 20 categories.'; return; } cs.push(rec); }
                         wr(K.cats, cs); $('#dlg').close(); log('log_save', 'm_cats', name); render(); toast(t('saved'));
                     }
                 });
