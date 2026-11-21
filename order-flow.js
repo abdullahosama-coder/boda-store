@@ -8,11 +8,8 @@
 (function () {
     'use strict';
 
-    /* ---------- STORE CONTACT (edit these) ---------- */
-    var CONTACT = window.BODA_CONTACT || {
-        phone: '',      // e.g. '+201001234567'  (used by the "Phone" button)
-        whatsapp: ''    // e.g. '201001234567'   (digits only, country code first)
-    };
+    /* ---------- STORE CONTACT ---------- */
+    var CONTACT = window.BODA_CONTACT || {};
 
     /* ---------- tiny i18n ---------- */
     var TXT = {
@@ -77,6 +74,13 @@
     /* ---------- helpers ---------- */
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     function lsGet(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
+    function storeContact() {
+        var site = lsGet('boda_site', {}), contact = site.contact || {}, social = site.social || {};
+        return {
+            phone: CONTACT.phone || contact.phone || '',
+            whatsapp: CONTACT.whatsapp || social.whatsapp || ''
+        };
+    }
     function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
     function toast(msg) {
         var el = document.createElement('div'); el.className = 'of-toast'; el.textContent = msg;
@@ -199,7 +203,8 @@
 
     function openChooser(item) {
         cur = item; closeAll(); addStyles();
-        var phone = (CONTACT.phone || '').replace(/\s/g, ''), wa = (CONTACT.whatsapp || '').replace(/\D/g, '');
+        var savedContact = storeContact();
+        var phone = (savedContact.phone || '').replace(/\s/g, ''), wa = (savedContact.whatsapp || '').replace(/\D/g, '');
         backdrop = document.createElement('div'); backdrop.className = 'of-back';
         backdrop.innerHTML = '<div class="of-modal" role="dialog" aria-modal="true">' +
             '<button type="button" class="of-x" data-of="close" aria-label="' + t('close') + '">×</button>' +
@@ -299,9 +304,9 @@
             else if (a === 'return') openChooser(cur);
             else if (a === 'minus' || a === 'plus') { var i = panel.querySelector('#of-qty'); i.value = (parseInt(i.value, 10) || 1) + (a === 'plus' ? 1 : -1); panel._upd(); }
             else if (a === 'confirm') confirmOrder();
-            else if (a === 'phone') { var p = (CONTACT.phone || '').replace(/\s/g, ''); if (!p) toast(t('noContact')); else location.href = 'tel:' + p; }
+            else if (a === 'phone') { var p = (storeContact().phone || '').replace(/\s/g, ''); if (!p) toast(t('noContact')); else location.href = 'tel:' + p; }
             else if (a === 'wa') {
-                var w = (CONTACT.whatsapp || '').replace(/\D/g, ''); if (!w) { toast(t('noContact')); return; }
+                var w = (storeContact().whatsapp || '').replace(/\D/g, ''); if (!w) { toast(t('noContact')); return; }
                 var msg = (lang() === 'ar' ? 'مرحبا، عايز أطلب: ' : 'Hello, I would like to order: ') + cur.name + ' (' + money(cur.price) + ')';
                 window.open('https://wa.me/' + w + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
             }
