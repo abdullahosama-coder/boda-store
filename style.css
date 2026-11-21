@@ -3679,15 +3679,3 @@ footer .fc .ci { display: inline-grid; place-items: center; width: 34px; height:
   .fp-row { gap: 12px; }
   .footer-grid { grid-template-columns: minmax(0, 1fr); }
 }
-
-/* Blue verification badge */
-.verified-badge {
-    display: inline-flex;
-    vertical-align: middle;
-    margin-inline-start: 6px;
-    line-height: 1;
-}
-
-.verified-badge svg {
-    display: block;
-}
