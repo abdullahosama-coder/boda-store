@@ -301,17 +301,19 @@ function initFilters() {
     var grid = document.querySelector('.product-grid'); if (!grid) return;
     var secs = [].slice.call(grid.children); secs.forEach(function (s, i) { s.dataset.i = i; });
     var P = new URLSearchParams(location.search);
-    var S = { cat: P.get('cat') || '', sub: P.get('sub') || '', q: (P.get('q') || '').toLowerCase(), stock: false, sale: P.get('sale') === '1' };
+    var S = { cat: P.get('cat') || '', sub: P.get('sub') || '', q: (P.get('q') || '').toLowerCase(), stock: false, sale: P.get('sale') === '1', vfy: P.get('vfy') === 'yes' || P.get('vfy') === 'no' ? P.get('vfy') : '' };
     var art = function (s) { return s.querySelector('article'); };
     var panel = el('div', 'filter-panel');
     panel.innerHTML =
         '<div class="fp-top"><input id="f-q" type="search" placeholder="Search in products..." aria-label="Search in products"></div>' +
         '<div class="fp-label">Categories</div><div class="chips" id="f-cats"></div><div class="chips subs" id="f-subs"></div>' +
+        '<div class="fp-label" style="margin-top:14px">Verification</div><div class="chips" id="f-vfy"></div>' +
         '<div class="fp-row"><label class="chk"><input id="f-stock" type="checkbox"> In stock only</label><label class="chk"><input id="f-sale" type="checkbox"> On sale</label></div>' +
         '<div class="fp-foot"><span id="f-count"></span><button type="button" id="f-reset">Clear all filters</button></div>';
     grid.before(panel);
     var none = el('div', 'no-results'); grid.before(none);
 
+    function isVfy(a) { return a.dataset.verified === '1'; }
     function count(fn) { return secs.map(art).filter(fn).length; }
     function chip(label, n, on, fn) {
         var b = el('button', 'chip' + (on ? ' on' : '')); b.type = 'button';
@@ -331,11 +333,16 @@ function initFilters() {
             });
         }
         s.style.display = cur ? '' : 'none';
+        var v = $id('f-vfy'); v.innerHTML = '';
+        v.appendChild(chip('All', secs.length, !S.vfy, function () { S.vfy = ''; apply(); }));
+        v.appendChild(chip('Verified', count(isVfy), S.vfy === 'yes', function () { S.vfy = 'yes'; apply(); }));
+        v.appendChild(chip('Not verified', count(function (a) { return !isVfy(a); }), S.vfy === 'no', function () { S.vfy = 'no'; apply(); }));
     }
     function match(a) {
         return (!S.cat || a.dataset.cat === S.cat) && (!S.sub || a.dataset.sub === S.sub) &&
             (!S.q || bsMatch(S.q, a.textContent) || bsMatch(S.q, ORIG(a)) || (window.BodaSearch && BodaSearch.matchProduct(S.q, a.dataset.id, a.dataset.cat, a.textContent))) &&
-            (!S.stock || /available/i.test(ORIG(a))) && (!S.sale || !!a.querySelector('.sale-badge:not(.new-badge)'));
+            (!S.stock || /available/i.test(ORIG(a))) && (!S.sale || !!a.querySelector('.sale-badge:not(.new-badge)')) &&
+            (!S.vfy || (S.vfy === 'yes') === isVfy(a));
     }
     function apply() {
         var shown = 0;
@@ -347,7 +354,7 @@ function initFilters() {
         try {
             var u = new URLSearchParams();
             if (S.cat) u.set('cat', S.cat); if (S.sub) u.set('sub', S.sub);
-            if (S.q) u.set('q', S.q); if (S.sale) u.set('sale', '1');
+            if (S.q) u.set('q', S.q); if (S.sale) u.set('sale', '1'); if (S.vfy) u.set('vfy', S.vfy);
             u.set('page', 'products');
             history.replaceState(null, '', location.pathname + '?' + u.toString());
         } catch (e) { }
@@ -358,7 +365,7 @@ function initFilters() {
     $id('f-stock').onchange = function () { S.stock = this.checked; apply(); };
     $id('f-sale').onchange = function () { S.sale = this.checked; apply(); };
     $id('f-reset').onclick = function () {
-        S.cat = S.sub = S.q = ''; S.stock = S.sale = false;
+        S.cat = S.sub = S.q = S.vfy = ''; S.stock = S.sale = false;
         $id('f-q').value = '';
         $id('f-stock').checked = $id('f-sale').checked = false; apply();
     };
@@ -1067,12 +1074,14 @@ function actionsHTML(p) {
     var d = p.stock === false ? ' disabled' : '';
     return '<div class="card-actions"><div class="card-row"><button type="button" class="add-cart"' + d + '>Add to Cart</button><button type="button" class="buy-btn"' + d + '>Buy Now</button></div><button type="button" class="fav-action">\u2661 Add to Favorites</button></div>';
 }
-function attrsOf(p) { return 'id="' + esc(p.id) + '" data-id="' + esc(p.id) + '" data-cat="' + esc(p.cat) + '" data-sub="' + esc(p.sub || '') + '" data-price="' + p.price + '"'; }
+function attrsOf(p) { return 'id="' + esc(p.id) + '" data-id="' + esc(p.id) + '" data-cat="' + esc(p.cat) + '" data-sub="' + esc(p.sub || '') + '" data-price="' + p.price + '"' + (p.verified ? ' data-verified="1"' : ''); }
+// Blue verification badge (shown next to the product name when the admin marks a product as verified)
+function verifiedHTML(p) { return p && p.verified ? '<span class="verified-badge" title="Verified product" aria-label="Verified product"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#1d9bf0" d="M22.5 12.5c0-1.58-.88-2.95-2.18-3.66.54-1.4.24-3.05-.88-4.17-1.12-1.12-2.77-1.42-4.17-.88C14.55 2.5 13.18 1.62 11.6 1.62S8.65 2.5 7.94 3.8c-1.4-.54-3.05-.24-4.17.88-1.12 1.12-1.42 2.77-.88 4.17C1.59 9.55.72 10.92.72 12.5s.87 2.95 2.17 3.66c-.54 1.4-.24 3.05.88 4.17 1.12 1.12 2.77 1.42 4.17.88.71 1.3 2.08 2.17 3.66 2.17s2.95-.87 3.66-2.17c1.4.54 3.05.24 4.17-.88 1.12-1.12 1.42-2.77.88-4.17 1.3-.71 2.18-2.08 2.18-3.66z"/><path fill="#fff" d="M10.4 16.6 6.9 13.1l1.4-1.4 2.1 2.1 5.3-5.3 1.4 1.4z"/></svg></span>' : ''; }
 function featuresHTML(p, max) { var f = max ? (p.features || []).slice(0, max) : (p.features || []); return f.length ? '<h4>Features</h4><ul>' + f.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>' : ''; }
 function labelOf(p) { return esc(p.cat + (p.sub ? ' \u203A ' + p.sub : '')); }
 function cardHTML(p) {
     return '<section><article ' + attrsOf(p) + '>' + badgeHTML(p) + '<img src="' + esc(p.img || IMG_FALLBACK) + '" alt="' + esc(p.name) + '" width="300" height="220" loading="lazy" referrerpolicy="no-referrer">' +
-        '<span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + '<p>' + esc(p.desc || '') + '</p>' + priceHTML(p) +
+        '<span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + verifiedHTML(p) + '</h3>' + ratingHTML() + '<p>' + esc(p.desc || '') + '</p>' + priceHTML(p) +
         '<p>Status: ' + statusText(p) + '</p>' + featuresHTML(p, 3) + actionsHTML(p) + '</article></section>';
 }
 function emptyBox(icon, title, text, href, label) {
@@ -1148,7 +1157,7 @@ function renderProduct() {
     var related = allProducts().filter(function (x) { return x.cat === p.cat && x.id !== p.id; }).slice(0, 4);
     box.innerHTML = '<div class="crumbs"><a href="index.html?page=home">Home</a> \u203A <a href="' + esc(catUrl(p.cat)) + '">' + esc(p.cat) + '</a> \u203A <span>' + esc(p.name) + '</span></div>' +
         '<article class="pd" ' + attrsOf(p) + '><div class="pd-media">' + badgeHTML(p) + '<img src="' + esc(p.img || IMG_FALLBACK) + '" alt="' + esc(p.name) + '" referrerpolicy="no-referrer"></div>' +
-        '<div class="pd-body"><span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + '</h3>' + ratingHTML() + priceHTML(p) +
+        '<div class="pd-body"><span class="cat-label">' + labelOf(p) + '</span><h3>' + esc(p.name) + verifiedHTML(p) + '</h3>' + ratingHTML() + priceHTML(p) +
         '<p class="pd-status' + (out ? ' out' : '') + '">\u25CF ' + (out ? 'Out of stock' : lowStock ? 'Only ' + p.qty + ' left in stock' : 'In stock — ready to ship') + '</p>' +
         '<p class="pd-desc">' + esc(p.desc || '') + '</p>' + (p.long ? '<p class="pd-long" style="white-space:pre-line">' + esc(p.long) + '</p>' : '') + featuresHTML(p) +
         '<table class="pd-specs"><tbody>' + rows.map(function (r) { return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table>' +
