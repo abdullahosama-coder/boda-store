@@ -638,6 +638,9 @@ View details || عرض التفاصيل || Voir les détails || Details ansehen
 Go to Store || الذهاب إلى المتجر || Aller à la boutique || Zum Shop
 ● In stock — ready to ship || ● متوفر — جاهز للشحن || ● En stock — prêt à expédier || ● Auf Lager — versandbereit
 1 year || سنة واحدة || 1 an || 1 Jahr
+Verification || التوثيق || Vérification || Verifizierung
+Verified products || المنتجات الموثقة || Produits vérifiés || Verifizierte Produkte
+Unverified products || المنتجات غير الموثقة || Produits non vérifiés || Nicht verifizierte Produkte
 `;
 
 /* ===== Boda Store — site-wide language engine (EN / AR / FR / DE) =====
