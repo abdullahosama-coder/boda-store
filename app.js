@@ -198,7 +198,7 @@ function rememberProduct(it) {
 function itemOf(a) {
     var im = a.querySelector('img');
     var p = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (x) { return x.id === a.dataset.id; }) || {};
-    return { id: a.dataset.id, name: ORIG(a.querySelector('h3')), price: +a.dataset.price, cat: a.dataset.cat || '', img: im ? im.src : '', brand: p.brand || '', condition: p.condition || 'new', colors: p.colors || [], sizes: p.sizes || [], components: p.components || [], features: p.features || [], stock: p.stock !== false }; 
+    return { id: a.dataset.id, name: ORIG(a.querySelector('h3')), price: +a.dataset.price, cat: a.dataset.cat || '', img: im ? im.src : '', brand: p.brand || '', condition: p.condition || 'new', colors: p.colors || [], sizes: p.sizes || [], components: p.components || [], features: p.features || [], stock: p.stock !== false };
 }
 function addToCart(it) {
     var live = (typeof allProductsRaw === 'function' ? allProductsRaw() : (window.BODA_PRODUCTS || [])).find(function (p) { return p.id === it.id; });
@@ -301,13 +301,13 @@ function initFilters() {
     var grid = document.querySelector('.product-grid'); if (!grid) return;
     var secs = [].slice.call(grid.children); secs.forEach(function (s, i) { s.dataset.i = i; });
     var P = new URLSearchParams(location.search);
-    var S = { cat: P.get('cat') || '', sub: P.get('sub') || '', q: (P.get('q') || '').toLowerCase(), stock: false, sale: P.get('sale') === '1' };
+    var S = { cat: P.get('cat') || '', sub: P.get('sub') || '', q: (P.get('q') || '').toLowerCase(), stock: false, sale: P.get('sale') === '1', ver: (P.get('ver') === 'yes' || P.get('ver') === 'no') ? P.get('ver') : '' };
     var art = function (s) { return s.querySelector('article'); };
     var panel = el('div', 'filter-panel');
     panel.innerHTML =
         '<div class="fp-top"><input id="f-q" type="search" placeholder="Search in products..." aria-label="Search in products"></div>' +
         '<div class="fp-label">Categories</div><div class="chips" id="f-cats"></div><div class="chips subs" id="f-subs"></div>' +
-        '<div class="fp-row"><label class="chk"><input id="f-stock" type="checkbox"> In stock only</label><label class="chk"><input id="f-sale" type="checkbox"> On sale</label></div>' +
+        '<div class="fp-row"><label class="chk"><input id="f-stock" type="checkbox"> In stock only</label><label class="chk"><input id="f-sale" type="checkbox"> On sale</label><label class="fp-ver"><span>Verification</span><select id="f-ver"><option value="">All</option><option value="yes">Verified products</option><option value="no">Unverified products</option></select></label></div>' +
         '<div class="fp-foot"><span id="f-count"></span><button type="button" id="f-reset">Clear all filters</button></div>';
     grid.before(panel);
     var none = el('div', 'no-results'); grid.before(none);
@@ -335,7 +335,8 @@ function initFilters() {
     function match(a) {
         return (!S.cat || a.dataset.cat === S.cat) && (!S.sub || a.dataset.sub === S.sub) &&
             (!S.q || bsMatch(S.q, a.textContent) || bsMatch(S.q, ORIG(a)) || (window.BodaSearch && BodaSearch.matchProduct(S.q, a.dataset.id, a.dataset.cat, a.textContent))) &&
-            (!S.stock || /available/i.test(ORIG(a))) && (!S.sale || !!a.querySelector('.sale-badge:not(.new-badge)'));
+            (!S.stock || /available/i.test(ORIG(a))) && (!S.sale || !!a.querySelector('.sale-badge:not(.new-badge)')) &&
+            (!S.ver || (S.ver === 'yes') === !!verifiedMap()[a.dataset.id]);
     }
     function apply() {
         var shown = 0;
@@ -347,18 +348,19 @@ function initFilters() {
         try {
             var u = new URLSearchParams();
             if (S.cat) u.set('cat', S.cat); if (S.sub) u.set('sub', S.sub);
-            if (S.q) u.set('q', S.q); if (S.sale) u.set('sale', '1');
+            if (S.q) u.set('q', S.q); if (S.sale) u.set('sale', '1'); if (S.ver) u.set('ver', S.ver);
             u.set('page', 'products');
             history.replaceState(null, '', location.pathname + '?' + u.toString());
         } catch (e) { }
     }
     $id('f-q').value = S.q;
-    $id('f-sale').checked = S.sale;
+    $id('f-sale').checked = S.sale; $id('f-ver').value = S.ver;
+    $id('f-ver').onchange = function () { S.ver = this.value; apply(); };
     $id('f-q').oninput = function () { S.q = this.value.trim().toLowerCase(); apply(); };
     $id('f-stock').onchange = function () { S.stock = this.checked; apply(); };
     $id('f-sale').onchange = function () { S.sale = this.checked; apply(); };
     $id('f-reset').onclick = function () {
-        S.cat = S.sub = S.q = ''; S.stock = S.sale = false;
+        S.cat = S.sub = S.q = S.ver = ''; S.stock = S.sale = false; $id('f-ver').value = '';
         $id('f-q').value = '';
         $id('f-stock').checked = $id('f-sale').checked = false; apply();
     };
@@ -634,7 +636,7 @@ function startCheckout(cart, buyNow) {
 
     box.innerHTML = '<form id="checkout-form" class="checkout"><div><fieldset><legend>Shipping details</legend><div class="card-grid">' +
         '<label>Full name<input id="sh-name" required value="' + esc(ship.name || (u ? u.name : '')) + '"></label><label>Phone<input id="sh-phone" type="tel" required value="' + esc(ship.phone || '') + '"></label>' +
-        '<label>Address<input id="sh-addr" required value="' + esc(ship.address || '') + '"></label><label>City / Area<input id="sh-city" required value="' + esc(ship.city || '') + '"></label></div><p class="gw-tip">' + (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (freeFrom > 0 && subtotal >= freeFrom ? 'Free delivery applied.' : 'Delivery fee: ' + money(deliveryFee)) ) + (shipCfg.eta ? ' · Estimated: ' + esc(shipCfg.eta) : '') + '</p></fieldset>' +
+        '<label>Address<input id="sh-addr" required value="' + esc(ship.address || '') + '"></label><label>City / Area<input id="sh-city" required value="' + esc(ship.city || '') + '"></label></div><p class="gw-tip">' + (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (freeFrom > 0 && subtotal >= freeFrom ? 'Free delivery applied.' : 'Delivery fee: ' + money(deliveryFee))) + (shipCfg.eta ? ' · Estimated: ' + esc(shipCfg.eta) : '') + '</p></fieldset>' +
         '<fieldset><legend>Payment method</legend>' + payHtml + '<div id="new-card" hidden>' + cardFields('nc') + '<label class="chk"><input type="checkbox" id="nc-save"> Save this card</label></div>' +
         '<p class="gw-tip"><a href="#payment">Manage payment methods &amp; gateways →</a></p></fieldset><p class="form-error"></p></div>' +
         '<aside class="co-sum"><h3>Order summary</h3>' + lines + '<div class="co-total"><span>Total</span><strong>' + money(total) + '</strong></div>' +
