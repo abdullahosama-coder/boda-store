@@ -38,6 +38,7 @@ Manage the products you rated. || أدر المنتجات التي قيّمته�
 Switch Account || تبديل الحساب || Changer de compte || Konto wechseln
 Switch accounts on this device || بدّل الحسابات على هذا الجهاز || Changer de compte sur cet appareil || Konten auf diesem Gerät wechseln
 Payment Methods & Gateways || طرق الدفع والبوابات || Moyens de paiement et passerelles || Zahlungsmethoden & Gateways
+✔ Verified || ✔ موثّق || ✔ Vérifié || ✔ Verifiziert
 Cards, Vodafone Cash, InstaPay, PayPal, Fawry || بطاقات، فودافون كاش، إنستاباي، باي بال، فوري || Cartes, Vodafone Cash, InstaPay, PayPal, Fawry || Karten, Vodafone Cash, InstaPay, PayPal, Fawry
 Store || المتجر || Boutique || Shop
 Store Information || معلومات المتجر || Informations sur la boutique || Shop-Informationen
