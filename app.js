@@ -1041,7 +1041,24 @@ function allProductsRaw() {
     return (window.BODA_PRODUCTS || []).map(function (p) { return Object.assign({}, p, a.edits[p.id] || {}); })
         .concat(a.added).filter(function (p) { return a.deleted.indexOf(p.id) < 0; });
 }
-function allProducts() { return allProductsRaw().filter(function (p) { return !p.hidden; }); }
+function allProducts() { var l = allProductsRaw().filter(function (p) { return !p.hidden && !p.archived; }); return l.filter(function (p) { return p.pinned; }).concat(l.filter(function (p) { return !p.pinned; })); }
+// Verified product = it has at least one active document in Admin -> Documentation
+function verifiedMap() { var m = {}; try { (JSON.parse(localStorage.getItem('boda_docs')) || []).forEach(function (d) { if (d && d.active !== false && d.product) m[String(d.product)] = 1; }); } catch (e) { } return m; }
+function applyVerifiedAndPins() {
+    var v = verifiedMap(), pins = {};
+    allProductsRaw().forEach(function (p) { if (p.pinned && !p.hidden && !p.archived) pins[p.id] = 1; });
+    document.querySelectorAll('article[data-id]').forEach(function (a) {
+        var old = a.querySelector(':scope > .verified-badge');
+        if (v[a.dataset.id]) { if (!old) { var b = document.createElement('span'); b.className = 'verified-badge'; b.textContent = '\u2714 Verified'; a.insertBefore(b, a.firstChild); } }
+        else if (old) old.remove();
+    });
+    document.querySelectorAll('.product-grid').forEach(function (g) {
+        var kids = [].slice.call(g.children), pinned = kids.filter(function (n) { var a = n.matches('article') ? n : n.querySelector('article[data-id]'); return a && pins[a.dataset.id]; });
+        if (!pinned.length) return;
+        var ok = pinned.every(function (n, i) { return kids[i] === n; }); if (ok) return;
+        pinned.slice().reverse().forEach(function (n) { g.insertBefore(n, g.firstChild); });
+    });
+}
 var IMG_FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="220" viewBox="0 0 300 220"><rect width="300" height="220" fill="#f3f5f9"/><g fill="none" stroke="#9aa6b8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><rect x="105" y="65" width="90" height="75" rx="8"/><circle cx="130" cy="92" r="9"/><path d="M105 130l28-26 20 18 14-12 28 20"/></g><text x="150" y="178" font-family="Arial" font-size="15" fill="#9aa6b8" text-anchor="middle">Image unavailable</text></svg>');
 // The catalog (products-data.js + admin edits) is the ONLY source of product images.
 function liveImg(id, fallback) {
@@ -1104,7 +1121,7 @@ function applyAdminDom() {
     document.querySelectorAll('article[data-id]').forEach(function (art) {
         var id = art.dataset.id, p = map[id], e = a.edits[id];
         var wrap = art.parentNode.tagName === 'SECTION' ? art.parentNode : art;
-        if (a.deleted.indexOf(id) > -1 || (p && p.hidden) || (!p && window.BODA_BACKEND_CATALOG)) { wrap.remove(); return; }
+        if (a.deleted.indexOf(id) > -1 || (p && (p.hidden || p.archived)) || (!p && window.BODA_BACKEND_CATALOG)) { wrap.remove(); return; }
         if (p && !e) { var im0 = art.querySelector('img'); if (im0 && p.img) { im0.setAttribute('referrerpolicy', 'no-referrer'); if (im0.getAttribute('src') !== p.img) im0.src = p.img; } }
         if (!e || !p) return;
         // Rebuild the card from the catalog so EVERY admin edit (image, description, features, badge, category, price, stock) shows up.
@@ -1243,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Admin saved something in another tab -> refresh the storefront automatically
     window.addEventListener('storage', function (ev) {
-        if (['boda_admin_products', 'boda_categories', 'boda_site', 'boda_seo_pages', 'boda_search_engines', 'boda_search_keywords'].indexOf(ev.key) > -1) location.reload();
+        if (['boda_admin_products', 'boda_docs', 'boda_categories', 'boda_site', 'boda_seo_pages', 'boda_search_engines', 'boda_search_keywords'].indexOf(ev.key) > -1) location.reload();
         else if (ev.key === 'boda_cart') { updateBadges(); syncCartActions(); }
     });
     // Every start-up step is isolated: one failing step can no longer stop the rest of the page
@@ -1264,6 +1281,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     step(updateBadges);
     step(function () { if (document.body.classList.contains('products')) initFilters(); });
     step(function () { initCards(); });
+    step(applyVerifiedAndPins);
+    step(function () { setTimeout(function () { step(applyVerifiedAndPins); }, 400); });
     step(function () { if ($id('cart-box')) initCart(); });
     step(function () { if ($id('checkout-box')) initCheckout(); });
     step(function () { if ($id('fav-box')) renderFavs(); });
