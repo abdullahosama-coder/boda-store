@@ -7143,6 +7143,11 @@
             .iobar { display: flex; flex-wrap: wrap; gap: 8px; margin: -6px 0 14px }
             .iobar .btn { padding: 8px 14px; font-size: .92rem }
             @media (max-width: 560px) { dialog { padding: 18px; width: 96vw } }
+            dialog[open] { position: fixed; inset: 0; margin: auto }
+            .amenu { position: fixed; z-index: 9999; min-width: 200px; background: var(--card, #fff); color: inherit; border: 1px solid var(--line, #dde3ee); border-radius: 10px; box-shadow: 0 12px 32px rgba(15, 27, 45, .28); padding: 6px; display: flex; flex-direction: column }
+            .amenu button { background: none; border: 0; text-align: start; padding: 9px 12px; border-radius: 7px; cursor: pointer; font: inherit; color: inherit }
+            .amenu button:hover { background: rgba(127, 127, 127, .16) }
+            .amenu button.del { color: #d33 }
 
             @media (min-width: 821px) {
                 aside nav {
@@ -7762,6 +7767,22 @@ n_docs || إدارة التوثيق || Documentation || Documentation || Dokumen
 m_docs || توثيق المنتجات || Product documentation || Documentation produit || Produktdokumentation
 docs_sub || أدلة الاستخدام والضمان والمواصفات والشهادات الخاصة بكل منتج. || Manuals, warranties, specifications and certificates for each product. || Manuels, garanties, spécifications et certificats par produit. || Anleitungen, Garantien, Spezifikationen und Zertifikate je Produkt.
 docs_new || مستند جديد || New document || Nouveau document || Neues Dokument
+act_menu || أكشن || Action || Action || Aktion
+p_addprod || إضافة منتج || Add product || Ajouter un produit || Produkt hinzufügen
+p_archive || إضافة إلى الأرشيف || Add to archive || Archiver || Archivieren
+p_unarchive || إخراج من الأرشيف || Remove from archive || Désarchiver || Aus Archiv holen
+p_pin || تثبيت المنتج || Pin product || Épingler le produit || Produkt anheften
+p_unpin || إلغاء تثبيت المنتج || Unpin product || Désépingler || Anheften aufheben
+p_addad || إضافة إعلان || Add ad || Ajouter une annonce || Anzeige hinzufügen
+p_addoffer || إضافة عرض || Add offer || Ajouter une offre || Angebot hinzufügen
+p_archived || مؤرشف || Archived || Archivé || Archiviert
+p_pinned || مثبّت || Pinned || Épinglé || Angeheftet
+vf_all || الكل || All || Tout || Alle
+vf_yes || المنتجات الموثقة || Verified products || Produits vérifiés || Verifizierte Produkte
+vf_no || المنتجات غير الموثقة || Unverified products || Produits non vérifiés || Nicht verifizierte Produkte
+vf_badge || موثّق || Verified || Vérifié || Verifiziert
+s_pay || بوابات الدفع الإلكتروني || Electronic payment gateways || Passerelles de paiement électronique || Elektronische Zahlungs-Gateways
+s_pay_h || فعّل البوابات التي تظهر للعملاء في صفحة الدفع. || Enable the gateways customers can use at checkout. || Activez les passerelles proposées au paiement. || Aktivieren Sie die Gateways im Checkout.
 n_pages || الصفحات (المساعدة والسياسات) || Pages (Help & Policies) || Pages (Aide et politiques) || Seiten (Hilfe & Richtlinien)
 m_pages || محتوى صفحات المساعدة والخصوصية والشروط || Help, Privacy & Terms content || Contenu Aide, Confidentialité et Conditions || Inhalt Hilfe, Datenschutz & AGB
 pages_sub || عدّل أو أضف أو احذف أقسام صفحات مركز المساعدة وسياسة الخصوصية والشروط والأحكام بالأربع لغات. || Edit, add or delete sections of the Help Center, Privacy Policy and Terms pages in all four languages. || Modifiez, ajoutez ou supprimez les sections du Centre d’aide, de la Politique de confidentialité et des Conditions dans les quatre langues. || Bearbeiten, ergänzen oder löschen Sie Abschnitte von Hilfe, Datenschutz und AGB in allen vier Sprachen.
@@ -8284,6 +8305,8 @@ restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide.
                 const orders = () => rd(K.orders, []).map(o => ({ ...o, s: stOf(o) })).sort((a, b) => b.created - a.created);
                 const PA = () => { const d = rd(K.pa, {}); return { edits: d.edits || {}, added: d.added || [], deleted: d.deleted || [] }; };
                 const baseIds = () => BODA_PRODUCTS.map(p => p.id);
+                const verifiedIds = () => new Set(rd(K.docs, []).filter(d => d && d.active !== false && d.product).map(d => String(d.product)));
+                const docVerified = r => r.active !== false && !!r.product;
                 function catalog() { const a = PA(); return BODA_PRODUCTS.map(p => ({ ...p, ...(a.edits[p.id] || {}) })).concat(a.added).filter(p => !a.deleted.includes(p.id)); }
                 const cn = n => (LG !== 'en' && window.BodaAuto && window.BodaAuto.get(n, LG)) || n;
                 const CATS = () => { const c = rd(K.cats, null); return Array.isArray(c) && c.length ? c : BODA_CATEGORIES_DEFAULT; };
@@ -8394,18 +8417,18 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
                 function patchProduct(id, f) { const a = PA(), i = a.added.findIndex(p => p.id === id); if (i > -1) a.added[i] = { ...a.added[i], ...f }; else a.edits[id] = { ...(a.edits[id] || {}), ...f }; wr(K.pa, a); }
                 function prodList() {
                     const q = (S.pq || '').toLowerCase(), low = +SITE().general.low;
-                    const l = catalog().filter(p => (!S.pc || p.cat === S.pc) && (!S.ps || (S.ps === 'in' ? p.stock !== false : S.ps === 'out' ? p.stock === false : (p.stock !== false && p.qty !== '' && p.qty != null && +p.qty <= low))) && (!S.pv || (S.pv === 'shown' ? !p.hidden : !!p.hidden)) && (!q || (p.name + ' ' + p.id + ' ' + (p.brand || '') + ' ' + (p.sub || '')).toLowerCase().includes(q)));
+                    const l = catalog().filter(p => (!S.pc || p.cat === S.pc) && (!S.ps || (S.ps === 'in' ? p.stock !== false : S.ps === 'out' ? p.stock === false : (p.stock !== false && p.qty !== '' && p.qty != null && +p.qty <= low))) && (!S.pv || (S.pv === 'shown' ? !p.hidden : !!p.hidden)) && (!S.pf || ((S.pf === 'yes') === verifiedIds().has(String(p.id)))) && (!q || (p.name + ' ' + p.id + ' ' + (p.brand || '') + ' ' + (p.sub || '')).toLowerCase().includes(q)));
                     return l.length ? `<div class="tw"><table><thead><tr><th></th><th>${t('th_prod')}</th><th>${t('th_cat')}</th><th>${t('th_price')}</th><th>${t('f_qty')}</th><th>${t('f_instock')}</th><th>${t('th_vis')}</th><th></th></tr></thead><tbody>${l.map(p => `<tr>
-<td>${thumb(p.img, p.id)}</td><td class="wrap"><b>${esc(p.name)}</b><br><small>${esc(p.id)}${p.brand ? ' · ' + esc(p.brand) : ''}</small></td><td>${esc(cn(p.cat))}<br><small>${esc(cn(p.sub))}</small></td>
+<td>${thumb(p.img, p.id)}</td><td class="wrap"><b>${esc(p.name)}</b>${verifiedIds().has(String(p.id)) ? ` <span class="pill ok">✔ ${t('vf_badge')}</span>` : ''}${p.pinned ? ` <span class="pill info">📌 ${t('p_pinned')}</span>` : ''}${p.archived ? ` <span class="pill warn">🗄️ ${t('p_archived')}</span>` : ''}<br><small>${esc(p.id)}${p.brand ? ' · ' + esc(p.brand) : ''}</small></td><td>${esc(cn(p.cat))}<br><small>${esc(cn(p.sub))}</small></td>
 <td>${p.old > p.price ? `<del><small>${money(p.old)}</small></del> ` : ''}<b>${money(p.price)}</b></td>
 <td>${p.qty == null || p.qty === '' ? '—' : `${p.qty}${+p.qty <= low ? ` <span class="pill warn">${t('low')}</span>` : ''}`}</td>
 <td>${sw('pstock', { id: p.id }, p.stock !== false)}</td><td>${sw('pvis', { id: p.id }, !p.hidden)}</td>
-<td class="nw"><button class="mini" data-act="pedit" data-id="${esc(p.id)}">${t('edit')}</button><button class="mini" data-act="pdup" data-id="${esc(p.id)}">${t('p_dup')}</button><button class="mini del" data-act="pdel" data-id="${esc(p.id)}">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`;
+<td class="nw"><button class="mini" data-act="amenu" data-id="${esc(p.id)}">${t('act_menu')} ▾</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`;
                 }
                 function productsView() {
                     const del = PA().deleted.length;
                     return `<div class="head"><div><h1>${t('n_products')}</h1><p class="sub">${t('p_sub')}</p></div><div>${del ? `<button class="btn ghost" data-act="prestore">${t('p_restore')} (${del})</button> ` : ''}<button class="btn" data-act="padd">+ ${t('p_new')}</button></div></div>
-<div class="filters"><input type="search" placeholder="${t('p_search')}" value="${esc(S.pq || '')}" data-q="pq" data-v="products"><select data-q="pc" data-v="products"><option value="">${t('p_allcats')}</option>${CATS().map(c => `<option ${S.pc === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select><select data-q="ps" data-v="products"><option value="">${t('p_allstock')}</option>${[['in', 'p_instock'], ['out', 'p_outstock'], ['low', 'p_lowstock']].map(o => `<option value="${o[0]}" ${S.ps === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select><select data-q="pv" data-v="products"><option value="">${t('p_allvis')}</option>${[['shown', 'p_shown'], ['hidden', 'p_hidden']].map(o => `<option value="${o[0]}" ${S.pv === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select></div><div id="tbl">${prodList()}</div>`;
+<div class="filters"><input type="search" placeholder="${t('p_search')}" value="${esc(S.pq || '')}" data-q="pq" data-v="products"><select data-q="pc" data-v="products"><option value="">${t('p_allcats')}</option>${CATS().map(c => `<option ${S.pc === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select><select data-q="ps" data-v="products"><option value="">${t('p_allstock')}</option>${[['in', 'p_instock'], ['out', 'p_outstock'], ['low', 'p_lowstock']].map(o => `<option value="${o[0]}" ${S.ps === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select><select data-q="pv" data-v="products"><option value="">${t('p_allvis')}</option>${[['shown', 'p_shown'], ['hidden', 'p_hidden']].map(o => `<option value="${o[0]}" ${S.pv === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select>${vfSelect('pf', 'products')}</div><div id="tbl">${prodList()}</div>`;
                 }
                 const imgField = (n, v, label) => `<div class="imgf wide"><label>${label}<input name="${n}" value="${esc(v)}" placeholder="https://... / icon/photo.jpg" data-imgurl="${n}" autocomplete="off"></label><div class="imgrow"><div class="pvbox ${v ? 'load' : 'empty'}" data-pvbox="${n}"><img src="${esc(v)}" alt="" class="prev" data-prev="${n}" referrerpolicy="no-referrer"></div><div class="pvside"><span class="pvmsg" data-pvmsg="${n}">${v ? t('img_loading') : t('img_empty')}</span><label class="mini up">📁 ${t('upload')}<input type="file" accept="image/*" data-up="${n}" hidden></label></div></div></div>`;
                 /* Live preview: loading spinner -> image / error. Works for pasted links, typing and uploads. */
@@ -8576,10 +8599,10 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                         cols: [{ l: '', f: r => thumb(r.img) }, { l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc(r.link)}</small>` }, { l: 'f_place', f: r => t('pl_' + r.place) }, { l: 'th_period', f: per }, { l: 'th_status', f: rs }]
                     },
                     docs: {
-                        k: K.docs, ti: 'm_docs', su: 'docs_sub', nw: 'docs_new', tog: 'active', togL: 'published', def: () => ({ active: true, doctype: 'manual', date: today(), version: '1.0' }), q: r => (r.title || '') + ' ' + (r.product || '') + ' ' + (r.version || ''),
+                        xf: r => !S.dvf || ((S.dvf === 'yes') === docVerified(r)), k: K.docs, ti: 'm_docs', su: 'docs_sub', nw: 'docs_new', tog: 'active', togL: 'published', def: () => ({ active: true, doctype: 'manual', date: today(), version: '1.0' }), q: r => (r.title || '') + ' ' + (r.product || '') + ' ' + (r.version || ''),
                         flt: { n: 'doctype', o: [['manual', 'dt_manual'], ['warranty', 'dt_warranty'], ['spec', 'dt_spec'], ['safety', 'dt_safety'], ['cert', 'dt_cert'], ['other', 'dt_other']] },
                         get fields() { return [{ n: 'title', l: 'f_title', ty: 'text', req: 1 }, { n: 'product', l: 'f_prodref', ty: 'sel', o: [['', 'none_sel']].concat(catalog().map(p => [p.id, p.name + ' (' + p.id + ')'])) }, { n: 'doctype', l: 'f_doctype', ty: 'sel', o: [['manual', 'dt_manual'], ['warranty', 'dt_warranty'], ['spec', 'dt_spec'], ['safety', 'dt_safety'], ['cert', 'dt_cert'], ['other', 'dt_other']] }, { n: 'version', l: 'f_version', ty: 'text' }, { n: 'date', l: 'f_date', ty: 'date' }, { n: 'active', l: 'published', ty: 'sw' }, { n: 'link', l: 'f_dlink', ty: 'text' }, { n: 'body', l: 'f_body', ty: 'area', rows: 7 }]; },
-                        cols: [{ l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.body || '').slice(0, 80))}</small>` }, { l: 'f_prodref', f: r => { const p = catalog().find(x => x.id === r.product); return p ? `${esc(p.name)}<br><small>${esc(p.id)}</small>` : '—'; } }, { l: 'f_doctype', f: r => t('dt_' + (r.doctype || 'other')) }, { l: 'f_version', f: r => esc(r.version) || '—' }, { l: 'f_date', f: r => dfmt(r.date) }]
+                        cols: [{ l: 'f_title', w: 1, f: r => `<b>${esc(r.title)}</b><br><small>${esc((r.body || '').slice(0, 80))}</small>` }, { l: 'f_prodref', f: r => { const p = catalog().find(x => x.id === r.product); return p ? `${esc(p.name)}<br><small>${esc(p.id)}</small>` : '—'; } }, { l: 'f_doctype', f: r => t('dt_' + (r.doctype || 'other')) }, { l: 'f_version', f: r => esc(r.version) || '—' }, { l: 'f_date', f: r => dfmt(r.date) }, { l: 'fl_vfy', f: r => docVerified(r) ? `<span class="pill ok">✔ ${t('vf_badge')}</span>` : `<span class="pill">${t('cu_vfy_no')}</span>` }]
                     },
                     comp: {
                         k: K.comp, ti: 'm_comp', su: 'comp_sub', nw: 'comp_new', def: () => ({ prio: 'med', status: 'open' }), q: r => (r.no || '') + r.customer + r.subject + r.contact, flt: { n: 'status', o: [['open', 'cs_open'], ['progress', 'cs_progress'], ['resolved', 'cs_resolved']] },
@@ -8615,7 +8638,7 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                     return `<label>${L}<input name="${x.n}" ${ty} value="${esc(v)}"${r}></label>`;
                 }
                 function gForm(k, r) {
-                    const m = MODS[k], isNew = !r; r = r || m.def();
+                    const m = MODS[k], isNew = !r || !r.id; r = r || m.def();
                     return `<form id="gf" data-m="${k}" data-id="${esc(r.id || '')}"><h3>${isNew ? t(m.nw) : t('edit')}</h3><div class="g2">${m.fields.map(x => fld(x, r[x.n])).join('')}</div><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button><button type="button" class="btn ghost" data-act="close">${t('cancel')}</button></div></form>`;
                 }
                 function readForm(m, f) {
@@ -8638,13 +8661,14 @@ ${imgField('img', p.img || '', t('f_imgmain'))}
                     if (z && (r.start || '0000') > z) return false;
                     return true;
                 }
+                const vfSelect = (q, v) => `<select data-q="${q}" data-v="${v}" title="${t('fl_vfy')}"><option value="">${t('fl_vfy')}: ${t('vf_all')}</option><option value="yes" ${S[q] === 'yes' ? 'selected' : ''}>${t('vf_yes')}</option><option value="no" ${S[q] === 'no' ? 'selected' : ''}>${t('vf_no')}</option></select>`;
                 function adFilterHtml() {
                     const o = (k, l, cur) => `<option value="${k}" ${cur === k ? 'selected' : ''}>${t(l)}</option>`;
                     return `<label class="fl"><span>${t('f_place')}</span><select data-q="ad_pl" data-v="ads"><option value="">${t('all')}</option>${['header', 'home', 'sidebar', 'popup', 'footer'].map(k => o(k, 'pl_' + k, S.ad_pl)).join('')}</select></label><label class="fl"><span>${t('th_status')}</span><select data-q="ad_st" data-v="ads"><option value="">${t('all')}</option>${o('live', 'ad_live', S.ad_st)}${o('soon', 'ad_soon', S.ad_st)}${o('sched', 'ad_sched', S.ad_st)}${o('exp', 'ad_exp', S.ad_st)}${o('off', 'ad_off', S.ad_st)}</select></label><label class="fl"><span>${t('fl_from')}</span><input type="date" data-q="ad_from" data-v="ads" value="${esc(S.ad_from || '')}"></label><label class="fl"><span>${t('fl_to')}</span><input type="date" data-q="ad_to" data-v="ads" value="${esc(S.ad_to || '')}"></label>`;
                 }
                 function gFilters(k) {
                     const m = MODS[k];
-                    return `<div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S['q_' + k] || '')}" data-q="q_${k}" data-v="${k}">${m.flt ? `<select data-q="f_${k}" data-v="${k}"><option value="">${t('all')}</option>${m.flt.o.map(o => `<option value="${o[0]}" ${S['f_' + k] === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select>` : ''}${k === 'ads' ? adFilterHtml() : ''}</div>`;
+                    return `<div class="filters"><input type="search" placeholder="${t('search')}" value="${esc(S['q_' + k] || '')}" data-q="q_${k}" data-v="${k}">${m.flt ? `<select data-q="f_${k}" data-v="${k}"><option value="">${t('all')}</option>${m.flt.o.map(o => `<option value="${o[0]}" ${S['f_' + k] === o[0] ? 'selected' : ''}>${t(o[1])}</option>`).join('')}</select>` : ''}${k === 'ads' ? adFilterHtml() : ''}${k === 'docs' ? vfSelect('dvf', 'docs') : ''}</div>`;
                 }
                 function gView(k, nohead) {
                     const m = MODS[k];
@@ -8793,11 +8817,11 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 }
 
                 /* ---------- Settings ---------- */
+                const GWS = [['vodafone', 'Vodafone Cash', 'Wallet Phone (010...)', '01012345678'], ['instapay', 'InstaPay', 'InstaPay Address (IPA)', 'username@instapay'], ['paypal', 'PayPal', 'PayPal Email', 'you@example.com'], ['fawry', 'Fawry Pay', '', ''], ['apple_google', 'Apple Pay / Google Pay', '', '']];
                 function settingsView() {
                     const s = SITE(), g = s.general, sc = (n, l, on) => `<label class="swl"><span class="sw"><input type="checkbox" name="${n}" ${on ? 'checked' : ''}><i></i></span> ${t(l)}</label>`;
                     return `<h1>${t('n_settings')}</h1><p class="sub">${t('s_sub')}</p>
-<div class="set-grid"><div class="box"><h2>${t('s_ui')}</h2><label>${t('s_lang')}</label><div class="langs">${LK.map(k => `<button type="button" class="lchip ${k === LG ? 'on' : ''}" data-act="lang" data-l="${k}">${fl(k)} ${lname(k)}</button>`).join('')}</div>
-<label class="swl" style="margin-top:14px">${sw('theme', {}, THEME === 'dark')} ${t('s_theme')}</label></div>
+<div class="set-grid"><form id="payf" class="box"><h2>💳 ${t('s_pay')}</h2><p class="sub" style="margin:0 0 10px">${t('s_pay_h')}</p>${GWS.map(g => { const c = rd('boda_gateways', {})[g[0]]; return `<div class="gwrow" style="margin-bottom:10px"><label class="swl"><span class="sw"><input type="checkbox" name="on_${g[0]}" ${c && c.enabled !== false ? 'checked' : ''}><i></i></span> <b>${g[1]}</b></label>${g[2] ? `<label>${g[2]}<input name="acc_${g[0]}" dir="ltr" placeholder="${g[3]}" value="${esc(c && c.account)}"></label>` : ''}</div>`; }).join('')}<div class="bar"><button class="btn">${t('save')}</button></div></form>
 <form id="pwf" class="box"><h2>${t('s_pw')}</h2><label>${t('s_curpw')}<input name="cur" type="password" autocomplete="current-password" required></label><label>${t('s_newpw')}<input name="nw" type="password" autocomplete="new-password" minlength="6" required></label><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div></form></div>
 <form id="sf"><div class="set-grid">
 <div class="box"><h2>${t('s_announce')}</h2><div class="chks">${sc('show', 's_showbar', s.announce.show)}</div><label>${t('s_atext')}<input name="text" value="${esc(s.announce.text)}"></label><label>${t('s_alink')}<input name="linkText" value="${esc(s.announce.linkText)}"></label><label>${t('s_ahref')}<input name="linkHref" value="${esc(s.announce.linkHref)}"></label></div>
@@ -9015,10 +9039,12 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 const dl = (name, blob) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); };
                 const csvOf = rows => '\ufeff' + rows.map(r => r.map(c => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(',')).join('\n');
                 /* ===== Admin add-ons: CSV import/export, centered dialogs, docs, print ===== */
+                const dlgOut = (d, e) => { const r = d.getBoundingClientRect(); return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom; };
+                let dlgDown = false;
+                $('#dlg').addEventListener('mousedown', e => { dlgDown = e.target === e.currentTarget && dlgOut(e.currentTarget, e); });
                 $('#dlg').addEventListener('click', e => {            // click on the dark backdrop closes the dialog
                     const d = e.currentTarget; if (e.target !== d) return;
-                    const r = d.getBoundingClientRect();
-                    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close();
+                    if (dlgDown && dlgOut(d, e)) d.close(); dlgDown = false;
                 });
                 function parseCSV(txt) {
                     txt = String(txt).replace(/^\ufeff/, ''); const first = txt.split(/\r?\n/)[0] || '';
@@ -9189,6 +9215,21 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                         if (baseIds().includes(d.id)) { a.deleted.push(d.id); delete a.edits[d.id]; } else a.added = a.added.filter(p => p.id !== d.id);
                         wr(K.pa, a); log('log_del', 'm_products', d.id); render(); toast(t('deleted'));
                     },
+                    amenu: (d, b) => {
+                        const old = document.getElementById('amenu'), same = old && old.dataset.id === d.id; if (old) old.remove(); if (same) return;
+                        const p = catalog().find(x => x.id === d.id); if (!p) return;
+                        const it = (a, l, c) => `<button type="button" class="${c || ''}" data-act="${a}" data-id="${esc(d.id)}">${l}</button>`;
+                        const m = document.createElement('div'); m.id = 'amenu'; m.className = 'amenu'; m.dataset.id = d.id;
+                        m.innerHTML = it('padd', '➕ ' + t('p_addprod')) + it('pedit', '✏️ ' + t('edit')) + it('pdup', '📄 ' + t('p_dup')) + it('parch', p.archived ? '📤 ' + t('p_unarchive') : '🗄️ ' + t('p_archive')) + it('ppin', p.pinned ? '📍 ' + t('p_unpin') : '📌 ' + t('p_pin')) + it('padad', '📢 ' + t('p_addad')) + it('paoffer', '🏷️ ' + t('p_addoffer')) + it('pdel', '🗑️ ' + t('del'), 'del');
+                        document.body.appendChild(m);
+                        const r = b.getBoundingClientRect(), w = m.offsetWidth, h = m.offsetHeight;
+                        let left = Math.max(8, Math.min(r.right - w, innerWidth - w - 8)), top = r.bottom + 4; if (top + h > innerHeight - 8) top = Math.max(8, r.top - h - 4);
+                        m.style.left = left + 'px'; m.style.top = top + 'px';
+                    },
+                    parch: d => { const p = catalog().find(x => x.id === d.id); if (!p) return; const on = !p.archived; patchProduct(d.id, { archived: on, hidden: on }); log('log_save', 'm_products', p.name); render(); toast(t('saved')); },
+                    ppin: d => { const p = catalog().find(x => x.id === d.id); if (!p) return; patchProduct(d.id, { pinned: !p.pinned }); log('log_save', 'm_products', p.name); render(); toast(t('saved')); },
+                    padad: d => { const p = catalog().find(x => x.id === d.id); if (p) open(gForm('ads', { ...MODS.ads.def(), title: p.name, link: 'index.html?page=product&id=' + encodeURIComponent(p.id), img: p.img || '' })); },
+                    paoffer: d => { const p = catalog().find(x => x.id === d.id); if (p) open(gForm('offers', { ...MODS.offers.def(), title: p.name, desc: p.desc || '', products: [p.id] })); },
                     prestore: () => { const a = PA(); a.deleted = []; wr(K.pa, a); render(); toast(t('saved')); },
                     /* categories */
                     cadd: () => open(cform()), cedit: d => open(cform(CATS().find(c => c.name === d.id))),
@@ -9222,6 +9263,10 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                     backup: () => { const all = {}; Object.keys(localStorage).filter(k => k.startsWith('boda_')).forEach(k => all[k] = localStorage.getItem(k)); dl('boda-backup-' + today() + '.json', new Blob([JSON.stringify(all)], { type: 'application/json' })); },
                     restore: () => $('#file').click()
                 };
+                const closeAmenu = () => { const m = document.getElementById('amenu'); if (m) m.remove(); };
+                document.addEventListener('click', e => { if (!e.target.closest('[data-act="amenu"]')) closeAmenu(); });
+                window.addEventListener('scroll', closeAmenu, true); window.addEventListener('resize', closeAmenu);
+                document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAmenu(); });
                 document.addEventListener('click', e => {
                     if (!e.target.closest('.lang')) document.querySelectorAll('.lmenu').forEach(x => x.hidden = true);
                     const b = e.target.closest('[data-act]'); if (b && ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset, b);
@@ -9281,6 +9326,11 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                         const c = n => f.elements[n].checked;
                         wr(K.site, { announce: { show: c('show'), text: v('text'), linkText: v('linkText'), linkHref: v('linkHref') }, contact: { email: v('email'), phone: v('phone'), address: v('address'), hours: v('hours'), emailIcon: v('i_email'), phoneIcon: v('i_phone'), addressIcon: v('i_address'), hoursIcon: v('i_hours') }, social: { whatsapp: v('s_wa'), x: v('s_x'), instagram: v('s_ig'), facebook: v('s_fb'), telegram: v('s_tg') }, socialIcons: { whatsapp: v('i_wa'), x: v('i_x'), instagram: v('i_ig'), facebook: v('i_fb'), telegram: v('i_tg') }, general: { name: v('gname') || 'Boda Store', free: +v('free') || 0, low: +v('low') || 0, tax: +v('tax') || 0, maint: c('maint'), reg: c('reg'), guest: c('guest'), reviews: c('reviews'), mail: c('mail') } });
                         log('log_save', 'n_settings'); toast(t('s_saved')); return;
+                    }
+                    if (f.id === 'payf') {
+                        const old = rd('boda_gateways', {}), out = {};
+                        GWS.forEach(g => { if (f.elements['on_' + g[0]].checked) out[g[0]] = { enabled: true, account: g[2] ? f.elements['acc_' + g[0]].value.trim() : ((old[g[0]] && old[g[0]].account) || '') }; });
+                        wr('boda_gateways', out); log('log_save', 's_pay'); toast(t('s_saved')); return;
                     }
                     if (f.id === 'pwf') {
                         if (!tryLogin(me(), f.elements.cur.value)) { err.textContent = t('s_pwbad'); return; }
