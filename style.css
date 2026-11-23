@@ -3679,3 +3679,18 @@ footer .fc .ci { display: inline-grid; place-items: center; width: 34px; height:
   .fp-row { gap: 12px; }
   .footer-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Verified product badge (product has active documentation) */
+.verified-badge {
+    position: absolute;
+    top: 40px;
+    inset-inline-start: 10px;
+    z-index: 2;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #e8f1ff;
+    color: #1456b8;
+    font-size: .72rem;
+    font-weight: 700;
+}
+body.dark-mode .verified-badge { background: #173055; color: #9cc4ff; }
