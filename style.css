@@ -4075,3 +4075,31 @@ body.dark-mode .verified-badge {
 .fp-ver { display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; }
 .fp-ver select { padding: 6px 10px; border-radius: 8px; border: 1px solid #d5dbe6; background: #fff; color: inherit; font: inherit; }
 body.dark-mode .fp-ver select { background: #16202f; color: #e6edf7; border-color: #2c3b52; }
+
+
+/* Verified products: highlighted card (no text badge) */
+article[data-id][data-verified="1"] {
+    border-color: #0b5ed7;
+    box-shadow: 0 0 0 2px rgba(11, 94, 215, .35), 0 10px 26px rgba(11, 94, 215, .18);
+}
+article[data-id][data-verified="1"]:hover {
+    border-color: #0b5ed7;
+    box-shadow: 0 0 0 3px rgba(11, 94, 215, .5), 0 14px 32px rgba(11, 94, 215, .26);
+}
+body.dark-mode article[data-id][data-verified="1"] {
+    border-color: #4f8dff;
+    box-shadow: 0 0 0 2px rgba(79, 141, 255, .45), 0 10px 26px rgba(79, 141, 255, .22);
+}
+
+/* Verified seal (blue scalloped check mark) on verified product cards */
+.verified-seal {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    z-index: 3;
+    width: 38px;
+    height: 38px;
+    filter: drop-shadow(0 2px 5px rgba(29, 155, 240, .45));
+    pointer-events: auto;
+}
+article[data-id][data-verified="1"] .sale-badge { inset-inline-start: 54px; }
