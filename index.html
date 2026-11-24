@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20261124q">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <script>
         /* The admin panel (?page=admin) only needs the catalog data; it skips the store scripts and stylesheet. */
@@ -18,6 +18,25 @@
             var admin = /[?&]page=admin(&|$)/.test(location.search);
             window.BODA_ADMIN = admin;
             /* Refresh always starts from the top of the page (storefront pages only; admin keeps its own scroll) */
+            window.bodaPaintHero = function () {
+                var raw = null, track = document.querySelector('.hero-slides');
+                try { raw = JSON.parse(localStorage.getItem('boda_hero') || 'null'); } catch (e) { }
+                document.documentElement.classList.remove('hero-wait');
+                if (!track || !Array.isArray(raw) || !raw.length) return;
+                var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+                track.innerHTML = raw.map(function (s) {
+                    var media = s.img ? '<img src="' + esc(s.img) + '" alt="" referrerpolicy="no-referrer">' : (s.emojis ? '<div class="hero-visual"><span>' + esc(s.emojis) + '</span></div>' : '');
+                    var second = s.b2 ? '<a href="' + esc(s.l2 || '#') + '" class="hero-btn-secondary">' + esc(s.b2) + '</a>' : '';
+                    return '<div class="hero-slide"><div>' + (s.badge ? '<span class="hero-badge">' + esc(s.badge) + '</span>' : '') +
+                        '<h2>' + esc(s.title || '') + '</h2><p>' + esc(s.text || '') + '</p><div class="hero-actions"><a href="' + esc(s.l1 || 'index.html?page=products') + '" class="hero-btn-primary">' + esc(s.b1 || 'Shop Now') + '</a>' + second + '</div></div>' + media + '</div>';
+                }).join('');
+            };
+            if (!admin) {
+                try {
+                    var savedHero = localStorage.getItem('boda_hero');
+                    if (savedHero && savedHero !== 'null' && savedHero !== '[]') document.documentElement.classList.add('hero-wait');
+                } catch (e) { }
+            }
             if (!admin) {
                 try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) { }
                 var navType = function () { try { var n = performance.getEntriesByType('navigation')[0]; return n ? n.type : ''; } catch (e) { return ''; } };
@@ -28,7 +47,7 @@
                 window.addEventListener('pageshow', function (e) { if (e.persisted) window.scrollTo(0, 0); });
             }
             (admin ? ['site-sync.js', 'auto-translate.js', 'products-data.js', 'pages-content.js', 'backend-link.js'] : ['site-sync.js', 'auto-translate.js', 'language.js', 'pages-content.js', 'products-data.js', 'backend-link.js', 'app.js', 'lazy-load.js', 'search-suggest.js', 'order-flow.js', 'order-confirm.js', 'product-extras.js', 'support-chat.js']).forEach(function (f) {
-                document.write('<script src="' + f + '?v=20261124p" defer><\/script>');
+                document.write('<script src="' + f + '?v=20261124q" defer><\/script>');
             });
             if (admin) document.write('<style>link[href="style.css"]{display:none}</style>');
         })();
@@ -10632,6 +10651,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
             document.documentElement.lang = template.dataset.lang || 'en';
             document.documentElement.dir = template.dataset.dir || 'ltr';
             document.body.replaceChildren(content);
+            if (!window.BODA_ADMIN && window.bodaPaintHero) window.bodaPaintHero();
             if (template.dataset.dir) {
                 document.documentElement.lang = template.dataset.lang || 'en';
                 document.documentElement.dir = template.dataset.dir;
@@ -10650,7 +10670,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
             }
         })();
     </script>
-    <script src="support-chat.js?v=20261124p"></script>
+    <script src="support-chat.js?v=20261124q"></script>
 </body>
 
 </html>

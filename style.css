@@ -3310,6 +3310,8 @@ header.menu-open .menu-toggle span:nth-child(3) {
 }
 
 /* ----- Full-width hero directly under the header ----- */
+html.hero-wait .hero-slider { visibility: hidden; }
+
 .hero-slider.hero-full {
     width: 100%;
     border-radius: 0;

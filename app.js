@@ -1241,6 +1241,7 @@ function applyAdminDom() {
 }
 
 function applyHeroFromAdmin() {
+    if (window.bodaPaintHero) { window.bodaPaintHero(); return; }
     var slides = null;
     try { slides = JSON.parse(localStorage.getItem('boda_hero')); } catch (e) { }
     if (!Array.isArray(slides) || !slides.length) return;

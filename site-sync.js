@@ -63,7 +63,8 @@
     }
     function push() {
         var token = '';
-        try { token = localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { }
+        try { token = (localStorage.getItem(TOKEN_KEY) || '').trim(); } catch (e) { }
+        if (token) { try { localStorage.setItem(TOKEN_KEY, token); } catch (e) { } }
         if (!token) {
             document.dispatchEvent(new CustomEvent('boda:need-token'));
             return Promise.resolve(false);
@@ -95,9 +96,7 @@
     function schedule() {
         clearTimeout(timer);
         timer = setTimeout(function () {
-            chain = chain.then(push).catch(function (e) {
-                if (window.toast) window.toast('⚠ ' + (e.message || 'النشر فشل'));
-            });
+            chain = chain.then(push).catch(function () { });
         }, 700);
     }
 
