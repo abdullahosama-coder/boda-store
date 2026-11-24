@@ -7992,6 +7992,7 @@ k_subs || مشترك في النشرة || newsletter subscribers || abonnés new
 k_outstock || غير متوفر || out of stock || en rupture || nicht verfügbar
 c_rev || المبيعات خلال الفترة || Revenue over time || Ventes sur la période || Umsatz im Zeitraum
 c_cnt || عدد الطلبات خلال الفترة || Orders over time || Commandes sur la période || Bestellungen im Zeitraum
+c_chart_tbl || جدول الرسوم البيانية || Chart data || Données des graphiques || Diagrammdaten
 c_status || الطلبات حسب الحالة || Orders by status || Commandes par statut || Bestellungen nach Status
 c_top || الأكثر مبيعًا || Top products || Meilleures ventes || Bestseller
 c_topcat || المبيعات حسب القسم || Sales by category || Ventes par catégorie || Umsatz nach Kategorie
@@ -8472,6 +8473,7 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
 <div class="kpi"><span>${t('k_cust')}</span><strong>${acc}</strong><small>${rd(K.news, []).length} ${t('k_subs')}</small></div>
 <div class="kpi"><span>${t('k_prod')}</span><strong>${cat.length}</strong><small>${out} ${t('k_outstock')}</small></div></div>
 <div class="cols"><div class="box"><h2>${t('c_rev')}</h2>${chart(revB, P.b.map(x => x.l), money, every)}</div><div class="box"><h2>${t('c_cnt')}</h2>${chart(cntB, P.b.map(x => x.l), v => String(v), every)}</div></div>
+<div class="box"><h2>${t('c_chart_tbl')}</h2><div class="tw"><table><thead><tr><th>${t('th_date')}</th><th>${t('k_rev')}</th><th>${t('k_orders')}</th></tr></thead><tbody>${P.b.map((x, i) => `<tr><td>${esc(x.l)}</td><td>${money(revB[i])}</td><td>${cntB[i]}</td></tr>`).join('')}</tbody></table></div></div>
 <div class="cols"><div class="box"><h2>${t('c_status')}</h2>${Object.keys(ST).map(k => `<div class="bar-row"><span>${t('st_' + k)}</span><i style="width:${cnt(k) / smx * 100}%"></i><b>${cnt(k)}</b></div>`).join('')}</div>
 <div class="box"><h2>${t('c_top')}</h2>${tops.length ? `<table><tbody>${tops.map(x => `<tr><td class="wrap">${esc(x.n)}</td><td>${x.q} ${t('pcs')}</td><td>${money(x.v)}</td></tr>`).join('')}</tbody></table>` : `<p class="empty">${t('no_sales')}</p>`}</div></div>
 <div class="cols"><div class="box"><h2>${t('c_topcat')}</h2>${cats.length ? cats.map(c => `<div class="bar-row wide"><span>${esc(c[0])}</span><i style="width:${c[1] / cmx * 100}%"></i><b>${money(c[1])}</b></div>`).join('') : `<p class="empty">${t('no_sales')}</p>`}</div>
