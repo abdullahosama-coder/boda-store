@@ -1046,13 +1046,27 @@ function allProductsRaw() {
 function allProducts() { var l = allProductsRaw().filter(function (p) { return !p.hidden && !p.archived; }); return l.filter(function (p) { return p.pinned; }).concat(l.filter(function (p) { return !p.pinned; })); }
 // Verified product = it has at least one active document in Admin -> Documentation
 function verifiedMap() { var m = {}; try { (JSON.parse(localStorage.getItem('boda_docs')) || []).forEach(function (d) { if (d && d.active !== false && d.product) m[String(d.product)] = 1; }); } catch (e) { } return m; }
+var _sealSvg = '';
+function verifiedSealSVG() {                                   // blue scalloped seal with a white check mark
+    if (_sealSvg) return _sealSvg;
+    var pts = [], i, r, ang;
+    for (i = 0; i < 32; i++) { r = i % 2 ? 41 : 49; ang = Math.PI * i / 16 - Math.PI / 2; pts.push((50 + r * Math.cos(ang)).toFixed(1) + ',' + (50 + r * Math.sin(ang)).toFixed(1)); }
+    _sealSvg = '<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="vsg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fa8ee"/><stop offset="1" stop-color="#3cc4f6"/></linearGradient></defs>' +
+        '<polygon points="' + pts.join(' ') + '" fill="url(#vsg)" stroke="url(#vsg)" stroke-width="5" stroke-linejoin="round"/>' +
+        '<path d="M30 52 L44 66 L71 36" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    return _sealSvg;
+}
 function applyVerifiedAndPins() {
     var v = verifiedMap(), pins = {};
     allProductsRaw().forEach(function (p) { if (p.pinned && !p.hidden && !p.archived) pins[p.id] = 1; });
     document.querySelectorAll('article[data-id]').forEach(function (a) {
         var old = a.querySelector(':scope > .verified-badge');
-        if (v[a.dataset.id]) { if (!old) { var b = document.createElement('span'); b.className = 'verified-badge'; b.textContent = '\u2714 Verified'; a.insertBefore(b, a.firstChild); } }
-        else if (old) old.remove();
+        if (old) old.remove();                                   // the old "Verified" text badge is gone
+        var seal = a.querySelector(':scope > .verified-seal');
+        if (v[a.dataset.id]) {
+            a.setAttribute('data-verified', '1');                // glowing blue frame (style.css)
+            if (!seal) { seal = document.createElement('span'); seal.className = 'verified-seal'; seal.title = 'Verified'; seal.setAttribute('role', 'img'); seal.setAttribute('aria-label', 'Verified'); seal.innerHTML = verifiedSealSVG(); a.insertBefore(seal, a.firstChild); }
+        } else { a.removeAttribute('data-verified'); if (seal) seal.remove(); }
     });
     document.querySelectorAll('.product-grid').forEach(function (g) {
         var kids = [].slice.call(g.children), pinned = kids.filter(function (n) { var a = n.matches('article') ? n : n.querySelector('article[data-id]'); return a && pins[a.dataset.id]; });
