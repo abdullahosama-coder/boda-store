@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: boda-store-api-abdullahosama
+    name: boda-store
     runtime: python
     plan: free
     region: frankfurt

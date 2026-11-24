@@ -10,7 +10,7 @@
     function defaultBase() {
         var host = location.hostname;
         if (host === '127.0.0.1' || host === 'localhost' || host === '') return 'http://127.0.0.1:8000';
-        return 'https://boda-store-api-abdullahosama.onrender.com';
+        return 'https://boda-store.onrender.com';
     }
     var base = String(q || saved || defaultBase()).replace(/\/$/, '');
     window.BODA_API_BASE = base;
