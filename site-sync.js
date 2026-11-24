@@ -45,11 +45,14 @@
         return true;
     }
     function pull() {
-        return fetch(rawUrl(), { cache: 'no-store' }).then(function (r) {
+        return fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE + '?ref=main&t=' + Date.now(), {
+            cache: 'no-store',
+            headers: { Accept: 'application/vnd.github.raw' }
+        }).then(function (r) {
             if (!r.ok) throw new Error('missing');
             return r.json();
         }).catch(function () {
-            return fetch('data/live.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+            return fetch(rawUrl(), { cache: 'no-store' }).then(function (r) {
                 if (!r.ok) return null;
                 return r.json();
             }).catch(function () { return null; });
@@ -121,5 +124,5 @@
     window.BODA_SYNC_READY = pull().then(function (data) { applySnap(data); }).catch(function () { });
     setInterval(function () {
         pull().then(function (data) { if (applySnap(data)) location.reload(); }).catch(function () { });
-    }, 20000);
+    }, 8000);
 })();
