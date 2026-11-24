@@ -28,7 +28,7 @@
                 window.addEventListener('pageshow', function (e) { if (e.persisted) window.scrollTo(0, 0); });
             }
             (admin ? ['auto-translate.js', 'products-data.js', 'pages-content.js', 'backend-link.js'] : ['auto-translate.js', 'language.js', 'pages-content.js', 'products-data.js', 'backend-link.js', 'app.js', 'lazy-load.js', 'search-suggest.js', 'order-flow.js', 'order-confirm.js', 'product-extras.js', 'support-chat.js']).forEach(function (f) {
-                document.write('<script src="' + f + '?v=20261124g" defer><\/script>');
+                document.write('<script src="' + f + '?v=20261124h" defer><\/script>');
             });
             if (admin) document.write('<style>link[href="style.css"]{display:none}</style>');
         })();
@@ -739,17 +739,17 @@
                                 autocomplete="name" required>
 
                             <label for="a-login">Email or Phone Number</label>
-                            <input id="a-login" name="login" type="text" placeholder="example@mail.com or 010xxxxxxxx"
+                            <input id="a-login" name="login" type="text" placeholder="Enter your email or phone number"
                                 autocomplete="username" required>
 
                             <label for="a-pass">Password</label>
-                            <input id="a-pass" name="password" type="password" placeholder="At least 6 characters"
+                            <input id="a-pass" name="password" type="password" placeholder="Enter your password"
                                 minlength="6" autocomplete="new-password" required>
                             <div class="pw-meter"><span></span></div>
                             <small class="pw-hint">Use 8+ characters with numbers and symbols.</small>
 
                             <label for="a-pass2">Confirm Password</label>
-                            <input id="a-pass2" name="password2" type="password" placeholder="Repeat your password"
+                            <input id="a-pass2" name="password2" type="password" placeholder="Confirm your password"
                                 minlength="6" autocomplete="new-password" required>
                             <small id="pw-match" class="pw-match"></small>
 
@@ -5164,12 +5164,12 @@
                             <input id="a-login" name="login" type="text" placeholder="Enter your email or phone number"
                                 autocomplete="username" required>
                             <label for="a-pass">Password</label>
-                            <input id="a-pass" name="password" type="password" placeholder="At least 6 characters"
+                            <input id="a-pass" name="password" type="password" placeholder="Enter your password"
                                 minlength="6" autocomplete="new-password" required>
                             <div class="password-wrappe"><span></span></div>
                             <small class="pw-hint">Use 8+ characters with numbers and symbols.</small>
                             <label for="a-pass2">Confirm Password</label>
-                            <input id="a-pass2" name="password2" type="password" placeholder="Repeat your password"
+                            <input id="a-pass2" name="password2" type="password" placeholder="Confirm your password"
                                 minlength="6" autocomplete="new-password" required>
                             <div class="check"><input type="checkbox" id="terms" name="terms" required><label
                                     for="terms">I agree to the terms.</label></div>
@@ -5884,17 +5884,17 @@
                                 autocomplete="name" required>
 
                             <label for="a-login">Email or Phone Number</label>
-                            <input id="a-login" name="login" type="text" placeholder="example@mail.com or 010xxxxxxxx"
+                            <input id="a-login" name="login" type="text" placeholder="Enter your email or phone number"
                                 autocomplete="username" required>
 
                             <label for="a-pass">Password</label>
-                            <input id="a-pass" name="password" type="password" placeholder="At least 6 characters"
+                            <input id="a-pass" name="password" type="password" placeholder="Enter your password"
                                 minlength="6" autocomplete="new-password" required>
                             <div class="pw-meter"><span></span></div>
                             <small class="pw-hint">Use 8+ characters with numbers and symbols.</small>
 
                             <label for="a-pass2">Confirm Password</label>
-                            <input id="a-pass2" name="password2" type="password" placeholder="Repeat your password"
+                            <input id="a-pass2" name="password2" type="password" placeholder="Confirm your password"
                                 minlength="6" autocomplete="new-password" required>
 
                             <div class="check">
@@ -10649,7 +10649,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
             }
         })();
     </script>
-    <script src="support-chat.js"></script>
+    <script src="support-chat.js?v=20261124h"></script>
 </body>
 
 </html>

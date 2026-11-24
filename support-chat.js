@@ -9,6 +9,8 @@
 (function () {
     'use strict';
     if (window.BODA_ADMIN) return;               // never inside the admin panel
+    if (window.__bodaSupportBoot) return;        // the file is included twice; the second copy would replace a working chat with a dead one
+    window.__bodaSupportBoot = true;
 
     var SUPPORT_NAME = { ar: 'الدعم الفني', en: 'Technical Support', fr: 'Support technique', de: 'Technischer Support' };
 

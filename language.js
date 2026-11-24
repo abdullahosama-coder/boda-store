@@ -132,11 +132,14 @@ Create your account || أنشئ حسابك || Créez votre compte || Erstellen S
 Enter your full name || أدخل اسمك بالكامل || Saisissez votre nom complet || Vollständigen Namen eingeben
 Email or Phone Number || البريد الإلكتروني أو رقم الهاتف || E-mail ou numéro de téléphone || E-Mail oder Telefonnummer
 example@mail.com or 010xxxxxxxx || example@mail.com أو 010xxxxxxxx || example@mail.com ou 010xxxxxxxx || example@mail.com oder 010xxxxxxxx
+Enter your email or phone number || أدخل بريدك الإلكتروني أو رقم هاتفك || Saisissez votre e-mail ou téléphone || E-Mail oder Telefonnummer eingeben
 Password || كلمة المرور || Mot de passe || Passwort
 At least 6 characters || 6 أحرف على الأقل || Au moins 6 caractères || Mindestens 6 Zeichen
+Enter your password || أدخل كلمة المرور || Saisissez votre mot de passe || Passwort eingeben
 Use 8+ characters with numbers and symbols. || استخدم 8 أحرف أو أكثر مع أرقام ورموز. || Utilisez 8 caractères ou plus avec chiffres et symboles. || Verwenden Sie 8+ Zeichen mit Zahlen und Symbolen.
 Confirm Password || تأكيد كلمة المرور || Confirmer le mot de passe || Passwort bestätigen
 Repeat your password || أعد كتابة كلمة المرور || Répétez votre mot de passe || Passwort wiederholen
+Confirm your password || أكّد كلمة المرور || Confirmez votre mot de passe || Passwort bestätigen
 I agree to the terms and privacy policy. || أوافق على الشروط وسياسة الخصوصية. || J’accepte les conditions et la politique de confidentialité. || Ich stimme den Bedingungen und der Datenschutzrichtlinie zu.
 Already have an account? Login || لديك حساب بالفعل؟ سجّل الدخول || Vous avez déjà un compte ? Connectez-vous || Bereits ein Konto? Anmelden
 Explore our latest products and offers. || اكتشف أحدث منتجاتنا وعروضنا. || Découvrez nos derniers produits et offres. || Entdecken Sie unsere neuesten Produkte und Angebote.
