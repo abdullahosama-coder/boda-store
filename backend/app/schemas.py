@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 
 class ProductIn(BaseModel):
@@ -25,6 +25,11 @@ class ProductIn(BaseModel):
     stock: bool = True
     hidden: bool = False
 
+    @field_validator("colors", "sizes", "components", "options", "gallery", "features", mode="before")
+    @classmethod
+    def empty_list(cls, value):
+        return value or []
+
 
 class ProductOut(ProductIn):
     model_config = ConfigDict(from_attributes=True)
@@ -48,6 +53,11 @@ class CategoryIn(BaseModel):
     desc: str = ""
     long: str = ""
     subs: list[str] = []
+
+    @field_validator("subs", mode="before")
+    @classmethod
+    def empty_subs(cls, value):
+        return value or []
 
 
 class CategoryOut(CategoryIn):

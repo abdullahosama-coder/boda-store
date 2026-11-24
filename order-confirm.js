@@ -315,6 +315,7 @@
         o.items = clone(D.items); o.subtotal = sumOf(o.items); o.total = o.subtotal + (Number(o.shippingFee) || 0); o.ship = clone(D.ship); o.edited = Date.now();
         o.history = (o.history || []).concat(changes.map(function (c) { return { t: Date.now(), text: c }; })).slice(-20);
         lsSet('boda_orders', all);
+        if (window.BODA_API_ON && window.bodaApi && String(o.id).indexOf('ORD') === 0) window.bodaApi('/api/orders/' + encodeURIComponent(o.id), { method: 'PATCH', json: { phone: o.ship.phone, name: o.ship.name, city: o.ship.city, address: o.ship.address, items: o.items.map(function (i) { return { id: i.id, qty: i.qty }; }) } }).catch(function (e) { say(e.message); });
         try { if (typeof window.recordStoreEvent === 'function') window.recordStoreEvent('order_edit', o.id); } catch (e) { }
         var meta = lsGet('boda_meta', {}); o.items.forEach(function (i) { meta[i.id] = { name: i.name, img: i.img, price: i.price, cat: i.cat }; }); lsSet('boda_meta', meta);
         try { if (typeof window.notify === 'function') window.notify('Order ' + o.id + ' updated (' + money(o.total) + ').', url(o.id)); } catch (e) { }
@@ -328,6 +329,7 @@
         o.cancelled = true; o.status = 'Cancelled'; o.edited = Date.now();
         o.history = (o.history || []).concat([{ t: Date.now(), text: t('cancelled') }]).slice(-20);
         lsSet('boda_orders', all);
+        if (window.BODA_API_ON && window.bodaApi && String(o.id).indexOf('ORD') === 0) window.bodaApi('/api/orders/' + encodeURIComponent(o.id) + '/cancel', { method: 'POST', json: { phone: (o.ship || {}).phone || '' } }).catch(function (e) { say(e.message); });
         try { if (typeof window.recordStoreEvent === 'function') window.recordStoreEvent('order_cancel', o.id); } catch (e) { }
         try { if (typeof window.notify === 'function') window.notify('Order ' + o.id + ' cancelled.', url(o.id)); } catch (e) { }
         D.dirty = false; D.items = clone(o.items); D.ship = clone(o.ship || {}); say(t('cancelled')); render();

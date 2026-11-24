@@ -661,11 +661,24 @@ function startCheckout(cart, buyNow) {
         }
         var s = { name: $id('sh-name').value.trim(), phone: $id('sh-phone').value.trim(), address: $id('sh-addr').value.trim(), city: $id('sh-city').value.trim() };
         localStorage.setItem('boda_ship', JSON.stringify(s));
-        var o = { id: 'BD-' + String(Date.now()).slice(-6), user: u ? u.email : 'guest', created: Date.now(), status: 'Pending', cancelled: false, items: cart, subtotal: subtotal, shippingFee: total - subtotal, deliveryStatus: 'Pending', deliveryEta: shipCfg.eta || '', total: total, payment: label, ship: s };
-        var os = getOrders(); os.unshift(o); LS.set('boda_orders', os); if (buyNow) { try { sessionStorage.removeItem('boda_buynow'); } catch (e) { } } else LS.set('boda_cart', []); updateBadges(); recordStoreEvent('order', o.id);
-        notify('Order ' + o.id + ' placed (' + money(total) + ').', 'index.html?page=orders');
-        // Go to the dedicated confirmation page (edit quantities / delete items / change shipping there, not in the cart)
-        location.href = 'index.html?page=order-confirm&id=' + encodeURIComponent(o.id) + '&placed=1';
+        function place(orderId, orderTotal) {
+            var o = { id: orderId, user: u ? u.email : 'guest', created: Date.now(), status: 'Pending', cancelled: false, manual: String(orderId).indexOf('ORD') === 0, items: cart, subtotal: subtotal, shippingFee: orderTotal - subtotal, deliveryStatus: 'Pending', deliveryEta: shipCfg.eta || '', total: orderTotal, payment: label, ship: s };
+            var os = getOrders(); os.unshift(o); LS.set('boda_orders', os); if (buyNow) { try { sessionStorage.removeItem('boda_buynow'); } catch (e) { } } else LS.set('boda_cart', []); updateBadges(); recordStoreEvent('order', o.id);
+            notify('Order ' + o.id + ' placed (' + money(o.total) + ').', 'index.html?page=orders');
+            location.href = 'index.html?page=order-confirm&id=' + encodeURIComponent(o.id) + '&placed=1';
+        }
+        if (window.BODA_API_ON && window.bodaApi) {
+            var btn = f.querySelector('.co-place');
+            btn.disabled = true;
+            window.bodaApi('/api/orders', { method: 'POST', json: { name: s.name, phone: s.phone, email: u ? u.email : '', city: s.city, address: s.address, notes: 'Payment: ' + label, items: cart.map(function (i) { return { id: i.id, qty: i.qty }; }) } }).then(function (d) {
+                place(d.id, total);
+            }).catch(function (ex) {
+                btn.disabled = false;
+                err.textContent = ex.message === 'NETWORK' ? 'The store server is not available. The order was not placed.' : ex.message;
+            });
+            return;
+        }
+        place('BD-' + String(Date.now()).slice(-6), total);
     };
 }
 
@@ -1039,6 +1052,7 @@ function getPA() {
     return { edits: d.edits || {}, added: d.added || [], deleted: d.deleted || [] };
 }
 function allProductsRaw() {
+    if (window.BODA_BACKEND_CATALOG) return (window.BODA_PRODUCTS || []).map(function (p) { return Object.assign({}, p); });
     var a = getPA();
     return (window.BODA_PRODUCTS || []).map(function (p) { return Object.assign({}, p, a.edits[p.id] || {}); })
         .concat(a.added).filter(function (p) { return a.deleted.indexOf(p.id) < 0; });
@@ -1046,15 +1060,8 @@ function allProductsRaw() {
 function allProducts() { var l = allProductsRaw().filter(function (p) { return !p.hidden && !p.archived; }); return l.filter(function (p) { return p.pinned; }).concat(l.filter(function (p) { return !p.pinned; })); }
 // Verified product = it has at least one active document in Admin -> Documentation
 function verifiedMap() { var m = {}; try { (JSON.parse(localStorage.getItem('boda_docs')) || []).forEach(function (d) { if (d && d.active !== false && d.product) m[String(d.product)] = 1; }); } catch (e) { } return m; }
-var _sealSvg = '';
-function verifiedSealSVG() {                                   // blue scalloped seal with a white check mark
-    if (_sealSvg) return _sealSvg;
-    var pts = [], i, r, ang;
-    for (i = 0; i < 32; i++) { r = i % 2 ? 41 : 49; ang = Math.PI * i / 16 - Math.PI / 2; pts.push((50 + r * Math.cos(ang)).toFixed(1) + ',' + (50 + r * Math.sin(ang)).toFixed(1)); }
-    _sealSvg = '<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="vsg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fa8ee"/><stop offset="1" stop-color="#3cc4f6"/></linearGradient></defs>' +
-        '<polygon points="' + pts.join(' ') + '" fill="url(#vsg)" stroke="url(#vsg)" stroke-width="5" stroke-linejoin="round"/>' +
-        '<path d="M30 52 L44 66 L71 36" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    return _sealSvg;
+function verifiedSealSVG() {
+    return '<svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true" focusable="false"><path fill="#1d9bf0" d="M9.2 16.2 4.9 11.9l1.6-1.6 2.7 2.7 8.3-8.3 1.6 1.6z"/></svg>';
 }
 function applyVerifiedAndPins() {
     var v = verifiedMap(), pins = {};
@@ -1065,7 +1072,7 @@ function applyVerifiedAndPins() {
         var seal = a.querySelector(':scope > .verified-seal');
         if (v[a.dataset.id]) {
             a.setAttribute('data-verified', '1');                // glowing blue frame (style.css)
-            if (!seal) { seal = document.createElement('span'); seal.className = 'verified-seal'; seal.style.cssText = 'position:absolute;top:10px;inset-inline-start:10px;z-index:3;width:38px;height:38px;filter:drop-shadow(0 2px 5px rgba(29,155,240,.45))'; seal.title = 'Verified'; seal.setAttribute('role', 'img'); seal.setAttribute('aria-label', 'Verified'); seal.innerHTML = verifiedSealSVG(); a.insertBefore(seal, a.firstChild); }
+            if (!seal) { seal = document.createElement('span'); seal.className = 'verified-seal'; seal.style.cssText = 'position:absolute;top:10px;inset-inline-start:10px;z-index:3;width:28px;height:28px;background:none;'; seal.title = 'Verified'; seal.setAttribute('role', 'img'); seal.setAttribute('aria-label', 'Verified'); seal.innerHTML = verifiedSealSVG(); a.insertBefore(seal, a.firstChild); }
         } else { a.removeAttribute('data-verified'); if (seal) seal.remove(); }
     });
     document.querySelectorAll('.product-grid').forEach(function (g) {
@@ -1249,10 +1256,33 @@ document.addEventListener('error', function (e) {
     }
 }, true);
 
-// ===== Frontend-only catalog =====
+// ===== Catalog from the API when the backend is reachable =====
 async function loadBackendCatalog() {
-    // Product and category changes stay in this browser's localStorage.
     window.BODA_BACKEND_CATALOG = false;
+    if (!window.BODA_API_READY) return;
+    try { await window.BODA_API_READY; } catch (e) { return; }
+    if (!window.BODA_API_ON || !window.bodaApi) return;
+    try {
+        var products = [], page = 1, pages = 1, batch;
+        do {
+            batch = await window.bodaApi('/api/products?limit=200&page=' + page);
+            products = products.concat(batch.items || []);
+            pages = batch.pages || 1;
+            page++;
+        } while (page <= pages);
+        var cats = await window.bodaApi('/api/categories');
+        if (!products.length) return;
+        window.BODA_PRODUCTS = products;
+        window.BODA_BACKEND_CATALOG = true;
+        if (Array.isArray(cats) && cats.length) {
+            CATEGORIES = cats.map(function (k) {
+                return { name: k.name, icon: k.icon || '', img: k.img || '', shop: k.shop || '', desc: k.desc || '', long: k.long || '', subs: k.subs || [] };
+            });
+            try { localStorage.setItem('boda_categories', JSON.stringify(CATEGORIES)); } catch (e) { }
+        }
+    } catch (e) {
+        window.BODA_BACKEND_CATALOG = false;
+    }
 }
 
 // ===== Boot =====
@@ -1268,8 +1298,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (cf) cf.onsubmit = function (e) {
         e.preventDefault();
         var m = LS.get('boda_messages'), f = cf.elements;
-        m.unshift({ id: 'm' + Date.now(), name: f.full_name.value, email: f.email.value, phone: f.phone.value, subject: f.subject.value, message: f.message.value, time: Date.now(), read: false });
+        var msg = { id: 'm' + Date.now(), name: f.full_name.value, email: f.email.value, phone: f.phone.value, subject: f.subject.value, message: f.message.value, time: Date.now(), read: false };
+        m.unshift(msg);
         LS.set('boda_messages', m);
+        if (window.BODA_API_ON && window.bodaApi) window.bodaApi('/api/messages', { method: 'POST', json: { name: msg.name, email: msg.email, phone: msg.phone, subject: msg.subject, message: msg.message } }).catch(function () { });
         recordStoreEvent('contact', f.subject.value);
         document.querySelector('.form-msg').classList.add('show'); cf.reset();
     };
