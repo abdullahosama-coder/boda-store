@@ -1241,6 +1241,7 @@ function applyAdminDom() {
 }
 
 function applyHeroFromAdmin() {
+    return; // the home hero keeps its original pictures
     var slides = null;
     try { slides = JSON.parse(localStorage.getItem('boda_hero')); } catch (e) { }
     if (!Array.isArray(slides) || !slides.length) return;
