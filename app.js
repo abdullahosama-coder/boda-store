@@ -1061,7 +1061,7 @@ function allProducts() { var l = allProductsRaw().filter(function (p) { return !
 // Verified product = it has at least one active document in Admin -> Documentation
 function verifiedMap() { var m = {}; try { (JSON.parse(localStorage.getItem('boda_docs')) || []).forEach(function (d) { if (d && d.active !== false && d.product) m[String(d.product)] = 1; }); } catch (e) { } return m; }
 function verifiedSealSVG() {
-    return '<svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true" focusable="false"><path fill="#1d9bf0" d="M9.2 16.2 4.9 11.9l1.6-1.6 2.7 2.7 8.3-8.3 1.6 1.6z"/></svg>';
+    return '<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true" focusable="false"><polygon points="99,50 92.1,56.9 94.2,66.6 85.3,71 83.6,80.8 73.7,81.9 69.5,90.9 59.9,88.6 53.8,96.4 47,92.3 38.6,97.5 34.5,88.4 24.7,87.3 22.6,77.5 13.8,72.8 15.9,63.1 8.9,56.3 16.5,49.9 11.5,41.2 20.6,37.4 21.3,27.4 31,25.2 34.4,15.8 44.3,16.9 50.6,9.3 57.6,13.1 66.1,8.1 69.5,17.4 79.2,18.5 80.9,28.4 89.8,32.7 87.5,42.4 94.7,48.9" fill="#34b0f1"/><path d="M30 52 L44 66 L71 36" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 }
 function applyVerifiedAndPins() {
     var v = verifiedMap(), pins = {};
@@ -1072,7 +1072,7 @@ function applyVerifiedAndPins() {
         var seal = a.querySelector(':scope > .verified-seal');
         if (v[a.dataset.id]) {
             a.setAttribute('data-verified', '1');                // glowing blue frame (style.css)
-            if (!seal) { seal = document.createElement('span'); seal.className = 'verified-seal'; seal.style.cssText = 'position:absolute;top:10px;inset-inline-start:10px;z-index:3;width:28px;height:28px;background:none;'; seal.title = 'Verified'; seal.setAttribute('role', 'img'); seal.setAttribute('aria-label', 'Verified'); seal.innerHTML = verifiedSealSVG(); a.insertBefore(seal, a.firstChild); }
+            if (!seal) { seal = document.createElement('span'); seal.className = 'verified-seal'; seal.style.cssText = 'position:absolute;top:10px;inset-inline-start:10px;z-index:3;width:36px;height:36px;background:transparent;'; seal.title = 'Verified'; seal.setAttribute('role', 'img'); seal.setAttribute('aria-label', 'Verified'); seal.innerHTML = verifiedSealSVG(); a.insertBefore(seal, a.firstChild); }
         } else { a.removeAttribute('data-verified'); if (seal) seal.remove(); }
     });
     document.querySelectorAll('.product-grid').forEach(function (g) {

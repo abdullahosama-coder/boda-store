@@ -4117,13 +4117,18 @@ body.dark-mode article[data-id][data-verified="1"] {
     top: 10px;
     inset-inline-start: 10px;
     z-index: 3;
-    width: 28px;
-    height: 28px;
-    background: none;
+    width: 36px;
+    height: 36px;
+    background: transparent;
     box-shadow: none;
     pointer-events: none;
 }
 
+.verified-seal svg {
+    display: block;
+    background: transparent;
+}
+
 article[data-id][data-verified="1"] .sale-badge {
-    inset-inline-start: 44px;
+    inset-inline-start: 52px;
 }
