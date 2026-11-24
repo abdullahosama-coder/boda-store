@@ -9046,8 +9046,8 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                         items.forEach((r, i) => r.classList.toggle('picked', !!(cks[i] && cks[i].checked)));
                         bar.querySelector('[data-bn]').textContent = n;
                         bar.classList.toggle('on', n > 0);
-                        bar.hidden = !canDel || (isTable && !n) ? true : false;
-                        if (!canDel) bar.hidden = true;
+                        if (all && !n) { all.checked = false; all.indeterminate = false; }
+                        bar.hidden = !canDel || n === 0;
                     }
                     function apply() {
                         const tot = items.length, pages = Math.max(1, Math.ceil(tot / st.n)); st.p = Math.min(Math.max(1, st.p), pages);
