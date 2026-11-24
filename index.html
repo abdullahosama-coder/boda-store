@@ -8510,7 +8510,7 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
 <td>${p.old > p.price ? `<del><small>${money(p.old)}</small></del> ` : ''}<b>${money(p.price)}</b></td>
 <td>${p.qty == null || p.qty === '' ? '—' : `${p.qty}${+p.qty <= low ? ` <span class="pill warn">${t('low')}</span>` : ''}`}</td>
 <td>${sw('pstock', { id: p.id }, p.stock !== false)}</td><td>${sw('pvis', { id: p.id }, !p.hidden)}</td>
-<td class="nw"><button class="mini" data-act="amenu" data-id="${esc(p.id)}">${t('act_menu')} ▾</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`;
+<td class="nw"><button class="mini" data-act="amenu" data-id="${esc(p.id)}">${t('act_menu')} ▾</button><button type="button" class="mini del" data-act="pdel" data-id="${esc(p.id)}" style="display:none">${t('del')}</button></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty tw">${t('none')}</div>`;
                 }
                 function productsView() {
                     const del = PA().deleted.length;
