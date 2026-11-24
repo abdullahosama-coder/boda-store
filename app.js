@@ -1065,7 +1065,7 @@ function applyVerifiedAndPins() {
         var seal = a.querySelector(':scope > .verified-seal');
         if (v[a.dataset.id]) {
             a.setAttribute('data-verified', '1');                // glowing blue frame (style.css)
-            if (!seal) { seal = document.createElement('span'); seal.className = 'verified-seal'; seal.title = 'Verified'; seal.setAttribute('role', 'img'); seal.setAttribute('aria-label', 'Verified'); seal.innerHTML = verifiedSealSVG(); a.insertBefore(seal, a.firstChild); }
+            if (!seal) { seal = document.createElement('span'); seal.className = 'verified-seal'; seal.style.cssText = 'position:absolute;top:10px;inset-inline-start:10px;z-index:3;width:38px;height:38px;filter:drop-shadow(0 2px 5px rgba(29,155,240,.45))'; seal.title = 'Verified'; seal.setAttribute('role', 'img'); seal.setAttribute('aria-label', 'Verified'); seal.innerHTML = verifiedSealSVG(); a.insertBefore(seal, a.firstChild); }
         } else { a.removeAttribute('data-verified'); if (seal) seal.remove(); }
     });
     document.querySelectorAll('.product-grid').forEach(function (g) {
