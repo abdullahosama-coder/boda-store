@@ -92,9 +92,7 @@
     function schedule() {
         clearTimeout(timer);
         timer = setTimeout(function () {
-            chain = chain.then(push).then(function (ok) {
-                if (ok && window.toast) window.toast('اتنشر على الموقع');
-            }).catch(function (e) {
+            chain = chain.then(push).catch(function (e) {
                 if (window.toast) window.toast('⚠ ' + (e.message || 'النشر فشل'));
             });
         }, 700);
