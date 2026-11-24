@@ -232,4 +232,5 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
     document.addEventListener('boda:lang', boot);                                    // language switched -> redraw the body text
     window.addEventListener('storage', function (e) { if (e.key === KEY) boot(); });  // admin edited in another tab -> live update
+    document.addEventListener('boda:store', boot);
 })();

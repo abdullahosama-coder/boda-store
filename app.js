@@ -36,7 +36,18 @@ function bsMatch(q, text) { return window.BodaSearch ? window.BodaSearch.match(q
 function searchProducts() {
     var inp = document.querySelector('input[name="search"]');
     var q = inp ? inp.value.trim() : '';
-    if (q) { recordStoreEvent('search', q); location.href = 'index.html?page=products&q=' + encodeURIComponent(q); }
+    if (!q) return;
+    recordStoreEvent('search', q);
+    var kws = [];
+    try { kws = JSON.parse(localStorage.getItem('boda_search_keywords')) || []; } catch (e) { }
+    var hit = kws.filter(function (k) {
+        if (!k || k.active === false) return false;
+        var words = [k.keyword].concat(String(k.aliases || '').split(/[,،]/));
+        return words.some(function (w) { return w.trim().toLowerCase() === q.toLowerCase(); });
+    })[0];
+    if (hit && hit.target === 'categories' && hit.targetId) { location.href = 'index.html?page=category&cat=' + encodeURIComponent(hit.targetId); return; }
+    if (hit && hit.target === 'products' && hit.targetId) { location.href = 'index.html?page=product&id=' + encodeURIComponent(hit.targetId); return; }
+    location.href = 'index.html?page=products&q=' + encodeURIComponent(q);
 }
 
 // ===== Dark Mode (Controlled from Settings only) =====
@@ -144,7 +155,7 @@ var CATEGORIES = [
 ];
 // Optional: override the list from the browser console without touching the code:
 //   localStorage.setItem('boda_categories', JSON.stringify([...same shape...]))  then reload
-(function () {
+function loadCategoriesFromStore() {
     try {
         var o = JSON.parse(localStorage.getItem('boda_categories'));
         if (Array.isArray(o) && o.length) {
@@ -153,7 +164,8 @@ var CATEGORIES = [
             });
         }
     } catch (e) { }
-})();
+}
+loadCategoriesFromStore();
 // Category names are translated automatically (built-in dictionary, then online translation, cached)
 (function () {
     if (!window.BodaAuto) return;
@@ -607,6 +619,10 @@ function checkoutSource() {
 }
 function initCheckout() {
     var box = $id('checkout-box'); if (!box) return;
+    var site = {}; try { site = JSON.parse(localStorage.getItem('boda_site')) || {}; } catch (e) { }
+    var general = site.general || {};
+    if (general.maint) { box.innerHTML = emptyBox('🔧', 'Checkout is paused', 'The store is under maintenance.', 'index.html?page=home', 'Back to Home'); return; }
+    if (general.guest === false && !getUser()) { box.innerHTML = emptyBox('🔒', 'Sign in to checkout', 'Guest checkout is turned off.', 'index.html?page=signin', 'Sign in'); return; }
     var src = checkoutSource();
     if (!src.items.length) {
         box.innerHTML = '<div class="empty-state"><div class="empty-big">🧾</div><h3>Your checkout is empty</h3><p>Nothing to check out yet. Pick a product first.</p><a class="favorites-btn" href="index.html?page=products">Browse All Products</a></div>';
@@ -621,7 +637,11 @@ function startCheckout(cart, buyNow) {
     var deliveryFee = shipCfg.enabled === false ? 0 : Math.max(0, Number(shipCfg.defaultFee ?? 5)); var freeFrom = Math.max(0, Number(shipCfg.freeFrom ?? 500));
     var def = pays.filter(function (p) { return p.def; })[0] || pays[0];
     var lines = cart.map(function (i) { total += i.price * i.qty; var parts = [].concat(i.extras || [], i.options || [], i.selectedOptions || []).filter(Boolean); return '<div class="co-line"><span>' + esc(i.name) + (parts.length ? '<small style="display:block">' + esc(parts.join('، ')) + '</small>' : '') + '</span><span>' + money(i.price * i.qty) + '</span></div>'; }).join('');
-    var subtotal = total; if (shipCfg.enabled !== false && !(freeFrom > 0 && subtotal >= freeFrom)) total += deliveryFee;
+    var subtotal = total, taxRate = Math.max(0, Number((function () { try { return (JSON.parse(localStorage.getItem('boda_site')) || {}).general || {}; } catch (e) { return {}; } })().tax) || 0);
+    var taxAmt = taxRate ? Math.round(subtotal * taxRate) / 100 : 0;
+    if (shipCfg.enabled !== false && !(freeFrom > 0 && subtotal >= freeFrom)) total += deliveryFee;
+    total += taxAmt;
+    var payTotal = total, shipFee = payTotal - subtotal - taxAmt;
     var opt = function (val, title, sub, on) { return '<label class="pay-opt"><input type="radio" name="pay" value="' + val + '"' + (on ? ' checked' : '') + '><span><strong>' + title + '</strong><small>' + sub + '</small></span></label>'; };
 
     var gwOpts = GATEWAYS.filter(function (g) { return gws[g.id] && gws[g.id].enabled; }).map(function (g) {
@@ -639,7 +659,10 @@ function startCheckout(cart, buyNow) {
         '<label>Address<input id="sh-addr" required value="' + esc(ship.address || '') + '"></label><label>City / Area<input id="sh-city" required value="' + esc(ship.city || '') + '"></label></div><p class="gw-tip">' + (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (freeFrom > 0 && subtotal >= freeFrom ? 'Free delivery applied.' : 'Delivery fee: ' + money(deliveryFee))) + (shipCfg.eta ? ' · Estimated: ' + esc(shipCfg.eta) : '') + '</p></fieldset>' +
         '<fieldset><legend>Payment method</legend>' + payHtml + '<div id="new-card" hidden>' + cardFields('nc') + '<label class="chk"><input type="checkbox" id="nc-save"> Save this card</label></div>' +
         '<p class="gw-tip"><a href="#payment">Manage payment methods &amp; gateways →</a></p></fieldset><p class="form-error"></p></div>' +
-        '<aside class="co-sum"><h3>Order summary</h3>' + lines + '<div class="co-total"><span>Total</span><strong>' + money(total) + '</strong></div>' +
+        '<aside class="co-sum"><h3>Order summary</h3>' + lines +
+        (taxAmt ? '<div class="co-line"><span>Tax (' + taxRate + '%)</span><span>' + money(taxAmt) + '</span></div>' : '') +
+        '<label>Coupon code<input id="co-code" placeholder="Enter a coupon code" autocomplete="off"></label><button type="button" id="co-apply" class="secondary">Apply</button><p id="co-coupon"></p>' +
+        '<div class="co-total"><span>Total</span><strong id="co-total">' + money(payTotal) + '</strong></div>' +
         '<button type="submit" class="co-place">Place order</button><button type="button" id="co-back" class="secondary">' + (buyNow ? '← Back to product' : '← Back to cart') + '</button></aside></form>';
     bindCard('nc');
     var f = $id('checkout-form');
@@ -671,14 +694,59 @@ function startCheckout(cart, buyNow) {
             var btn = f.querySelector('.co-place');
             btn.disabled = true;
             window.bodaApi('/api/orders', { method: 'POST', json: { name: s.name, phone: s.phone, email: u ? u.email : '', city: s.city, address: s.address, notes: 'Payment: ' + label, items: cart.map(function (i) { return { id: i.id, qty: i.qty }; }) } }).then(function (d) {
-                place(d.id, total);
+                place(d.id, payTotal);
             }).catch(function (ex) {
                 btn.disabled = false;
                 err.textContent = ex.message === 'NETWORK' ? 'The store server is not available. The order was not placed.' : ex.message;
             });
             return;
         }
-        place('BD-' + String(Date.now()).slice(-6), total);
+        place('BD-' + String(Date.now()).slice(-6), payTotal);
+    };
+    var govs = [];
+    try { var rawG = JSON.parse(localStorage.getItem('boda_govs')); if (Array.isArray(rawG)) govs = rawG.filter(function (g) { return g && g.active !== false; }); } catch (e) { }
+    var city = $id('sh-city');
+    if (govs.length && city) {
+        var sel = document.createElement('select');
+        sel.id = 'sh-city'; sel.required = true;
+        sel.innerHTML = '<option value="">Choose a governorate</option>' + govs.map(function (g) {
+            return '<option value="' + esc(g.en || g.n) + '" data-fee="' + (Number(g.fee) || 0) + '">' + esc(g.n || g.en) + ' · ' + money(g.fee) + '</option>';
+        }).join('');
+        city.replaceWith(sel);
+        sel.onchange = function () {
+            var opt = sel.options[sel.selectedIndex];
+            var fee = opt && opt.dataset.fee !== undefined && sel.value ? Number(opt.dataset.fee) : deliveryFee;
+            if (shipCfg.enabled === false) fee = 0;
+            if (freeFrom > 0 && subtotal >= freeFrom) fee = 0;
+            shipFee = fee;
+            payTotal = subtotal + taxAmt + fee;
+            var shown = $id('co-total'); if (shown) shown.textContent = money(payTotal);
+            var tip = f.querySelector('.gw-tip');
+            if (tip) tip.textContent = (shipCfg.enabled === false ? 'Delivery is currently unavailable.' : (fee ? 'Delivery fee: ' + money(fee) : 'Free delivery applied.')) + (shipCfg.eta ? ' · Estimated: ' + shipCfg.eta : '');
+        };
+    }
+    var applyBtn = $id('co-apply');
+    if (applyBtn) applyBtn.onclick = function () {
+        var code = ($id('co-code').value || '').trim().toLowerCase();
+        var note = $id('co-coupon'), coupons = [];
+        try { coupons = JSON.parse(localStorage.getItem('boda_coupons')) || []; } catch (e) { }
+        var today = new Date().toISOString().slice(0, 10);
+        var c = coupons.filter(function (x) {
+            if (!x || x.active === false || String(x.code || '').trim().toLowerCase() !== code) return false;
+            if (x.start && x.start > today) return false;
+            if (x.end && x.end < today) return false;
+            if (+x.maxUses > 0 && +x.used >= +x.maxUses) return false;
+            return true;
+        })[0];
+        if (!c) { note.textContent = 'This coupon is not valid.'; return; }
+        var base = subtotal;
+        if (Array.isArray(c.products) && c.products.length) {
+            base = cart.reduce(function (s, i) { return s + (c.products.indexOf(i.id) > -1 ? i.price * i.qty : 0); }, 0);
+        }
+        var off = c.type === 'fixed' ? Math.min(base, +c.value || 0) : Math.round(base * (+c.value || 0)) / 100;
+        payTotal = Math.max(0, subtotal - off + taxAmt + shipFee);
+        var shown = $id('co-total'); if (shown) shown.textContent = money(payTotal);
+        note.textContent = 'Coupon applied: −' + money(off);
     };
 }
 
@@ -955,7 +1023,7 @@ function initHeroSlider() {
     var wrap = document.querySelector('.hero-slider'); if (!wrap) return;
     var track = wrap.querySelector('.hero-slides'), slides = wrap.querySelectorAll('.hero-slide');
     var dots = wrap.querySelector('.hero-dots'), prev = wrap.querySelector('.hero-arrow.prev'), next = wrap.querySelector('.hero-arrow.next');
-    if (!track || slides.length < 2) return;
+    if (!track || !slides.length) return;
     var idx = 0, timer;
     slides.forEach(function (_, i) {
         var d = document.createElement('button'); d.type = 'button';
@@ -966,7 +1034,7 @@ function initHeroSlider() {
         track.style.transform = 'translateX(-' + (idx * 100) + '%)';
         dots.querySelectorAll('button').forEach(function (b, j) { b.classList.toggle('active', j === idx); });
     }
-    function reset() { clearInterval(timer); timer = setInterval(function () { go(idx + 1); }, 5000); }
+    function reset() { clearInterval(timer); if (slides.length < 2) return; timer = setInterval(function () { go(idx + 1); }, 5000); }
     if (prev) prev.onclick = function () { go(idx - 1); reset(); };
     if (next) next.onclick = function () { go(idx + 1); reset(); };
     wrap.addEventListener('mouseenter', function () { clearInterval(timer); });
@@ -1013,10 +1081,10 @@ function initStandardFooter() {
     var footer = document.querySelector('footer'), grid = footer && footer.querySelector('.footer-grid');
     if (!grid) return;
     var site = {}; try { site = JSON.parse(localStorage.getItem('boda_site')) || {}; } catch (e) { }
-    var contact = site.contact || {}, ci = { email: contact.emailIcon || '📧', phone: contact.phoneIcon || '📞', address: contact.addressIcon || '📍', hours: contact.hoursIcon || '🕒' };
+    var contact = site.contact || {}, storeName = (site.general && site.general.name) || 'Boda Store', ci = { email: contact.emailIcon || '📧', phone: contact.phoneIcon || '📞', address: contact.addressIcon || '📍', hours: contact.hoursIcon || '🕒' };
     var cats = CATEGORIES.map(function (k) { return '<li><a href="' + esc(catUrl(k.name)) + '">' + esc(k.name) + '</a></li>'; }).join('');
     grid.innerHTML =
-        '<div><h3>Boda Store</h3><p>Your trusted place for everything you need — all in one store.</p>' +
+        '<div><h3>' + esc(storeName) + '</h3><p>Your trusted place for everything you need — all in one store.</p>' +
         '<div class=\"footer-social\">' + socialLinks() + '</div></div>' +
         '<div><h3>Quick Links</h3><ul><li><a href="index.html?page=home">Home</a></li><li><a href="index.html?page=categories">Categories</a></li><li><a href="index.html?page=products">Products</a></li><li><a href="index.html?page=offers">Offers</a></li><li><a href="index.html?page=about">About Us</a></li><li><a href="index.html?page=contact">Contact</a></li></ul></div>' +
         '<div><h3>Categories</h3><ul>' + cats + '</ul></div>' +
@@ -1163,6 +1231,107 @@ function applyAdminDom() {
         var exists = [].some.call(grid.querySelectorAll('article[data-id]'), function (x) { return x.dataset.id === p.id; });
         if (!exists && !p.hidden && a.deleted.indexOf(p.id) < 0) grid.insertAdjacentHTML('beforeend', cardHTML(p));
     });
+    if (document.body.classList.contains('home')) {
+        var homeGrid = document.querySelector('main .product-grid');
+        if (homeGrid) allProducts().forEach(function (p) {
+            if (p.hidden || p.archived || document.querySelector('article[data-id="' + p.id + '"]')) return;
+            homeGrid.insertAdjacentHTML('afterbegin', cardHTML(p));
+        });
+    }
+}
+
+function applyHeroFromAdmin() {
+    var slides = null;
+    try { slides = JSON.parse(localStorage.getItem('boda_hero')); } catch (e) { }
+    if (!Array.isArray(slides) || !slides.length) return;
+    var track = document.querySelector('.hero-slides'); if (!track) return;
+    track.innerHTML = slides.map(function (s) {
+        var media = s.img ? '<img src="' + esc(s.img) + '" alt="" referrerpolicy="no-referrer">' : (s.emojis ? '<div class="hero-visual"><span>' + esc(s.emojis) + '</span></div>' : '');
+        var second = s.b2 ? '<a href="' + esc(s.l2 || '#') + '" class="hero-btn-secondary">' + esc(s.b2) + '</a>' : '';
+        return '<div class="hero-slide"><div>' + (s.badge ? '<span class="hero-badge">' + esc(s.badge) + '</span>' : '') +
+            '<h2>' + esc(s.title || '') + '</h2><p>' + esc(s.text || '') + '</p><div class="hero-actions"><a href="' + esc(s.l1 || 'index.html?page=products') + '" class="hero-btn-primary">' + esc(s.b1 || 'Shop Now') + '</a>' + second + '</div></div>' + media + '</div>';
+    }).join('');
+}
+
+function applySiteChrome() {
+    var site = {}; try { site = JSON.parse(localStorage.getItem('boda_site')) || {}; } catch (e) { }
+    var a = site.announce, bar = document.querySelector('.announcement-bar');
+    if (bar && a) {
+        bar.hidden = a.show === false;
+        var p = bar.querySelector('p');
+        if (p && a.text) p.innerHTML = esc(a.text) + (a.linkText ? ' <a href="' + esc(a.linkHref || '#') + '">' + esc(a.linkText) + '</a>' : '');
+    }
+    var name = site.general && site.general.name;
+    if (name) document.querySelectorAll('.brand-link h1').forEach(function (h) { h.textContent = name; });
+    if (site.general && site.general.reg === false) document.querySelectorAll('a[href*="page=signup"], a[href*="page=register"]').forEach(function (n) { n.hidden = true; });
+    if (site.general && site.general.maint && !document.getElementById('maint-note')) {
+        var n = document.createElement('div'); n.id = 'maint-note';
+        n.textContent = 'The store is under maintenance.';
+        n.style.cssText = 'background:#b45309;color:#fff;text-align:center;padding:8px 12px;font-weight:600';
+        document.body.prepend(n);
+    }
+}
+
+function liveRows(key) {
+    var list = [], today = new Date().toISOString().slice(0, 10);
+    try { list = JSON.parse(localStorage.getItem(key)) || []; } catch (e) { }
+    return list.filter(function (r) {
+        if (!r || r.active === false) return false;
+        if (r.start && r.start > today) return false;
+        if (r.end && r.end < today) return false;
+        return true;
+    });
+}
+
+function applyAds() {
+    var old = document.getElementById('admin-ads'); if (old) old.remove();
+    var ads = liveRows('boda_ads'); if (!ads.length) return;
+    function block(place) {
+        return ads.filter(function (a) { return a.place === place; }).map(function (a) {
+            var inner = a.img ? '<img src="' + esc(a.img) + '" alt="' + esc(a.title) + '" style="max-width:100%;border-radius:12px">' : '<strong>' + esc(a.title) + '</strong>';
+            return a.link ? '<a href="' + esc(a.link) + '" style="display:block;margin:10px 0">' + inner + '</a>' : '<div style="margin:10px 0">' + inner + '</div>';
+        }).join('');
+    }
+    var box = document.createElement('div'); box.id = 'admin-ads';
+    var header = block('header'), home = document.body.classList.contains('home') ? block('home') : '', foot = block('footer');
+    if (header) {
+        var bar = document.querySelector('.announcement-bar') || document.querySelector('header');
+        if (bar) bar.insertAdjacentHTML('afterend', '<div class="admin-ad">' + header + '</div>');
+    }
+    if (home) {
+        var main = document.querySelector('main');
+        if (main) main.insertAdjacentHTML('afterbegin', '<div class="admin-ad" style="max-width:1100px;margin:12px auto;padding:0 16px">' + home + '</div>');
+    }
+    if (foot) {
+        var f = document.querySelector('footer');
+        if (f) f.insertAdjacentHTML('beforebegin', '<div class="admin-ad" style="max-width:1100px;margin:12px auto;padding:0 16px">' + foot + '</div>');
+    }
+    if (box.childNodes.length) document.body.appendChild(box);
+}
+
+function applyOfferStrip() {
+    var old = document.getElementById('admin-offers'); if (old) old.remove();
+    var rows = liveRows('boda_offers'); if (!rows.length) return;
+    var onOffers = document.body.classList.contains('offers-page') || new URLSearchParams(location.search).get('page') === 'offers';
+    if (!onOffers && !document.body.classList.contains('home')) return;
+    var html = '<div id="admin-offers" class="help-cards" style="max-width:1100px;margin:16px auto;padding:0 16px">' + rows.map(function (r) {
+        return '<div class="help-card"><strong>' + esc(r.title) + '</strong><span>' + esc(r.discount) + '% off' + (r.code ? ' · code ' + esc(r.code) : '') + '</span><span>' + esc(r.desc || '') + '</span></div>';
+    }).join('') + '</div>';
+    var anchor = document.querySelector('main') || document.querySelector('.hero-slider');
+    if (anchor) anchor.insertAdjacentHTML(anchor.matches('main') ? 'afterbegin' : 'afterend', html);
+}
+
+function applyArticles() {
+    if (!document.body.classList.contains('home')) return;
+    var old = document.getElementById('admin-news'); if (old) old.remove();
+    var rows = [];
+    try { rows = JSON.parse(localStorage.getItem('boda_news')) || []; } catch (e) { }
+    rows = rows.filter(function (r) { return r && r.active !== false && r.title; });
+    if (!rows.length) return;
+    var main = document.querySelector('main'); if (!main) return;
+    main.insertAdjacentHTML('beforeend', '<section id="admin-news"><div class="section-head"><h2>News</h2></div><div class="help-cards">' + rows.map(function (r) {
+        return '<article class="help-card">' + (r.img ? '<img src="' + esc(r.img) + '" alt="" style="width:100%;border-radius:8px">' : '') + '<strong>' + esc(r.title) + '</strong><span>' + esc(r.summary || '') + '</span></article>';
+    }).join('') + '</div></section>');
 }
 
 // ---- Product page: index.html?page=product&id=LAP001 ----
@@ -1287,6 +1456,8 @@ async function loadBackendCatalog() {
 
 // ===== Boot =====
 document.addEventListener('DOMContentLoaded', async function () {
+    if (window.BODA_SYNC_READY) { try { await window.BODA_SYNC_READY; } catch (e) { } }
+    loadCategoriesFromStore();
     await loadBackendCatalog();
     if (!window.BODA_ADMIN) recordStoreEvent('page_view', new URLSearchParams(location.search).get('page') || 'home');
     var inp = document.querySelector('input[name="search"]');
@@ -1308,7 +1479,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Admin saved something in another tab -> refresh the storefront automatically
     window.addEventListener('storage', function (ev) {
-        if (['boda_admin_products', 'boda_docs', 'boda_categories', 'boda_site', 'boda_seo_pages', 'boda_search_engines', 'boda_search_keywords'].indexOf(ev.key) > -1) location.reload();
+        if (['boda_admin_products', 'boda_docs', 'boda_categories', 'boda_site', 'boda_hero', 'boda_pages', 'boda_shipping_settings', 'boda_offers', 'boda_ads', 'boda_coupons', 'boda_govs', 'boda_seo_pages', 'boda_search_engines', 'boda_search_keywords', 'boda_news', 'boda_gateways', 'boda_notifs', 'boda_orders'].indexOf(ev.key) > -1) location.reload();
         else if (ev.key === 'boda_cart') { updateBadges(); syncCartActions(); }
     });
     // Every start-up step is isolated: one failing step can no longer stop the rest of the page
@@ -1317,8 +1488,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     step(initTheme);
     step(initSettingsMenu);
     step(initActiveNav);
+    step(applySiteChrome);
+    step(applyHeroFromAdmin);
     step(renderCategoryCards);
     step(applyAdminDom);
+    step(applyAds);
+    step(applyOfferStrip);
+    step(applyArticles);
+    step(function () { if (window.BodaPages) BodaPages.render(); });
     step(function () { if ($id('product-box')) { renderProduct(); initGallery(); } });
     step(function () { if ($id('category-box')) renderCategory(); });
     step(initHeaderSlider);
@@ -1329,6 +1506,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     step(updateBadges);
     step(function () { if (document.body.classList.contains('products')) initFilters(); });
     step(function () { initCards(); });
+    step(function () {
+        var site = {}; try { site = JSON.parse(localStorage.getItem('boda_site')) || {}; } catch (e) { }
+        if (site.general && site.general.reviews === false) document.querySelectorAll('.rating').forEach(function (n) { n.remove(); });
+    });
     step(applyVerifiedAndPins);
     step(function () { setTimeout(function () { step(applyVerifiedAndPins); }, 400); });
     step(function () { if ($id('cart-box')) initCart(); });

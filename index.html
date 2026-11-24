@@ -27,8 +27,8 @@
                 window.addEventListener('load', function () { toTop(); setTimeout(toTop, 120); });
                 window.addEventListener('pageshow', function (e) { if (e.persisted) window.scrollTo(0, 0); });
             }
-            (admin ? ['auto-translate.js', 'products-data.js', 'pages-content.js', 'backend-link.js'] : ['auto-translate.js', 'language.js', 'pages-content.js', 'products-data.js', 'backend-link.js', 'app.js', 'lazy-load.js', 'search-suggest.js', 'order-flow.js', 'order-confirm.js', 'product-extras.js', 'support-chat.js']).forEach(function (f) {
-                document.write('<script src="' + f + '?v=20261124h" defer><\/script>');
+            (admin ? ['site-sync.js', 'auto-translate.js', 'products-data.js', 'pages-content.js', 'backend-link.js'] : ['site-sync.js', 'auto-translate.js', 'language.js', 'pages-content.js', 'products-data.js', 'backend-link.js', 'app.js', 'lazy-load.js', 'search-suggest.js', 'order-flow.js', 'order-confirm.js', 'product-extras.js', 'support-chat.js']).forEach(function (f) {
+                document.write('<script src="' + f + '?v=20261124i" defer><\/script>');
             });
             if (admin) document.write('<style>link[href="style.css"]{display:none}</style>');
         })();
@@ -8446,7 +8446,9 @@ restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide.
                     const x = USERS().find(a => a.u === u && a.active !== false); return !!x && x.h === hash(p);
                 }
                 const log = (k, a, n) => { const l = rd(K.log, []); l.unshift({ t: Date.now(), u: me(), k, a: a || '', n: n || '' }); wr(K.log, l.slice(0, 60)); };
+                document.addEventListener('boda:need-token', () => { if (sessionStorage.getItem('boda_sync_hint')) return; sessionStorage.setItem('boda_sync_hint', '1'); setTimeout(() => toast('التعديل اتحفظ على الجهاز ده. علشان كل الزوار يشوفوه، احفظ مفتاح GitHub من الإعدادات.'), 400); });
                 function toast(x) { document.querySelectorAll('.toast').forEach(e => e.remove()); const d = document.createElement('div'); d.className = 'toast'; d.textContent = x; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
+                window.toast = toast;
                 const thumb = (s, id) => s ? `<img class="th" src="${esc(s)}" alt="" referrerpolicy="no-referrer" ${id ? `data-act="pedit" data-id="${esc(id)}" title="${t('edit')}"` : ''} onerror="this.classList.add('bad');this.alt='⚠';this.title='الصورة لا تعمل — اضغط لتعديل الرابط'">` : '';
                 const open = html => { const d = $('#dlg'); d.innerHTML = html; if (!d.open) d.showModal(); };
                 const refresh = k => { const e = $('#tbl'); if (e && TBLS[k]) e.innerHTML = TBLS[k](); };
@@ -8960,7 +8962,9 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                 const GWS = [['vodafone', 'Vodafone Cash', 'Wallet Phone (010...)', '01012345678'], ['instapay', 'InstaPay', 'InstaPay Address (IPA)', 'username@instapay'], ['paypal', 'PayPal', 'PayPal Email', 'you@example.com'], ['fawry', 'Fawry Pay', '', ''], ['apple_google', 'Apple Pay / Google Pay', '', '']];
                 function settingsView() {
                     const s = SITE(), g = s.general, sc = (n, l, on) => `<label class="swl"><span class="sw"><input type="checkbox" name="${n}" ${on ? 'checked' : ''}><i></i></span> ${t(l)}</label>`;
+                    const hasTok = !!localStorage.getItem('boda_github_token');
                     return `<h1>${t('n_settings')}</h1><p class="sub">${t('s_sub')}</p>
+<form id="pubf" class="box"><h2>نشر التعديلات على الموقع</h2><p class="sub">أي إضافة أو تعديل أو تحديث في اللوحة يتبعت للموقع. المفتاح يتسجل على الجهاز ده فقط.</p><label>GitHub token<input name="token" type="password" autocomplete="off" placeholder="${hasTok ? 'محفوظ — اكتب مفتاح جديد لو عايز تغيّره' : 'ghp_...'}"></label><p class="err"></p><div class="bar"><button class="btn">حفظ ونشر الآن</button></div></form>
 <div class="set-grid"><form id="payf" class="box"><h2>💳 ${t('s_pay')}</h2><p class="sub" style="margin:0 0 10px">${t('s_pay_h')}</p>${GWS.map(g => { const c = rd('boda_gateways', {})[g[0]]; return `<div class="gwrow" style="margin-bottom:10px"><label class="swl"><span class="sw"><input type="checkbox" name="on_${g[0]}" ${c && c.enabled !== false ? 'checked' : ''}><i></i></span> <b>${g[1]}</b></label>${g[2] ? `<label>${g[2]}<input name="acc_${g[0]}" dir="ltr" placeholder="${g[3]}" value="${esc(c && c.account)}"></label>` : ''}</div>`; }).join('')}<div class="bar"><button class="btn">${t('save')}</button></div></form>
 <form id="pwf" class="box"><h2>${t('s_pw')}</h2><label>${t('s_curpw')}<input name="cur" type="password" autocomplete="current-password" required></label><label>${t('s_newpw')}<input name="nw" type="password" autocomplete="new-password" minlength="6" required></label><p class="err"></p><div class="bar"><button class="btn">${t('save')}</button></div></form></div>
 <form id="sf"><div class="set-grid">
@@ -9519,6 +9523,16 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
                         site.social = { facebook: v('facebook'), instagram: v('instagram'), x: v('x'), whatsapp: v('whatsapp'), telegram: v('telegram') };
                         site.socialIcons = { facebook: v('i_facebook'), instagram: v('i_instagram'), x: v('i_x'), whatsapp: v('i_whatsapp'), telegram: v('i_telegram') };
                         wr(K.site, site); log('log_save', 'n_social'); render(); toast(t('saved')); return;
+                    }
+                    if (f.id === 'pubf') {
+                        const tok = f.elements.token.value.trim();
+                        if (tok) localStorage.setItem('boda_github_token', tok);
+                        if (!localStorage.getItem('boda_github_token')) { err.textContent = 'اكتب مفتاح GitHub مرة واحدة.'; return; }
+                        localStorage.setItem('boda_sync_at', String(Date.now()));
+                        if (window.BodaSync) BodaSync.push().then(ok => { if (ok) toast('اتنشر على الموقع'); }).catch(ex => { err.textContent = ex.message || 'النشر فشل'; });
+                        else err.textContent = 'النشر مش جاهز. حدّث الصفحة.';
+                        f.elements.token.value = '';
+                        return;
                     }
                     if (f.id === 'sf') {
                         const c = n => f.elements[n].checked;
@@ -10649,7 +10663,7 @@ ${imgField('img', x.img || '', t('h_img'))}<label class="wide">${t('h_emoji')}<i
             }
         })();
     </script>
-    <script src="support-chat.js?v=20261124h"></script>
+    <script src="support-chat.js?v=20261124i"></script>
 </body>
 
 </html>
