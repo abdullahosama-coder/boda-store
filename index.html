@@ -7021,6 +7021,35 @@
                 filter: brightness(1.15)
             }
 
+            .linechart .lc-head {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                color: var(--soft);
+                font-size: .86rem
+            }
+
+            .linechart .lc-key {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px
+            }
+
+            .linechart .lc-key i {
+                width: 14px;
+                height: 10px;
+                border-radius: 2px;
+                background: #3b82f6
+            }
+
+            .linechart svg {
+                width: 100%;
+                height: auto;
+                display: block
+            }
+
             .chart .col small {
                 height: 16px;
                 font-size: .62rem;
@@ -7992,7 +8021,6 @@ k_subs || مشترك في النشرة || newsletter subscribers || abonnés new
 k_outstock || غير متوفر || out of stock || en rupture || nicht verfügbar
 c_rev || المبيعات خلال الفترة || Revenue over time || Ventes sur la période || Umsatz im Zeitraum
 c_cnt || عدد الطلبات خلال الفترة || Orders over time || Commandes sur la période || Bestellungen im Zeitraum
-c_chart_tbl || جدول الرسوم البيانية || Chart data || Données des graphiques || Diagrammdaten
 c_status || الطلبات حسب الحالة || Orders by status || Commandes par statut || Bestellungen nach Status
 c_top || الأكثر مبيعًا || Top products || Meilleures ventes || Bestseller
 c_topcat || المبيعات حسب القسم || Sales by category || Ventes par catégorie || Umsatz nach Kategorie
@@ -8426,15 +8454,35 @@ restore_bad || الملف غير صالح. || Invalid file. || Fichier invalide.
                 /* ---------- Dashboard & analytics ---------- */
                 function periodInfo(per) {
                     const now = new Date(), D = 864e5, H = 36e5, d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime(); let b = [], start, end;
-                    if (per === 'day') { start = d0; end = d0 + D; for (let i = 0; i < 24; i++) b.push({ f: start + i * H, to: start + (i + 1) * H, l: String(i) }); }
-                    else if (per === 'week') { start = d0 - 6 * D; end = d0 + D; for (let i = 0; i < 7; i++) { const f = start + i * D; b.push({ f, to: f + D, l: new Date(f).toLocaleDateString(loc(), { weekday: 'short' }) }); } }
-                    else if (per === 'month') { start = d0 - 29 * D; end = d0 + D; for (let i = 0; i < 30; i++) { const f = start + i * D; b.push({ f, to: f + D, l: String(new Date(f).getDate()) }); } }
-                    else { for (let i = 11; i >= 0; i--) { const a = new Date(now.getFullYear(), now.getMonth() - i, 1), z = new Date(now.getFullYear(), now.getMonth() - i + 1, 1); b.push({ f: a.getTime(), to: z.getTime(), l: a.toLocaleDateString(loc(), { month: 'short' }) }); } start = b[0].f; end = b[11].to; }
+                    if (per === 'day') { start = d0; end = d0 + D; for (let i = 0; i < 24; i++) b.push({ f: start + i * H, to: start + (i + 1) * H, l: String(i).padStart(2, '0') }); }
+                    else if (per === 'week') { start = d0 - 6 * D; end = d0 + D; for (let i = 0; i < 7; i++) { const f = start + i * D; b.push({ f, to: f + D, l: new Date(f).toLocaleDateString(loc(), { day: 'numeric', month: 'short' }) }); } }
+                    else if (per === 'month') { start = d0 - 29 * D; end = d0 + D; for (let i = 0; i < 30; i++) { const f = start + i * D; b.push({ f, to: f + D, l: new Date(f).toLocaleDateString(loc(), { day: 'numeric', month: 'short' }) }); } }
+                    else { for (let i = 11; i >= 0; i--) { const a = new Date(now.getFullYear(), now.getMonth() - i, 1), z = new Date(now.getFullYear(), now.getMonth() - i + 1, 1); b.push({ f: a.getTime(), to: z.getTime(), l: a.toLocaleDateString(loc(), { month: 'short', year: 'numeric' }) }); } start = b[0].f; end = b[11].to; }
                     return { b, start, end, prev: [start - (end - start), start] };
                 }
-                function chart(vals, labs, fmt, every) {
-                    const mx = Math.max(1, ...vals);
-                    return `<div class="chart">${vals.map((v, i) => `<div class="col" title="${esc(labs[i] + ': ' + fmt(v))}"><div class="bw"><i style="height:${v ? Math.max(3, v / mx * 100) : 0}%"></i></div><small>${i % every === 0 ? esc(labs[i]) : ''}</small></div>`).join('')}</div>`;
+                function chart(vals, labs, fmt, every, title, range) {
+                    const w = 640, h = 230, left = 42, right = 14, top = 14, bottom = 28;
+                    const mx = Math.max(1, ...vals), n = Math.max(vals.length, 1), steps = mx <= 1 ? 10 : 5;
+                    const X = i => left + (n === 1 ? (w - left - right) / 2 : i / (n - 1) * (w - left - right));
+                    const Y = v => top + (1 - v / mx) * (h - top - bottom);
+                    const labelStep = Math.max(1, every || 1);
+                    let grid = '';
+                    for (let g = 0; g <= steps; g++) {
+                        const yy = top + g / steps * (h - top - bottom), val = mx * (1 - g / steps);
+                        const txt = mx <= 1 ? val.toFixed(1) : (val >= 10 ? String(Math.round(val)) : val.toFixed(1));
+                        grid += `<line x1="${left}" y1="${yy.toFixed(1)}" x2="${w - right}" y2="${yy.toFixed(1)}" stroke="#e7edf5"/>`;
+                        grid += `<text x="${left - 6}" y="${(yy + 4).toFixed(1)}" text-anchor="end" font-size="11" fill="#8b97a8">${txt}</text>`;
+                    }
+                    labs.forEach((label, i) => {
+                        if (i % labelStep !== 0 && i !== n - 1) return;
+                        const xx = X(i);
+                        grid += `<line x1="${xx.toFixed(1)}" y1="${top}" x2="${xx.toFixed(1)}" y2="${h - bottom}" stroke="#f3f6fa"/>`;
+                        grid += `<text x="${xx.toFixed(1)}" y="${h - 8}" text-anchor="middle" font-size="11" fill="#8b97a8">${esc(label)}</text>`;
+                    });
+                    const pts = vals.map((v, i) => X(i).toFixed(1) + ',' + Y(v).toFixed(1)).join(' ');
+                    const dots = vals.map((v, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3.4" fill="#3b82f6"><title>${esc(labs[i] + ': ' + fmt(v))}</title></circle>`).join('');
+                    const whenNow = (() => { const span = range || [Date.now(), Date.now() + 1], a = new Date(span[0]), z = new Date(span[1] - 1), opt = { day: 'numeric', month: 'long', year: 'numeric' }, as = a.toLocaleDateString(loc(), opt), zs = z.toLocaleDateString(loc(), opt); return as === zs ? as : as + ' – ' + zs; })();
+                    return `<div class="linechart"><div class="lc-head"><span class="lc-key"><i></i>${esc(title || '')}</span><span>${esc(whenNow)}</span></div><svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(title || '')}">${grid}<polyline points="${pts}" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}</svg></div>`;
                 }
                 function ordersTbl(list, ro) {
                     return `<div class="tw"><table><thead><tr><th>${t('th_order')}</th><th>${t('th_cust')}</th><th>${t('th_total')}</th><th>${t('th_pay')}</th><th>${t('th_date')}</th><th>${t('th_status')}</th>${ro ? '' : '<th></th>'}</tr></thead><tbody>${list.map(o => `<tr>
@@ -8472,8 +8520,7 @@ ${ro ? '' : `<td class="nw"><button class="mini" data-act="odetail" data-id="${e
 <div class="kpi"><span>${t('k_items')}</span><strong>${items}</strong><small>${all.length - live.length} ${t('st_Cancelled')}</small></div>
 <div class="kpi"><span>${t('k_cust')}</span><strong>${acc}</strong><small>${rd(K.news, []).length} ${t('k_subs')}</small></div>
 <div class="kpi"><span>${t('k_prod')}</span><strong>${cat.length}</strong><small>${out} ${t('k_outstock')}</small></div></div>
-<div class="cols"><div class="box"><h2>${t('c_rev')}</h2>${chart(revB, P.b.map(x => x.l), money, every)}</div><div class="box"><h2>${t('c_cnt')}</h2>${chart(cntB, P.b.map(x => x.l), v => String(v), every)}</div></div>
-<div class="box"><h2>${t('c_chart_tbl')}</h2><div class="tw"><table><thead><tr><th>${t('th_date')}</th><th>${t('k_rev')}</th><th>${t('k_orders')}</th></tr></thead><tbody>${P.b.map((x, i) => `<tr><td>${esc(x.l)}</td><td>${money(revB[i])}</td><td>${cntB[i]}</td></tr>`).join('')}</tbody></table></div></div>
+<div class="cols"><div class="box"><h2>${t('c_rev')}</h2>${chart(revB, P.b.map(x => x.l), money, every, t('k_rev'), [P.start, P.end])}</div><div class="box"><h2>${t('c_cnt')}</h2>${chart(cntB, P.b.map(x => x.l), v => String(v), every, t('k_orders'), [P.start, P.end])}</div></div>
 <div class="cols"><div class="box"><h2>${t('c_status')}</h2>${Object.keys(ST).map(k => `<div class="bar-row"><span>${t('st_' + k)}</span><i style="width:${cnt(k) / smx * 100}%"></i><b>${cnt(k)}</b></div>`).join('')}</div>
 <div class="box"><h2>${t('c_top')}</h2>${tops.length ? `<table><tbody>${tops.map(x => `<tr><td class="wrap">${esc(x.n)}</td><td>${x.q} ${t('pcs')}</td><td>${money(x.v)}</td></tr>`).join('')}</tbody></table>` : `<p class="empty">${t('no_sales')}</p>`}</div></div>
 <div class="cols"><div class="box"><h2>${t('c_topcat')}</h2>${cats.length ? cats.map(c => `<div class="bar-row wide"><span>${esc(c[0])}</span><i style="width:${c[1] / cmx * 100}%"></i><b>${money(c[1])}</b></div>`).join('') : `<p class="empty">${t('no_sales')}</p>`}</div>
