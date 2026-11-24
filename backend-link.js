@@ -7,7 +7,12 @@
     try { q = new URLSearchParams(location.search).get('api') || ''; } catch (e) { }
     var saved = '';
     try { saved = localStorage.getItem('boda_api_base') || ''; } catch (e) { }
-    var base = String(q || saved || 'http://127.0.0.1:8000').replace(/\/$/, '');
+    function defaultBase() {
+        var host = location.hostname;
+        if (host === '127.0.0.1' || host === 'localhost' || host === '') return 'http://127.0.0.1:8000';
+        return 'https://boda-store-api-abdullahosama.onrender.com';
+    }
+    var base = String(q || saved || defaultBase()).replace(/\/$/, '');
     window.BODA_API_BASE = base;
     window.BODA_API_ON = false;
 
